@@ -12,7 +12,7 @@ Hardware needed:
 
 - Microcontroller PIC32
 - Bluetooth module >> .............................................	RN42
-- GPS module
+- GPS module ......................................................	A2035H
 - gyro / accelerometer / magnetometre
 - IHM  >> led (thm / cms) - 50 ....................................	SMP4-RGY
 - IHM >> buttons ..................................................	B3S-1000
@@ -26,3 +26,4 @@ Buying url:
 - SMP4-RGY : http://fr.farnell.com/bivar/smp4-rgy/led-2-4mm-red-yell-grn-36-16-40/dp/2293501RL
 - B3S-1000 : http://fr.farnell.com/omron-electronic-components/b3s-1000/commutateur-cms-spno-50ma/dp/177807?MER=bn_browse_1TP_MostPopular_3
 - PVB-spdt : http://fr.farnell.com/c-k-components/pvb4-ee-300-ns-lfs/commutateur-bouton-poussoir-spdt/dp/2435330?st=boutons%20cms
+- A2035H : http://fr.farnell.com/maestro-wireless-solutions/a2035h/module-gps-w-ant-sirf-iv/dp/2281693?MER=bn_level5_5NP_EngagementRecSingleItem_2 
