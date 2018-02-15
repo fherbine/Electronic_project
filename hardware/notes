@@ -18,7 +18,7 @@ Hardware needed:
 - IHM >> buttons ..................................................	B3S-1000
 - IHM >> power button .............................................	PVB - spdt
 - servo - motor ...................................................	MS-1.3-9
-- pointor
+- pointor .........................................................	MS-ARM-1/2
 
 Buying url: (Farnell & Olimex)
 
@@ -29,3 +29,5 @@ Buying url: (Farnell & Olimex)
 - PVB-spdt : http://fr.farnell.com/c-k-components/pvb4-ee-300-ns-lfs/commutateur-bouton-poussoir-spdt/dp/2435330?st=boutons%20cms
 - A2035H : http://fr.farnell.com/maestro-wireless-solutions/a2035h/module-gps-w-ant-sirf-iv/dp/2281693?MER=bn_level5_5NP_EngagementRecSingleItem_2 
 - MS-1.3-9 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-1.3-9/
+- MS-ARM-1 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-ARM-1/
+- MS-ARM-2 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-ARM-2/
