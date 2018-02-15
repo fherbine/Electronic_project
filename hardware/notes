@@ -15,5 +15,9 @@ Hardware needed:
 - GPS module
 - gyro / accelerometer / magnetometre
 - IHM  >> led (thm / cms) - 50 | buttons
-- motor + pointer                                                                  
-                                                                  
+- motor + pointer
+
+Buying url:
+
+- PIC32	: 
+- RN42	: http://fr.farnell.com/microchip/rn42-i-rm/module-bluetooth-class-2-w-ant/dp/2143310
