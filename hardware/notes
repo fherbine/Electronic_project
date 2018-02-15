@@ -17,9 +17,10 @@ Hardware needed:
 - IHM  >> led (thm / cms) - 50 ....................................	SMP4-RGY
 - IHM >> buttons ..................................................	B3S-1000
 - IHM >> power button .............................................	PVB - spdt
-- motor + pointer
+- servo - motor ...................................................	MS-1.3-9
+- pointor
 
-Buying url:
+Buying url: (Farnell & Olimex)
 
 - PIC32	: 
 - RN42	: http://fr.farnell.com/microchip/rn42-i-rm/module-bluetooth-class-2-w-ant/dp/2143310
@@ -27,3 +28,4 @@ Buying url:
 - B3S-1000 : http://fr.farnell.com/omron-electronic-components/b3s-1000/commutateur-cms-spno-50ma/dp/177807?MER=bn_browse_1TP_MostPopular_3
 - PVB-spdt : http://fr.farnell.com/c-k-components/pvb4-ee-300-ns-lfs/commutateur-bouton-poussoir-spdt/dp/2435330?st=boutons%20cms
 - A2035H : http://fr.farnell.com/maestro-wireless-solutions/a2035h/module-gps-w-ant-sirf-iv/dp/2281693?MER=bn_level5_5NP_EngagementRecSingleItem_2 
+- MS-1.3-9 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-1.3-9/
