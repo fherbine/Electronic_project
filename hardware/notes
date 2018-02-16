@@ -13,12 +13,13 @@ Hardware needed:
 - Microcontroller PIC32
 - Bluetooth module >> .............................................	RN42
 - GPS module ......................................................	A2035H
-- gyro / accelerometer / magnetometre .............................	ADXL335 
+- Gyro / Accelerometer ............................................	ADXL335
+- Digital Magnetometer ............................................ MAG3110FCR1
 - IHM  >> led (thm / cms) - 50 ....................................	SMP4-RGY
 - IHM >> buttons ..................................................	B3S-1000
 - IHM >> power button .............................................	PVB - spdt
-- servo - motor ...................................................	MS-1.3-9
-- pointor .........................................................	MS-ARM-1/2
+- Servo - motor ...................................................	MS-1.3-9
+- Pointor .........................................................	MS-ARM-1/2
 
 Buying url: (Farnell & Olimex)
 
@@ -32,3 +33,12 @@ Buying url: (Farnell & Olimex)
 - MS-ARM-1 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-ARM-1/
 - MS-ARM-2 : https://www.olimex.com/Products/RobotParts/ServoMotors/MS-ARM-2/
 - ADXL335 : http://fr.farnell.com/analog-devices/adxl335bcpz/ic-accelerometer-3-axis-3g-16lfcsp/dp/2068032
+- MAG3110FCR1 : http://fr.farnell.com/nxp/mag3110fcr1/magnetometer-3axes-i2c-80hz/dp/2080492?st=MAG3110
+
+Tutorial :
+Bluetooth -> https://learn.sparkfun.com/tutorials/bluetooth-basics
+Serial communication -> https://learn.sparkfun.com/tutorials/serial-communication
+GPS -> https://learn.sparkfun.com/tutorials/gps-basics
+I2C communication -> https://learn.sparkfun.com/tutorials/i2c
+Resistors -> https://learn.sparkfun.com/tutorials/resistors
+Hall effect sensor -> https://www.electronics-tutorials.ws/electromagnetism/hall-effect.html
