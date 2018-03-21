@@ -1,0 +1,86 @@
+Added Component: Designator=C1(CAPC1608N)
+Added Component: Designator=C2(CAPC1608N)
+Added Component: Designator=C3(CAPC1608N)
+Added Component: Designator=C4(CAPC1608N)
+Added Component: Designator=C5(CAPC1608N)
+Added Component: Designator=C6(CAPC1608N)
+Added Component: Designator=C7(CAPC1608N)
+Added Component: Designator=C8(CAPC1608N)
+Added Component: Designator=C9(CAPC2012N)
+Added Component: Designator=C10(CAPC1608N)
+Added Component: Designator=C11(CAPC2012N)
+Added Component: Designator=C12(CAPC2012N)
+Added Component: Designator=C13(CAPC2012N)
+Added Component: Designator=C14(CAPC1608N)
+Added Component: Designator=C15(CAPC1608N)
+Added Component: Designator=D1_LED0(LED 0805)
+Added Component: Designator=D1_LED1(LED 0805)
+Added Component: Designator=D1_LED2(LED 0805)
+Added Component: Designator=D1_LED3(LED 0805)
+Added Component: Designator=D2(SMA/DO-214AC_21)
+Added Component: Designator=D3(SMA/DO-214AC_21)
+Added Component: Designator=D4(LED 0805)
+Added Component: Designator=FB1(INDC1608AN)
+Added Component: Designator=J1(RJ12_90)
+Added Component: Designator=P1(PHOENIX_1985195)
+Added Component: Designator=P2(PHOENIX_1985195)
+Added Component: Designator=R2_LED0(RESC1608n)
+Added Component: Designator=R2_LED1(RESC1608n)
+Added Component: Designator=R2_LED2(RESC1608n)
+Added Component: Designator=R2_LED3(RESC1608n)
+Added Component: Designator=R3(RESC1608N)
+Added Component: Designator=R4(RESC1608N)
+Added Component: Designator=U1(PIC)
+Added Component: Designator=U2(TD03B_N)
+Added Component: Designator=Y1(HC49/4H SMX CRYSTAL)
+Added Pin To Net: NetName=X1 Pin=C7-1
+Added Pin To Net: NetName=X2 Pin=C8-1
+Added Pin To Net: NetName=NetC9_2 Pin=C9-2
+Added Pin To Net: NetName=V5 Pin=C11-2
+Added Pin To Net: NetName=V5 Pin=C12-2
+Added Pin To Net: NetName=V3P3 Pin=C13-2
+Added Pin To Net: NetName=GND Pin=C14-1
+Added Pin To Net: NetName=GND Pin=C15-1
+Added Pin To Net: NetName=X2 Pin=Y1-1
+Added Member To Class: ClassName=PIC Member=Component C1 100nF
+Added Member To Class: ClassName=PIC Member=Component C2 100nF
+Added Member To Class: ClassName=PIC Member=Component C3 100nF
+Added Member To Class: ClassName=PIC Member=Component C4 100nF
+Added Member To Class: ClassName=PIC Member=Component C5 100nF
+Added Member To Class: ClassName=PIC Member=Component C6 100nF
+Added Member To Class: ClassName=PIC Member=Component C7 20pF
+Added Member To Class: ClassName=PIC Member=Component C8 20pF
+Added Member To Class: ClassName=PIC Member=Component C9 10uF
+Added Member To Class: ClassName=PIC Member=Component C10 1uF
+Added Member To Class: ClassName=POWER Member=Component C11 
+Added Member To Class: ClassName=POWER Member=Component C12 10uF
+Added Member To Class: ClassName=POWER Member=Component C13 Cap
+Added Member To Class: ClassName=POWER Member=Component C14 Cap
+Added Member To Class: ClassName=POWER Member=Component C15 Cap
+Added Member To Class: ClassName=LED0 Member=Component D1_LED0 (D1) Green LED
+Added Member To Class: ClassName=LED1 Member=Component D1_LED1 (D1) Green LED
+Added Member To Class: ClassName=LED2 Member=Component D1_LED2 (D1) Green LED
+Added Member To Class: ClassName=LED3 Member=Component D1_LED3 (D1) Green LED
+Added Member To Class: ClassName=POWER Member=Component D2 Diode
+Added Member To Class: ClassName=POWER Member=Component D3 Diode
+Added Member To Class: ClassName=POWER Member=Component D4 Green LED
+Added Member To Class: ClassName=POWER Member=Component FB1 Inductor
+Added Member To Class: ClassName=PIC Member=Component J1 Program / Debug
+Added Member To Class: ClassName=POWER Member=Component P1 12V
+Added Member To Class: ClassName=POWER Member=Component P2 12V Battery
+Added Member To Class: ClassName=LED0 Member=Component R2_LED0 (R2) 330r
+Added Member To Class: ClassName=LED1 Member=Component R2_LED1 (R2) 330r
+Added Member To Class: ClassName=LED2 Member=Component R2_LED2 (R2) 330r
+Added Member To Class: ClassName=LED3 Member=Component R2_LED3 (R2) 330r
+Added Member To Class: ClassName=PIC Member=Component R3 4.7k
+Added Member To Class: ClassName=POWER Member=Component R4 470r
+Added Member To Class: ClassName=PIC Member=Component U1 PIC32MX764F128H-I/PT
+Added Member To Class: ClassName=POWER Member=Component U2 AP1117
+Added Member To Class: ClassName=PIC Member=Component Y1 8MHz
+Added Room: Name=global
+Added Room: Name=LED0
+Added Room: Name=LED1
+Added Room: Name=LED2
+Added Room: Name=LED3
+Added Room: Name=PIC
+Added Room: Name=POWER

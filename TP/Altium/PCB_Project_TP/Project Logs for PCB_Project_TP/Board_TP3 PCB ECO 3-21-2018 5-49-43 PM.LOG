@@ -1,0 +1,5 @@
+Removed Pin From Net: NetName=X2 Pin=Y1-1
+Added Component: Designator=R2_LED0(RESC1608n)
+Added Component: Designator=R2_LED1(RESC1608n)
+Added Member To Class: ClassName=LED0 Member=Component R2_LED0 (R2) 330r
+Added Member To Class: ClassName=LED1 Member=Component R2_LED1 (R2) 330r
