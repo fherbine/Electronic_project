@@ -1,0 +1,34 @@
+Change Component Footprint: Designator=R4 Old Footprint=RESC1608N New Footprint=HC49/4H SMX CRYSTAL
+Change Component Footprint: Designator=R3 Old Footprint=RESC1608N New Footprint=PIC
+Change Physical Footprint: Designator=C1 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C2 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C3 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C4 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C5 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C6 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C7 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C8 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C9 Old Footprint=CAPC2012N New Footprint=CAPC2012N
+Change Physical Footprint: Designator=C10 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C11 Old Footprint=CAPC2012N New Footprint=CAPC2012N
+Change Physical Footprint: Designator=C12 Old Footprint=CAPC2012N New Footprint=CAPC2012N
+Change Physical Footprint: Designator=C13 Old Footprint=CAPC2012N New Footprint=CAPC2012N
+Change Physical Footprint: Designator=C14 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=C15 Old Footprint=CAPC1608N New Footprint=CAPC1608N
+Change Physical Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED 0805
+Change Physical Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED 0805
+Change Physical Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED 0805
+Change Physical Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED 0805
+Change Physical Footprint: Designator=D2 Old Footprint=SMA/DO-214AC_21 New Footprint=SMA/DO-214AC_21
+Change Physical Footprint: Designator=D3 Old Footprint=SMA/DO-214AC_21 New Footprint=SMA/DO-214AC_21
+Change Physical Footprint: Designator=D4 Old Footprint=LED 0805 New Footprint=LED 0805
+Change Physical Footprint: Designator=FB1 Old Footprint=INDC1608AN New Footprint=INDC1608AN
+Change Physical Footprint: Designator=J1 Old Footprint=RJ12_90 New Footprint=RJ12_90
+Change Physical Footprint: Designator=P1 Old Footprint=PHOENIX_1985195 New Footprint=PHOENIX_1985195
+Change Physical Footprint: Designator=P2 Old Footprint=PHOENIX_1985195 New Footprint=PHOENIX_1985195
+Change Physical Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=RESC1608N
+Change Physical Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=RESC1608N
+Change Physical Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=RESC1608n
+Change Physical Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=RESC1608n
+Change Physical Footprint: Designator=U2 Old Footprint=TD03B_N New Footprint=TD03B_N
+Change Physical Footprint: Designator=Y1 Old Footprint=HC49/4H SMX CRYSTAL New Footprint=HC49/4H SMX CRYSTAL

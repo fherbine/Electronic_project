@@ -1,0 +1,173 @@
+Change Component DesignItemId : Designator=U2 Old DesignItemId= New DesignItemId=AP1117
+Change Component DesignItemId : Designator=P1 Old DesignItemId=Res1 New DesignItemId=12V
+Change Component DesignItemId : Designator=P2 Old DesignItemId=Res1 New DesignItemId=12V
+Change Component DesignItemId : Designator=J1 Old DesignItemId=RPot New DesignItemId=Program / Debug
+Change Component Footprint: Designator=C1 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C2 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C3 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C4 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C5 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C6 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C7 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C8 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C10 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C14 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C15 Old Footprint=CAPC1608N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C9 Old Footprint=CAPC2012N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C11 Old Footprint=CAPC2012N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C12 Old Footprint=CAPC2012N New Footprint=RAD-0.3
+Change Component Footprint: Designator=C13 Old Footprint=CAPC2012N New Footprint=RAD-0.3
+Change Component Footprint: Designator=FB1 Old Footprint=INDC1608AN New Footprint=0402-A
+Change Component Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED-0
+Change Component Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED-0
+Change Component Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED-0
+Change Component Footprint: Designator=D1 Old Footprint=LED 0805 New Footprint=LED-0
+Change Component Footprint: Designator=D4 Old Footprint=LED 0805 New Footprint=LED-0
+Change Component Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=AXIAL-0.3
+Change Component Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=AXIAL-0.3
+Change Component Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=AXIAL-0.3
+Change Component Footprint: Designator=R2 Old Footprint=RESC1608N New Footprint=AXIAL-0.3
+Change Component Footprint: Designator=R4 Old Footprint=RESC1608N New Footprint=R38
+Change Component Footprint: Designator=D2 Old Footprint=SMA/DO-214AC_21 New Footprint=SMC
+Change Component Footprint: Designator=D3 Old Footprint=SMA/DO-214AC_21 New Footprint=SMC
+Change Component Comment : Designator=C10 Old Comment=Comment New Comment=1uF
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=4.7k
+Change Component Comment : Designator=R4 Old Comment=Comment New Comment=8MHz
+Change Component Comment : Designator=C9 Old Comment=Comment New Comment=10uF
+Change Component Comment : Designator=C12 Old Comment=Comment New Comment=10uF
+Change Component Comment : Designator=P1 Old Comment=Comment New Comment=12V
+Change Component Comment : Designator=P2 Old Comment=Comment New Comment=12V Battery
+Change Component Comment : Designator=C7 Old Comment=Comment New Comment=20pF
+Change Component Comment : Designator=C8 Old Comment=Comment New Comment=20pF
+Change Component Comment : Designator=C1 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C2 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C3 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C4 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C5 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C6 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=330r
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=330r
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=470r
+Change Component Comment : Designator=C11 Old Comment=Comment New Comment=
+Change Component Comment : Designator=U2 Old Comment=Comment New Comment=AP1117
+Change Component Comment : Designator=C13 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=C14 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=C15 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=D2 Old Comment=Comment New Comment=Diode
+Change Component Comment : Designator=D3 Old Comment=Comment New Comment=Diode
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D4 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=FB1 Old Comment=Comment New Comment=Inductor
+Change Component Comment : Designator=R3 Old Comment=Comment New Comment=PIC32MX764F128H-I/PT
+Change Component Comment : Designator=J1 Old Comment=Comment New Comment=Program / Debug
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED0
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED1
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED2
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED3
+Change Component Designator: OldDesignator=R2 NewDesignator=R2_LED2
+Change Component Designator: OldDesignator=R2 NewDesignator=R2_LED3
+Change Component Designator: OldDesignator=R2 NewDesignator=R3
+Change Component Designator: OldDesignator=R2 NewDesignator=R4
+Change Component Designator: OldDesignator=R3 NewDesignator=U1
+Change Component Designator: OldDesignator=R4 NewDesignator=Y1
+Change Component Description : Designator=J1 Old Description=Potentiometer New Description=
+Change Component Description : Designator=P1 Old Description=Resistor New Description=
+Change Component Description : Designator=P2 Old Description=Resistor New Description=
+Change Component Library : Designator=U2 Old Library= New Library=LibSch.SchLib
+Change Component Library : Designator=J1 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Change Component Library : Designator=P1 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Change Component Library : Designator=P2 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Added Component: Designator=R1(VR5)
+Added Component: Designator=R2_LED0(AXIAL-0.3)
+Added Component: Designator=R2_LED1(AXIAL-0.3)
+Added Pin To Net: NetName=ALIM Pin=D2-1
+Added Net: Name=ALIM
+Added Pin To Net: NetName=BATTERY Pin=D3-1
+Added Net: Name=BATTERY
+Added Pin To Net: NetName=GND Pin=C7-2
+Added Pin To Net: NetName=GND Pin=C8-2
+Added Pin To Net: NetName=GND Pin=C11-1
+Added Pin To Net: NetName=GND Pin=C12-1
+Added Pin To Net: NetName=GND Pin=C13-1
+Added Pin To Net: NetName=GND Pin=C14-1
+Added Pin To Net: NetName=GND Pin=C15-1
+Added Pin To Net: NetName=GND Pin=D1_LED0-2
+Added Pin To Net: NetName=GND Pin=D1_LED1-2
+Added Pin To Net: NetName=GND Pin=D1_LED2-2
+Added Pin To Net: NetName=GND Pin=D1_LED3-2
+Added Pin To Net: NetName=GND Pin=D4-2
+Added Net: Name=GND
+Added Pin To Net: NetName=LED0 Pin=R2_LED0-2
+Added Net: Name=LED0
+Added Pin To Net: NetName=LED1 Pin=R2_LED1-2
+Added Net: Name=LED1
+Added Pin To Net: NetName=LED2 Pin=R2_LED2-2
+Added Net: Name=LED2
+Added Pin To Net: NetName=LED3 Pin=R2_LED3-2
+Added Net: Name=LED3
+Added Pin To Net: NetName=MCLR Pin=R3-1
+Added Net: Name=MCLR
+Added Pin To Net: NetName=NetC9_2 Pin=C9-2
+Added Pin To Net: NetName=NetC9_2 Pin=C10-2
+Added Net: Name=NetC9_2
+Added Pin To Net: NetName=NetD1_LED0_1 Pin=D1_LED0-1
+Added Pin To Net: NetName=NetD1_LED0_1 Pin=R2_LED0-1
+Added Net: Name=NetD1_LED0_1
+Added Pin To Net: NetName=NetD1_LED1_1 Pin=D1_LED1-1
+Added Pin To Net: NetName=NetD1_LED1_1 Pin=R2_LED1-1
+Added Net: Name=NetD1_LED1_1
+Added Pin To Net: NetName=NetD1_LED2_1 Pin=D1_LED2-1
+Added Pin To Net: NetName=NetD1_LED2_1 Pin=R2_LED2-1
+Added Net: Name=NetD1_LED2_1
+Added Pin To Net: NetName=NetD1_LED3_1 Pin=D1_LED3-1
+Added Pin To Net: NetName=NetD1_LED3_1 Pin=R2_LED3-1
+Added Net: Name=NetD1_LED3_1
+Added Pin To Net: NetName=NetD4_1 Pin=D4-1
+Added Pin To Net: NetName=NetD4_1 Pin=R4-1
+Added Net: Name=NetD4_1
+Added Net: Name=NetR1_3
+Added Pin To Net: NetName=V3P3A Pin=C15-2
+Added Pin To Net: NetName=V3P3A Pin=FB1-2
+Added Net: Name=V3P3A
+Added Pin To Net: NetName=V3P3 Pin=C1-2
+Added Pin To Net: NetName=V3P3 Pin=C2-2
+Added Pin To Net: NetName=V3P3 Pin=C3-2
+Added Pin To Net: NetName=V3P3 Pin=C4-2
+Added Pin To Net: NetName=V3P3 Pin=C5-2
+Added Pin To Net: NetName=V3P3 Pin=C6-2
+Added Pin To Net: NetName=V3P3 Pin=C13-2
+Added Pin To Net: NetName=V3P3 Pin=C14-2
+Added Pin To Net: NetName=V3P3 Pin=FB1-1
+Added Pin To Net: NetName=V3P3 Pin=R3-2
+Added Net: Name=V3P3
+Added Pin To Net: NetName=V5 Pin=C11-2
+Added Pin To Net: NetName=V5 Pin=C12-2
+Added Pin To Net: NetName=V5 Pin=D2-2
+Added Pin To Net: NetName=V5 Pin=D3-2
+Added Pin To Net: NetName=V5 Pin=R4-2
+Added Net: Name=V5
+Added Pin To Net: NetName=X1 Pin=C7-1
+Added Pin To Net: NetName=X1 Pin=Y1-2
+Added Net: Name=X1
+Added Pin To Net: NetName=X2 Pin=C8-1
+Added Pin To Net: NetName=X2 Pin=Y1-1
+Added Net: Name=X2
+Added Class: Name=global
+Added Class: Name=LED0
+Added Class: Name=LED1
+Added Class: Name=LED2
+Added Class: Name=LED3
+Added Class: Name=PIC
+Added Class: Name=POWER
+Added Class: Name=LED[0..3]
+Added Class: Name=led
+Added Room: Name=global
+Added Room: Name=LED0
+Added Room: Name=LED1
+Added Room: Name=LED2
+Added Room: Name=LED3
+Added Room: Name=PIC
+Added Room: Name=POWER

@@ -1,0 +1,103 @@
+Change Component DesignItemId : Designator=U2 Old DesignItemId= New DesignItemId=AP1117
+Change Component DesignItemId : Designator=P1 Old DesignItemId=Res1 New DesignItemId=12V
+Change Component DesignItemId : Designator=P2 Old DesignItemId=Res1 New DesignItemId=12V
+Change Component DesignItemId : Designator=J1 Old DesignItemId=RPot New DesignItemId=Program / Debug
+Change Component Footprint: Designator=R4 Old Footprint=RESC1608N New Footprint=HC49/4H SMX CRYSTAL
+Change Component Footprint: Designator=R3 Old Footprint=RESC1608N New Footprint=PIC
+Change Component Comment : Designator=C10 Old Comment=Comment New Comment=1uF
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=4.7k
+Change Component Comment : Designator=R4 Old Comment=Comment New Comment=8MHz
+Change Component Comment : Designator=C9 Old Comment=Comment New Comment=10uF
+Change Component Comment : Designator=C12 Old Comment=Comment New Comment=10uF
+Change Component Comment : Designator=P1 Old Comment=Comment New Comment=12V
+Change Component Comment : Designator=P2 Old Comment=Comment New Comment=12V Battery
+Change Component Comment : Designator=C7 Old Comment=Comment New Comment=20pF
+Change Component Comment : Designator=C8 Old Comment=Comment New Comment=20pF
+Change Component Comment : Designator=C1 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C2 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C3 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C4 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C5 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=C6 Old Comment=Comment New Comment=100nF
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=330r
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=330r
+Change Component Comment : Designator=R2 Old Comment=Comment New Comment=470r
+Change Component Comment : Designator=C11 Old Comment=Comment New Comment=
+Change Component Comment : Designator=U2 Old Comment=Comment New Comment=AP1117
+Change Component Comment : Designator=C13 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=C14 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=C15 Old Comment=Comment New Comment=Cap
+Change Component Comment : Designator=D2 Old Comment=Comment New Comment=Diode
+Change Component Comment : Designator=D3 Old Comment=Comment New Comment=Diode
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D1 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=D4 Old Comment=Comment New Comment=Green LED
+Change Component Comment : Designator=FB1 Old Comment=Comment New Comment=Inductor
+Change Component Comment : Designator=R3 Old Comment=Comment New Comment=PIC32MX764F128H-I/PT
+Change Component Comment : Designator=J1 Old Comment=Comment New Comment=Program / Debug
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED0
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED1
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED2
+Change Component Designator: OldDesignator=D1 NewDesignator=D1_LED3
+Change Component Designator: OldDesignator=R2 NewDesignator=R2_LED2
+Change Component Designator: OldDesignator=R2 NewDesignator=R2_LED3
+Change Component Designator: OldDesignator=R2 NewDesignator=R3
+Change Component Designator: OldDesignator=R2 NewDesignator=R4
+Change Component Designator: OldDesignator=R3 NewDesignator=U1
+Change Component Designator: OldDesignator=R4 NewDesignator=Y1
+Change Component Description : Designator=J1 Old Description=Potentiometer New Description=
+Change Component Description : Designator=P1 Old Description=Resistor New Description=
+Change Component Description : Designator=P2 Old Description=Resistor New Description=
+Change Component Library : Designator=U2 Old Library= New Library=LibSch.SchLib
+Change Component Library : Designator=J1 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Change Component Library : Designator=P1 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Change Component Library : Designator=P2 Old Library=Miscellaneous Devices.IntLib New Library=LibSch.SchLib
+Added Component: Designator=R2_LED0(RESC1608n)
+Added Component: Designator=R2_LED1(RESC1608n)
+Added Net: Name=ALIM
+Added Net: Name=BATTERY
+Added Pin To Net: NetName=GND Pin=C14-1
+Added Pin To Net: NetName=GND Pin=C15-1
+Added Net: Name=GND
+Added Net: Name=LED0
+Added Net: Name=LED1
+Added Net: Name=LED2
+Added Net: Name=LED3
+Added Net: Name=MCLR
+Added Pin To Net: NetName=NetC9_2 Pin=C9-2
+Added Net: Name=NetC9_2
+Added Net: Name=NetD1_LED0_1
+Added Net: Name=NetD1_LED1_1
+Added Net: Name=NetD1_LED2_1
+Added Net: Name=NetD1_LED3_1
+Added Net: Name=NetD4_1
+Added Net: Name=NetR1_3
+Added Net: Name=V3P3A
+Added Pin To Net: NetName=V3P3 Pin=C13-2
+Added Net: Name=V3P3
+Added Pin To Net: NetName=V5 Pin=C11-2
+Added Pin To Net: NetName=V5 Pin=C12-2
+Added Net: Name=V5
+Added Pin To Net: NetName=X1 Pin=C7-1
+Added Net: Name=X1
+Added Pin To Net: NetName=X2 Pin=C8-1
+Added Pin To Net: NetName=X2 Pin=Y1-1
+Added Net: Name=X2
+Added Class: Name=global
+Added Class: Name=LED0
+Added Class: Name=LED1
+Added Class: Name=LED2
+Added Class: Name=LED3
+Added Class: Name=PIC
+Added Class: Name=POWER
+Added Class: Name=LED[0..3]
+Added Class: Name=led
+Added Room: Name=global
+Added Room: Name=LED0
+Added Room: Name=LED1
+Added Room: Name=LED2
+Added Room: Name=LED3
+Added Room: Name=PIC
+Added Room: Name=POWER

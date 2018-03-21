@@ -1,0 +1,45 @@
+Change Component Footprint: Designator=Y1 Old Footprint=HC49/4H SMX CRYSTAL New Footprint=RESC1608N
+Change Component Footprint: Designator=U1 Old Footprint=PIC New Footprint=RESC1608N
+Change Component Comment: Designator=C11 Old Comment= New Comment=Comment
+Change Component Comment: Designator=C10 Old Comment=1uF New Comment=Comment
+Change Component Comment: Designator=R3 Old Comment=4.7k New Comment=Comment
+Change Component Comment: Designator=Y1 Old Comment=8MHz New Comment=Comment
+Change Component Comment: Designator=C9 Old Comment=10uF New Comment=Comment
+Change Component Comment: Designator=C12 Old Comment=10uF New Comment=Comment
+Change Component Comment: Designator=P1 Old Comment=12V New Comment=Comment
+Change Component Comment: Designator=P2 Old Comment=12V Battery New Comment=Comment
+Change Component Comment: Designator=C7 Old Comment=20pF New Comment=Comment
+Change Component Comment: Designator=C8 Old Comment=20pF New Comment=Comment
+Change Component Comment: Designator=C1 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=C2 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=C3 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=C4 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=C5 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=C6 Old Comment=100nF New Comment=Comment
+Change Component Comment: Designator=R2 Old Comment=330r New Comment=Comment
+Change Component Comment: Designator=R2 Old Comment=Comment New Comment=Comment
+Change Component Comment: Designator=R4 Old Comment=470r New Comment=Comment
+Change Component Comment: Designator=U2 Old Comment=AP1117 New Comment=Comment
+Change Component Comment: Designator=C13 Old Comment=Cap New Comment=Comment
+Change Component Comment: Designator=C14 Old Comment=Cap New Comment=Comment
+Change Component Comment: Designator=C15 Old Comment=Cap New Comment=Comment
+Change Component Comment: Designator=D2 Old Comment=Diode New Comment=Comment
+Change Component Comment: Designator=D3 Old Comment=Diode New Comment=Comment
+Change Component Comment: Designator=D1 Old Comment=Green LED New Comment=Comment
+Change Component Comment: Designator=D1 Old Comment=Comment New Comment=Comment
+Change Component Comment: Designator=D1 Old Comment=Comment New Comment=Comment
+Change Component Comment: Designator=D1 Old Comment=Comment New Comment=Comment
+Change Component Comment: Designator=D4 Old Comment=Green LED New Comment=Comment
+Change Component Comment: Designator=FB1 Old Comment=Inductor New Comment=Comment
+Change Component Comment: Designator=U1 Old Comment=PIC32MX764F128H-I/PT New Comment=Comment
+Change Component Comment: Designator=J1 Old Comment=Program / Debug New Comment=Comment
+Change Component Designator: OldDesignator=D1 NewDesignator=D1
+Change Component Designator: OldDesignator=D1 NewDesignator=D1
+Change Component Designator: OldDesignator=D1 NewDesignator=D1
+Change Component Designator: OldDesignator=D1 NewDesignator=D1
+Change Component Designator: OldDesignator=R2 NewDesignator=R2
+Change Component Designator: OldDesignator=R2 NewDesignator=R2
+Change Component Designator: OldDesignator=R3 NewDesignator=R2
+Change Component Designator: OldDesignator=R4 NewDesignator=R2
+Change Component Designator: OldDesignator=U1 NewDesignator=R3
+Change Component Designator: OldDesignator=Y1 NewDesignator=R4
