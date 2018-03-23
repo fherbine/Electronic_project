@@ -1,0 +1,8 @@
+Change Component Comment : Designator=P2 Old Comment=12V Battery New Comment=12V
+Added Component: Designator=R1(PDB181-K415K-102A2)
+Added Component: Designator=R2_LED0(RESC1608n)
+Added Component: Designator=R2_LED1(RESC1608n)
+Added Net: Name=PGC
+Added Net: Name=PGD
+Added Member To Class: ClassName=LED0 Member=Component R2_LED0 (R2) 330r
+Added Member To Class: ClassName=LED1 Member=Component R2_LED1 (R2) 330r
