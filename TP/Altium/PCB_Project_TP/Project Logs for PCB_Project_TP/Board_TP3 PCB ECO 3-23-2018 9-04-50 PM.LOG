@@ -1,0 +1,4 @@
+Added Pin To Net: NetName=ALIM Pin=P1-1
+Added Pin To Net: NetName=GND Pin=P1-2
+Added Pin To Net: NetName=BATTERY Pin=P2-1
+Added Pin To Net: NetName=GND Pin=P2-2
