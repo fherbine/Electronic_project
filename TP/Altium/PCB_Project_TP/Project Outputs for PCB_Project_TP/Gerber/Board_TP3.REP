@@ -1,0 +1,137 @@
+*************************************************************
+FileName = Board_TP3.GBR
+AutoAperture = True
+*************************************************************
+Generating : Top Layer
+      File : Board_TP3.GTL
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Borne outline
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : Board_TP3.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Borne outline
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D22
+    D24
+    D27
+    D28
+    D29
+*************************************************************
+
+*************************************************************
+Generating : Top Overlay
+      File : Board_TP3.GTO
+
+    Adding Layer      : Top Overlay
+
+    Adding Layer      : Borne outline
+
+
+Used DCodes :
+    D22
+    D30
+    D31
+    D32
+    D33
+*************************************************************
+
+*************************************************************
+Generating : Top Solder
+      File : Board_TP3.GTS
+
+    Adding Layer      : Top Solder
+
+    Adding Layer      : Borne outline
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+    D44
+    D45
+    D46
+    D47
+    D48
+    D49
+    D50
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : Board_TP3.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Borne outline
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D46
+    D49
+    D50
+    D51
+*************************************************************
+
+*************************************************************
+Generating : Borne outline
+      File : Board_TP3.GM32
+
+    Adding Layer      : Borne outline
+
+    Adding Layer      : Borne outline
+
+
+Used DCodes :
+*************************************************************
+

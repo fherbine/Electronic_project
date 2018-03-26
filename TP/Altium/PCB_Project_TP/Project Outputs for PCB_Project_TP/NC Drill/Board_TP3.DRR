@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: Board_TP3.PcbDoc   3/26/2018  6:48:36 PM
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Board_TP3.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        0.7112mm (28mil)         Round          28               188.37 mm (7.42 Inch)
+T2        0.762mm (30mil)          Round          4                22.01 mm (0.87 Inch)
+T3        0.9mm (35.433mil)        Round          6                13.00 mm (0.51 Inch)
+T4        1.2mm (47.244mil)        Round          3                10.00 mm (0.39 Inch)
+---------------------------------------------------------------------------
+Totals                                            41               233.38 mm (9.19 Inch)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
