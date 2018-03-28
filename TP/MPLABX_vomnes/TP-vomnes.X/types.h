@@ -2,7 +2,7 @@
  * File:   types.h
  * Author: bocal
  *
- * Created on March 22, 2018, 2:05 PM
+ * Created on March 28, 2018, 3:48 PM
  */
 
 #ifndef TYPES_H
@@ -14,9 +14,6 @@ typedef unsigned long u32;
 typedef char s8;
 typedef short s16;
 typedef long s32;
-
-#define PERIOD 40000
-#define LIMIT_SPEED 1250
 #ifdef	__cplusplus
 extern "C" {
 #endif
