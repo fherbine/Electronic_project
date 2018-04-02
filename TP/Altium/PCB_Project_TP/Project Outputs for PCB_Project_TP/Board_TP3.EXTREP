@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------
-Gerber File Extension Report For: Board_TP3.GBR   4/2/2018  7:38:09 PM
+Gerber File Extension Report For: Board_TP3.GBR   4/2/2018  8:20:01 PM
 ------------------------------------------------------------------------------------------
 
 
@@ -11,5 +11,4 @@ Layer Extension     Layer Description
 .GTO                Top Overlay                             
 .GTS                Top Solder                              
 .GBS                Bottom Solder                           
-.GM32               Borne outline                           
 ------------------------------------------------------------------------------------------
