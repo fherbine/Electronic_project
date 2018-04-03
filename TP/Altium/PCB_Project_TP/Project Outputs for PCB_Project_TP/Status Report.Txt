@@ -1,17 +1,12 @@
-Output: Gerber Files
-Type  : Gerber
-From  : Variant [[No Variations]] of Project [PCB_Project_TP.PrjPcb]
-   Generated File[Board_TP3.GTL]
-   Generated File[Board_TP3.GBL]
-   Generated File[Board_TP3.GTO]
-   Generated File[Board_TP3.GTS]
-   Generated File[Board_TP3.GBS]
-   Generated File[Board_TP3.RUL]
-   Generated File[Board_TP3.EXTREP]
-   Generated File[Board_TP3.REP]
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [PCB_Project_TP.PrjPcb]
+   Generated File[Board_TP3.TXT]
+   Generated File[Board_TP3.LDP]
+   Generated File[Board_TP3.DRR]
 
 
-Files Generated   : 8
+Files Generated   : 3
 Documents Printed : 0
 
-Finished Output Generation At 8:20:02 PM On 4/2/2018
+Finished Output Generation At 4:45:19 PM On 4/3/2018

@@ -17,12 +17,12 @@ RevisionNamingSchemeGUID=
 [OutputGroup1]
 Name=doc.OutJob
 Description=
-TargetOutputMedium=Folder Structure
+TargetOutputMedium=PDF
 VariantName=[No Variations]
 VariantScope=1
 CurrentConfigurationName=
-TargetPrinter=Send To OneNote 2013
-PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintWhat=0
+TargetPrinter=Virtual Printer
+PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintWhat=1
 OutputMedium1=Print Job
 OutputMedium1_Type=Printer
 OutputMedium1_Printer=
@@ -165,13 +165,13 @@ OutputName8=Drill Drawing/Guides
 OutputCategory8=Fabrication
 OutputDocumentPath8=Board_TP3.PcbDoc
 OutputVariantName8=
-OutputEnabled8=0
+OutputEnabled8=1
 OutputEnabled8_OutputMedium1=0
-OutputEnabled8_OutputMedium2=0
+OutputEnabled8_OutputMedium2=1
 OutputEnabled8_OutputMedium3=0
 OutputEnabled8_OutputMedium4=0
 OutputDefault8=0
-PageOptions8=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=Letter|PaperIndex=1
+PageOptions8=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=0|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=Letter|PaperIndex=1
 Configuration8_Name1=OutputConfigurationParameter1
 Configuration8_Item1=DesignatorDisplayMode=Physical|PrintArea=DesignExtent|PrintAreaLowerLeftCornerX=0|PrintAreaLowerLeftCornerY=0|PrintAreaUpperRightCornerX=0|PrintAreaUpperRightCornerY=0|Record=PcbPrintView
 Configuration8_Name2=OutputConfigurationParameter2
@@ -187,7 +187,7 @@ OutputName9=Copy of NC Drill Files
 OutputCategory9=Fabrication
 OutputDocumentPath9=Board_TP3.PcbDoc
 OutputVariantName9=
-OutputEnabled9=1
+OutputEnabled9=0
 OutputEnabled9_OutputMedium1=0
 OutputEnabled9_OutputMedium2=0
 OutputEnabled9_OutputMedium3=1
