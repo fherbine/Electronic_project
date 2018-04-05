@@ -54,8 +54,11 @@ int ex2_2() {
     T2CON = 0; // 0 on every bit, (timer stop, basic config)
     T2CONSET = (scale << 4); // Set scaler
     TMR2 = 0; // Counter to 0
+    PR2 = 0;
     PR2 = 122 * 16 * p; // Setup the period
+
     T2CONSET = (1 << 15); // Assigning directly the right bit of TCON itself works aswell.
+    //TOUS LES SCALES TMR sincremente
     while (1) {
         if (IFS0bits.T2IF) // Check for the event triggered by completion of counter
         {
@@ -78,12 +81,10 @@ int ex2_2() {
     return (0);
 }
 
-void __ISR(_TIMER_2_VECTOR, ipl7) Timer1Handler(void) {
-    if (IFS0bits.T2IF) {
+void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer1Handler(void) {
         LATFbits.LATF1 ^= 1; // Toggle
         TMR2 = 0x0;
         IFS0CLR = 0x100; // Clear timer 2
-    }
 }
 
 int ex3() {
@@ -95,15 +96,17 @@ int ex3() {
     TMR2 = 0x0; // Clean the timer register
     T2CONSET = (0b111 << 4); // Set scaler
     PR2 = 122 * 16 * 1; // Setup the period
-
-    IPC2SET = 0b01100; // Set priority level = 3
-    IPC2SET = 0b01;   // Set subpriority level = 1
+  
+//    IPC0bits.INT0IP = 1; // Set priority level = 3
+//    IPC0bits.INT0IS = 1; // Set priority level = 3
     // => One operation by assigning PC2SET = 0b01101
 
-    IFS0CLR = 0x100; // Clear the timer 2 interrupt status flag
-    IEC0SET = 0x100; // Enable timer 2 interrupts
+    IFS0bits.T2IF = 0; // Clear the timer 2 interrupt status flag
+    IEC0bits.T2IE = 1; // Enable timer 2 interrupts
 
-    T2CONSET = 0x8000; // Start the timer
+    __builtin_enable_interrupts();
+
+    T2CONbits.ON = 1; //start timer at the end
 
     while (1) {
         WDTCONSET = 0x01; // This is WDT !
