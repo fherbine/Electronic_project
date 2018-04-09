@@ -81,35 +81,37 @@ int ex2_2() {
     return (0);
 }
 
-void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer1Handler(void) {
+void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
         LATFbits.LATF1 ^= 1; // Toggle
-        TMR2 = 0x0;
-        IFS0CLR = 0x100; // Clear timer 2
+        TMR2 = 0;
+        IFS0bits.T2IF = 0; // Clear timer 2
 }
 
 int ex3() {
+    // Interrupteur -> RD8 - INT1
     TRISDbits.TRISD8 = 1;
     TRISFbits.TRISF1 = 0;
     LATFbits.LATF1 = 0;
 
-    T2CON = 0x0; // 0 on every bit, (timer stop, basic config)
-    TMR2 = 0x0; // Clean the timer register
-    T2CONSET = (0b111 << 4); // Set scaler
-    PR2 = 122 * 16 * 1; // Setup the period
-  
-//    IPC0bits.INT0IP = 1; // Set priority level = 3
-//    IPC0bits.INT0IS = 1; // Set priority level = 3
-    // => One operation by assigning PC2SET = 0b01101
-
+    T2CON = 0;               // 0 on every bit, (timer stop, basic config)
+    TMR2 = 0;                // Clean the timer register
+    T2CONbits.TCKPS = 0b101; // Set scaler 1:256
+    PR2 = 16000;             // Setup the period
+    
+    IPC2bits.T2IP = 3; // Set priority
+    IPC2bits.T2IS = 0; // Set subpriority
     IFS0bits.T2IF = 0; // Clear the timer 2 interrupt status flag
     IEC0bits.T2IE = 1; // Enable timer 2 interrupts
 
-    __builtin_enable_interrupts();
-
     T2CONbits.ON = 1; //start timer at the end
 
+    __builtin_enable_interrupts();
+
+    INTCONbits.MVEC = 1;
+
+
     while (1) {
-        WDTCONSET = 0x01; // This is WDT !
+      WDTCONSET = 0x01; // This is WDT !
     }
 }
 
