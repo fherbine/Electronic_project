@@ -81,22 +81,22 @@ int ex2_2() {
     return (0);
 }
 
-void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
-    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
-    TMR2 = 0;            // Reset TIMER2
-    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
-}
-
-void __ISR(_EXTERNAL_1_VECTOR, IPL7) Int1Handler(void) {
-    T2CONbits.ON = 0;         // STOP Timer
-    TMR2CLR = 0xFFFF;         // Clear timer
-    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
-        PR2 = PERIOD;
-    else
-        PR2 /= 2;        // Divide period by two, thus increasing frequency,
-    T2CONbits.ON = 1;    // START Timer
-    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
-}
+//void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
+//    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
+//    TMR2 = 0;            // Reset TIMER2
+//    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+//}
+//
+//void __ISR(_EXTERNAL_1_VECTOR, IPL7) Int1Handler(void) {
+//    T2CONbits.ON = 0;         // STOP Timer
+//    TMR2CLR = 0xFFFF;         // Clear timer
+//    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
+//        PR2 = PERIOD;
+//    else
+//        PR2 /= 2;        // Divide period by two, thus increasing frequency,
+//    T2CONbits.ON = 1;    // START Timer
+//    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
+//}
 
 int ex3() {
     TRISDbits.TRISD8 = 1;
@@ -132,7 +132,82 @@ int ex3() {
     }
 }
 
+//void __ISR(_EXTERNAL_1_VECTOR, IPL7) Int1Handler(void) {
+//    T2CONbits.ON = 0;         // STOP Timer
+//    TMR2CLR = 0xFFFF;         // Clear timer
+//    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
+//        PR2 = PERIOD;
+//    else
+//        PR2 /= 2;        // Divide period by two, thus increasing frequency,
+//    T2CONbits.ON = 1;    // START Timer
+//    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
+//}
+
+void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
+    if (T3CONbits.ON == 0) {
+        T3CONbits.ON == 1;
+        while (IFS0bits.T3IF == 0){
+            LATFbits.LATF1 = 1; // Switch ON/OFF LED
+            if (TMR3 > 0) {
+                break;
+            }
+        }
+        IFS0bits.T3IF == 0;
+        LATFbits.LATF1 = 0;
+        TMR3 = 0;
+        T3CONbits.ON == 0;
+    }
+    TMR2 = 0;            // Reset TIMER2
+    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+}
+
+//void __ISR(_TIMER_3_VECTOR, IPL3) Timer3Handler(void) {
+//    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
+//    TMR2 = 0;            // Reset TIMER2
+//    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+//}
+
+void ex4() {
+    TRISDbits.TRISD8 = 1;
+    TRISFbits.TRISF1 = 0;
+    LATFbits.LATF1 = 0;
+
+    // Timer 2
+    T2CON = 0;               // 0 on every bit, (timer stop, basic config)
+    TMR2 = 0;                // Clean the timer register
+    T2CONbits.TCKPS = 0b101; // Set scaler 1:32
+    PR2 = PERIOD;            // Setup the period
+
+    // Timer 3
+    T3CON = 0;
+    TMR3 = 0;
+    T3CONbits.TCKPS = 0b101;
+    PR3 = PERIOD;
+
+    // T2
+    IPC2bits.T2IP = 3; // Set priority
+    IPC2bits.T2IS = 0; // Set subpriority
+    IFS0bits.T2IF = 0; // Clear interrupt status flag
+    IEC0bits.T2IE = 1; // Enable interrupts
+    // T3
+    IPC3bits.T3IP = 5; // Set priority
+    IPC3bits.T3IS = 0; // Set subpriority
+    IFS0bits.T3IF = 0; // Clear interrupt status flag
+    IEC0bits.T3IE = 1; // Enable interrupts
+
+    T2CONbits.ON = 1; //start timer at the end
+
+    __builtin_enable_interrupts();
+
+    INTCONbits.MVEC = 1; // Enable multi interrupts
+
+    WDTCONbits.ON = 1; // Enable Watchdog timer: safety reset
+    while (1) {
+     WDTCONbits.WDTCLR = 1; // This is WDT !
+    }
+}
+
 int main() {
-    ex3();
+    ex4();
     return (0);
 }
