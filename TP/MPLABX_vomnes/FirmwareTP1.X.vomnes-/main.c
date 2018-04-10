@@ -3,8 +3,8 @@
 #include "sys/attribs.h"
 
 int ex1() {
-    TRISDbits.TRISD8 = 1;
-    TRISFbits.TRISF1 = 0;
+    TRISDbits.TRISD8 = 1; //1 == readeable
+    TRISFbits.TRISF1 = 0; //writable
     LATFbits.LATF1 = 0;
     u8 val = 1;
     while (1) {
@@ -82,36 +82,53 @@ int ex2_2() {
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
-        LATFbits.LATF1 ^= 1; // Toggle
-        TMR2 = 0;
-        IFS0bits.T2IF = 0; // Clear timer 2
+    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
+    TMR2 = 0;            // Reset TIMER2
+    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+}
+
+void __ISR(_EXTERNAL_1_VECTOR, IPL7) Int1Handler(void) {
+    T2CONbits.ON = 0;         // STOP Timer
+    TMR2CLR = 0xFFFF;         // Clear timer
+    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
+        PR2 = PERIOD;
+    else
+        PR2 /= 2;        // Divide period by two, thus increasing frequency,
+    T2CONbits.ON = 1;    // START Timer
+    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
 }
 
 int ex3() {
-    // Interrupteur -> RD8 - INT1
     TRISDbits.TRISD8 = 1;
     TRISFbits.TRISF1 = 0;
     LATFbits.LATF1 = 0;
 
     T2CON = 0;               // 0 on every bit, (timer stop, basic config)
     TMR2 = 0;                // Clean the timer register
-    T2CONbits.TCKPS = 0b101; // Set scaler 1:256
-    PR2 = 16000;             // Setup the period
-    
+    T2CONbits.TCKPS = 0b101; // Set scaler 1:32
+    PR2 = PERIOD;            // Setup the period
+
+    // LED
     IPC2bits.T2IP = 3; // Set priority
     IPC2bits.T2IS = 0; // Set subpriority
-    IFS0bits.T2IF = 0; // Clear the timer 2 interrupt status flag
-    IEC0bits.T2IE = 1; // Enable timer 2 interrupts
+    IFS0bits.T2IF = 0; // Clear interrupt status flag
+    IEC0bits.T2IE = 1; // Enable interrupts
+
+    // INT1
+    IPC1bits.INT1IP = 2;
+    IPC1bits.INT1IS = 0;
+    IFS0bits.INT1IF = 0;
+    IEC0bits.INT1IE = 1;
 
     T2CONbits.ON = 1; //start timer at the end
 
     __builtin_enable_interrupts();
 
-    INTCONbits.MVEC = 1;
+    INTCONbits.MVEC = 1; // Enable multi interrupts
 
-
+    WDTCONbits.ON = 1; // Enable Watchdog timer: safety reset
     while (1) {
-      WDTCONSET = 0x01; // This is WDT !
+     WDTCONbits.WDTCLR = 1; // This is WDT !
     }
 }
 

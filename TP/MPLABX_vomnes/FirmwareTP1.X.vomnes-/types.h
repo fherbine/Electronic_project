@@ -15,7 +15,7 @@ typedef char s8;
 typedef short s16;
 typedef long s32;
 
-#define PERIOD 40000
+#define PERIOD 32000
 #define LIMIT_SPEED 1250
 #ifdef	__cplusplus
 extern "C" {
