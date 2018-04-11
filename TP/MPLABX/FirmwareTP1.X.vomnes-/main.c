@@ -148,8 +148,9 @@ u8 level = 2;
 u8 step = 0;
 u8 count = 0;
 u8 inc = TRUE;
+u8 dim_active = TRUE;
 
-void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
+void led_dim() {
     if (count < step) {
       LATFbits.LATF1 = 1;
     } else {
@@ -177,13 +178,25 @@ void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
             }
         }
     }
+}
+
+void led_blinky() {
+    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
+    TMR2 = 0;            // Reset TIMER2
+    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+}
+
+void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
+    if (dim_active) {
+       led_dim();
+    } else {
+       led_blinky();
+    }
     TMR2 = 0;
     IFS0bits.T2IF = 0;
 }
 
-void __ISR(_TIMER_3_VECTOR, IPL3) Timer3Handler(void) {
-//    LATFbits.LATF1 = 0;
-//    T3CONbits.ON = 0;
+void __ISR(_TIMER_3_VECTOR, IPL7) Timer3Handler(void) {
 //    TMR3 = 0;
 //    IFS0bits.T3IF = 0;
 }
@@ -211,12 +224,13 @@ void ex4() {
     IFS0bits.T2IF = 0; // Clear interrupt status flag
     IEC0bits.T2IE = 1; // Enable interrupts
     // T3
-    IPC3bits.T3IP = 5; // Set priority
+    IPC3bits.T3IP = 2; // Set priority
     IPC3bits.T3IS = 0; // Set subpriority
     IFS0bits.T3IF = 0; // Clear interrupt status flag
     IEC0bits.T3IE = 1; // Enable interrupts
 
-    T2CONbits.ON = 1; //start timer at the end
+    T2CONbits.TON = 1; //start timer at the end
+    T3CONbits.TON = 1; //start timer at the end
 
     __builtin_enable_interrupts();
 
