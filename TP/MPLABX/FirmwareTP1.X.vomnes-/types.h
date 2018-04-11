@@ -17,6 +17,8 @@ typedef long s32;
 
 #define PERIOD 32000
 #define LIMIT_SPEED 1250
+#define TRUE 1
+#define FALSE 0
 #ifdef	__cplusplus
 extern "C" {
 #endif

@@ -143,29 +143,50 @@ int ex3() {
 //    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
 //}
 
+u8 limit = 380;
+u8 level = 2;
+u8 step = 0;
+u8 count = 0;
+u8 inc = TRUE;
+
 void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
-    if (T3CONbits.ON == 0) {
-        T3CONbits.ON == 1;
-        while (IFS0bits.T3IF == 0){
-            LATFbits.LATF1 = 1; // Switch ON/OFF LED
-            if (TMR3 > 0) {
-                break;
+    if (count < step) {
+      LATFbits.LATF1 = 1;
+    } else {
+      LATFbits.LATF1 = 0;
+    }
+    count++;
+    if (count > limit) {
+        count = 0;
+        if (step == limit && inc == TRUE) {
+            inc = FALSE;
+        } else if (step == 0 && inc == FALSE) {
+            inc = TRUE;
+        }
+        if (count < (limit / 2)) {
+             if (inc == TRUE) {
+                step += 1;
+            } else {
+                step -= 1;
+            }
+        } else {
+             if (inc == TRUE) {
+                step += level;
+            } else {
+                step -= level;
             }
         }
-        IFS0bits.T3IF == 0;
-        LATFbits.LATF1 = 0;
-        TMR3 = 0;
-        T3CONbits.ON == 0;
     }
-    TMR2 = 0;            // Reset TIMER2
-    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+    TMR2 = 0;
+    IFS0bits.T2IF = 0;
 }
 
-//void __ISR(_TIMER_3_VECTOR, IPL3) Timer3Handler(void) {
-//    LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
-//    TMR2 = 0;            // Reset TIMER2
-//    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
-//}
+void __ISR(_TIMER_3_VECTOR, IPL3) Timer3Handler(void) {
+//    LATFbits.LATF1 = 0;
+//    T3CONbits.ON = 0;
+//    TMR3 = 0;
+//    IFS0bits.T3IF = 0;
+}
 
 void ex4() {
     TRISDbits.TRISD8 = 1;
@@ -175,8 +196,8 @@ void ex4() {
     // Timer 2
     T2CON = 0;               // 0 on every bit, (timer stop, basic config)
     TMR2 = 0;                // Clean the timer register
-    T2CONbits.TCKPS = 0b101; // Set scaler 1:32
-    PR2 = PERIOD;            // Setup the period
+    T2CONbits.TCKPS = 0b000; // Set scaler 1:32
+    PR2 = 5;            // Setup the period
 
     // Timer 3
     T3CON = 0;
