@@ -132,17 +132,6 @@ int ex3() {
     }
 }
 
-//void __ISR(_EXTERNAL_1_VECTOR, IPL7) Int1Handler(void) {
-//    T2CONbits.ON = 0;         // STOP Timer
-//    TMR2CLR = 0xFFFF;         // Clear timer
-//    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
-//        PR2 = PERIOD;
-//    else
-//        PR2 /= 2;        // Divide period by two, thus increasing frequency,
-//    T2CONbits.ON = 1;    // START Timer
-//    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
-//}
-
 u8 limit = 380;
 u8 level = 2;
 u8 step = 0;
@@ -187,19 +176,57 @@ void led_blinky() {
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
-    if (dim_active) {
-       led_dim();
-    } else {
-       led_blinky();
-    }
+//    if (dim_active) {
+//       led_dim();
+//    } else {
+//       led_blinky();
+//    }
     TMR2 = 0;
     IFS0bits.T2IF = 0;
 }
 
+
 void __ISR(_TIMER_3_VECTOR, IPL7) Timer3Handler(void) {
-//    TMR3 = 0;
-//    IFS0bits.T3IF = 0;
+
+    TMR3 = 0;
+    IFS0bits.T3IF = 0;
 }
+
+//u8 deuxsec = 0;
+void __ISR(_EXTERNAL_1_VECTOR, IPL5) Int1Handler(void) {
+    T2CONbits.ON = 0;         // STOP Timer
+    TMR2CLR = 0xFFFF;         // Clear timer
+//    if (c > 22){
+//       LATFbits.LATF1 = 1;
+//    }
+//    deuxsec = 1;
+
+       if (INTCONbits.INT1EP == 1){
+           //lorsqu'il sort
+           INTCONbits.INT1EP = 0;
+           //lire timer
+           //remettre a 0
+          LATFbits.LATF1 = 0;
+       }else{
+           INTCONbits.INT1EP = 1;
+           //lancer timer
+
+          LATFbits.LATF1 = 1;
+       }
+//
+//    if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
+//        PR2 = PERIOD;
+//    else
+//        PR2 /= 2;        // Divide period by two, thus increasing frequency,
+//    T2CONbits.ON = 1;    // START Timer
+    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
+//                  LATFbits.LATF1 = 0;
+
+}
+//
+//void bouttonRelache(){
+////    deuxsec=0;
+//}
 
 void ex4() {
     TRISDbits.TRISD8 = 1;
@@ -212,11 +239,22 @@ void ex4() {
     T2CONbits.TCKPS = 0b000; // Set scaler 1:32
     PR2 = 5;            // Setup the period
 
+
     // Timer 3
     T3CON = 0;
     TMR3 = 0;
     T3CONbits.TCKPS = 0b101;
     PR3 = PERIOD;
+    INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt
+    //se produit
+
+
+
+    // INT1
+    IPC1bits.INT1IP = 5;
+    IPC1bits.INT1IS = 0;
+    IFS0bits.INT1IF = 0;
+    IEC0bits.INT1IE = 1;
 
     // T2
     IPC2bits.T2IP = 3; // Set priority
@@ -230,8 +268,9 @@ void ex4() {
     IEC0bits.T3IE = 1; // Enable interrupts
 
     T2CONbits.TON = 1; //start timer at the end
-    T3CONbits.TON = 1; //start timer at the end
+//    T3CONbits.TON = 1; //start timer at the end
 
+//    INTCONbits.INT1EP = 1;
     __builtin_enable_interrupts();
 
     INTCONbits.MVEC = 1; // Enable multi interrupts
