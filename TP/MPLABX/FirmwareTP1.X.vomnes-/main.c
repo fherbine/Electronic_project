@@ -173,56 +173,58 @@ void led_blinky() {
     LATFbits.LATF1 ^= 1; // Switch ON/OFF LED
 }
 
-void __ISR(_TIMER_4_VECTOR, IPL3) Timer4Handler(void) {
-    dim_active = TRUE;
-    TMR4 = 0;
-    IFS0bits.T4IF = 0;
-    T4CONbits.ON = 0;
-}
-
 void __ISR(_TIMER_2_VECTOR, IPL1) Timer2Handler(void) {
-    if (dim_active == TRUE) {
+    if (dim_active) {
      led_dim();
+    } else {
+     led_blinky();
     }
     TMR2 = 0;
     IFS0bits.T2IF = 0;
 }
 
-void __ISR(_TIMER_3_VECTOR, IPL3) Timer3Handler(void) {
-    if (!dim_active) {
-      led_blinky();
-    }
+void __ISR(_TIMER_3_VECTOR, IPL3) Button2secHandler(void) {
+    /* Active dim mode */
+    dim_active = TRUE;
+    /* Update timer frequency for dim mode */
+    T2CONbits.ON = 0;
+    TMR2CLR = 0xFFFF;
+    T2CONbits.TCKPS = 0b000; // Set scaler 1:0
+    PR2 = 5;            // Setup the period
+    T2CONbits.ON = 1;
+    /* Reset Interrupt */
     TMR3 = 0;
     IFS0bits.T3IF = 0;
 }
 
+void SpeedUpFrequencyT2() {
+     T2CONbits.ON = 0;         // STOP Timer
+     TMR2CLR = 0xFFFF;         // Clear timer
+     if (PR2 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
+       PR2 = PERIOD;
+     else
+       PR2 /= 2;        // Divide period by two, thus increasing frequency,
+     T2CONbits.ON = 1;    // START Timer
+}
+
 void __ISR(_EXTERNAL_1_VECTOR, IPL6) ButtonHandler(void) {
-
        if (INTCONbits.INT1EP == 1){
-           //lire timer
-	   TMR4 = 0;
-	   T4CONbits.ON = 0;
+           // Stop timer
+	   TMR3 = 0;
+	   T3CONbits.ON = 0;
 
-           //remettre a 0
-	   //lorsqu'il sort
+	   // Get button pushing instead of getting release
            INTCONbits.INT1EP = 0;
 
-	   //si le timer >= 2s --> on fait varier l'intensite | start_dim
-	   //sinon augmenter la frequence
-
-	   T3CONbits.ON = 0;         // STOP Timer
-	   TMR3CLR = 0xFFFF;         // Clear timer
-	   if (PR3 == (PERIOD / 32)) // Until I reach the maximum (8Hz)
-	    PR3 = PERIOD;
-	   else
-	    PR3 /= 2;        // Divide period by two, thus increasing frequency,
-	   T3CONbits.ON = 1;    // START Timer
-//          LATFbits.LATF1 = 0;
-       }else{
-//	   lancer timer || init timer
-	   TMR4 = 0;
-	   T4CONbits.ON = 1;
-           INTCONbits.INT1EP = 1;
+	   /* Not dim mode -> ++ speed frequency */
+	   if (!dim_active) {
+	     SpeedUpFrequencyT2();
+	   }
+       } else {
+	   // Launch Timer3 - Check 2sec pressed button
+	   TMR3 = 0;
+	   T3CONbits.ON = 1;
+           INTCONbits.INT1EP = 1; // Active button release mode
        }
     IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT0
 
@@ -237,36 +239,20 @@ void ex4() {
     TRISFbits.TRISF1 = 0;
     LATFbits.LATF1 = 0;
 
-
-
     // Timer 2 - DIM
     T2CON = 0;               // 0 on every bit, (timer stop, basic config)
     TMR2 = 0;                // Clean the timer register
-
-
-    T2CONbits.TCKPS = 0b000; // Set scaler 1:32
-    PR2 = 5;            // Setup the period
-
-    // Timer 3 - LED Clignotement
+    T2CONbits.TCKPS = 0b101;
+    PR2 = PERIOD;
+    
+    //Timer 3 - 2sec on button
     T3CON = 0;
     TMR3 = 0;
-    T3CONbits.TCKPS = 0b101;
-    PR3 = PERIOD;
-    
-    //Il faut avoir un seul timer pour T2 et T3 --> un clignotement et l'autre dim_luminosite sachant que les deux c'est juste un clignotement
-    //Timer 4 - 2sec on button
-    T4CON = 0;
-    TMR4 = 0;
-    T4CONbits.TCKPS = 0b110; // Set scaler 1:64
-    PR4 = PERIOD; //on reste appuye deux secondes
-
-
-
+    T3CONbits.TCKPS = 0b110; // Set scaler 1:64
+    PR3 = PERIOD; //on reste appuye deux secondes
 
     INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt
     //se produit
-
-
 
     // INT1
     IPC1bits.INT1IP = 6;
@@ -285,13 +271,7 @@ void ex4() {
     IFS0bits.T3IF = 0; // Clear interrupt status flag
     IEC0bits.T3IE = 1; // Enable interrupts
 
-    IPC4bits.T4IP = 3; // Set priority
-    IPC4bits.T4IS = 0; // Set subpriority
-    IFS0bits.T4IF = 0; // Clear interrupt status flag
-    IEC0bits.T4IE = 1; // Enable interrupts
-
     T2CONbits.ON = 1; //start timer at the end
-    T3CONbits.TON = 1; //start timer at the end
 
 //    INTCONbits.INT1EP = 1;
 
