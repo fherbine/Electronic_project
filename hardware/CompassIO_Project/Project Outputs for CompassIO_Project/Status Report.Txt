@@ -1,0 +1,14 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 8:01:54 PM On 4/26/2018
+
+Output: Bill of Materials
+Type  : BOM
+From  : Variant [[No Variations]] of Project [CompassIO_Project.PrjPcb]
+   Generated File[Bill of Materials-CompassIO_Project.xlsx]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 8:02:00 PM On 4/26/2018
