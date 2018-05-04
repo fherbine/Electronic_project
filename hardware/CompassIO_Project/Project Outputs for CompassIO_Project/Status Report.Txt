@@ -1,6 +1,6 @@
 Project Outputs Generation Report
 ---------------------------------
-Start Output Generation At 8:01:54 PM On 4/26/2018
+Start Output Generation At 4:34:04 PM On 5/4/2018
 
 Output: Bill of Materials
 Type  : BOM
@@ -11,4 +11,4 @@ From  : Variant [[No Variations]] of Project [CompassIO_Project.PrjPcb]
 Files Generated   : 1
 Documents Printed : 0
 
-Finished Output Generation At 8:02:00 PM On 4/26/2018
+Finished Output Generation At 4:34:12 PM On 5/4/2018
