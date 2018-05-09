@@ -8,6 +8,8 @@
 #ifndef TYPES_H
 #define	TYPES_H
 #include <p32xxxx.h>
+#include "sys/attribs.h"
+
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
@@ -42,6 +44,6 @@ typedef long s32;
 
 #define MAX_BUFFER_SIZE 256
 
-#define UART_BAUD_RATE ((PBCLK/5000/16)-1) // Baud Rate -> 5000
+#define UART_BAUD_RATE ((PBCLK/9600/16)-1) // Baud Rate -> 5000
 
 #endif	/* TYPES_H */

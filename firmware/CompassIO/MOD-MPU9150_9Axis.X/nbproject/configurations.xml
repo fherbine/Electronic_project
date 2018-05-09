@@ -150,6 +150,9 @@
         <property key="save-temps" value="false"/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
+      <ICD3PlatformTool>
+        <property key="firmware.download.all" value="false"/>
+      </ICD3PlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>
