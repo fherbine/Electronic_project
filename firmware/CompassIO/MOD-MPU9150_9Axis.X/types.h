@@ -27,7 +27,7 @@ typedef long s32;
 #define SYSCLK (8000000/2*20/1) // = 80Mhz
 #define PBCLK (SYSCLK/8) // = 10 Mhz
 #define Fsck 5000
-#define BAUD_RATE ((PBCLK/2/Fsck)-2)
+#define I2C_BAUD_RATE ((PBCLK/2/Fsck)-2)
 
 /* UART */
 /* Parity and data slection bits */
@@ -35,5 +35,13 @@ typedef long s32;
 #define _8O 0b10 // 8-bit data, odd parity
 #define _8E 0b01 // 8-bit data, even parity
 #define _8N 0b00 // 8-bit data, no parity
+
+#define UART_RX_TX_ON 3
+#define UART_RX_ON 2
+#define UART_TX_ON 1
+
+#define MAX_BUFFER_SIZE 256
+
+#define UART_BAUD_RATE ((PBCLK/5000/16)-1) // Baud Rate -> 5000
 
 #endif	/* TYPES_H */

@@ -41,37 +41,39 @@ s8 Master_Read_I2C1()
     return I2C1RCV;
 }
 
+#define I2C_BAUD_RATE ((PBCLK/2/Fsck)-2)
+
 void I2C1_Init()
 {
     I2C1CON = 0;
     I2C1CONbits.A10M = 0; // 7-bit slave address
-    I2C1BRG = BAUD_RATE; // Set baud rate
+    I2C1BRG = I2C_BAUD_RATE; // Set baud rate
     I2C1CONbits.ON = 1;
 }
 
 void I2C1_Send_Data(u8 data, u8 addr)
 {
-    StartI2CI();
-    IdleI2CI(); // SEN
-    MasterWriteI2C1((addr << 1) | WRITE_CMD);
+    Start_I2CI();
+    Idle_I2CI(); // SEN
+    Master_Write_I2C1((addr << 1) | WRITE_CMD);
     //while(MasterWriteI2C1((addr << 1) | WRITE_CMD));
-    IdleI2CI(); // TBF - Transmit Buffer Full
-    MasterWriteI2C1(data);
+    Idle_I2CI(); // TBF - Transmit Buffer Full
+    Master_Write_I2C1(data);
     //while(MasterWriteI2C1(data));
-    StopI2CI();
-    IdleI2CI(); // PEN - Stop Condition Enabled
+    Stop_I2CI();
+    Idle_I2CI(); // PEN - Stop Condition Enabled
 }
 
 u8 I2C1_Receive_Data(u8 addr)
 {
     s8 data;
-    StartI2CI();
-    IdleI2CI(); // SEN
-    MasterWriteI2C1((addr << 1) | READ_CMD);
+    Start_I2CI();
+    Idle_I2CI(); // SEN
+    Master_Write_I2C1((addr << 1) | READ_CMD);
     //while(MasterWriteI2C1((addr << 1) | READ_CMD));
-    IdleI2CI(); // TBF - Transmit Buffer Full
-    data = MasterReadI2C1();
-    StopI2CI();
-    IdleI2CI(); // TBF - Transmit Buffer Full
+    Idle_I2CI(); // TBF - Transmit Buffer Full
+    data = Master_Read_I2C1();
+    Stop_I2CI();
+    Idle_I2CI(); // TBF - Transmit Buffer Full
     return data;
 }
