@@ -1,2 +1,2 @@
-build/default/production/ConfigBits.o:  \
-ConfigBits.c 
+build/default/production/configBits.o:  \
+configBits.c 

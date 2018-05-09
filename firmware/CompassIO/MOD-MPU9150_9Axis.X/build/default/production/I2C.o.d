@@ -1,3 +1,3 @@
-build/default/production/I2C.o:  \
-I2C.c  \
+build/default/production/i2c.o:  \
+i2c.c  \
 types.h 

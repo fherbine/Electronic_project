@@ -1,3 +1,3 @@
-build/default/production/UART.o:  \
-UART.c  \
+build/default/production/uart.o:  \
+uart.c  \
 types.h 

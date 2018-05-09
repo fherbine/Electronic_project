@@ -14,9 +14,9 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
-      <itemPath>I2C.c</itemPath>
-      <itemPath>ConfigBits.c</itemPath>
-      <itemPath>UART.c</itemPath>
+      <itemPath>uart.c</itemPath>
+      <itemPath>i2c.c</itemPath>
+      <itemPath>configBits.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
