@@ -11,7 +11,7 @@
  * 
  */
 
-void __ISR(_TIMER_2_VECTOR, IPL3) Timer2Handler(void) {
+void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
 //    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
 //    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
 //    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
@@ -39,12 +39,15 @@ void delays(u32 s) {
 
 void Init_Delay()
 {
+  __builtin_disable_interrupts();
   T3CON = 0;               // 0 on every bit, (timer stop, basic config)
   TMR3 = 2;                // Clean the timer register
   IFS0bits.T3IF = 0;       // Clear interrupt status flag
   T3CONbits.TCKPS = 0b111; // Set scaler 1:256
   PR3 = PBCLK/256/1000;    // Setup the period
   T3CONbits.ON = 1;
+  INTCONbits.MVEC = 1; // Enable multi interrupts
+  __builtin_enable_interrupts();
 }
 
 void Init_T1()
@@ -63,13 +66,23 @@ void Init_T1_Int()
    IEC0bits.T2IE = 1; // Enable interrupts
 }
 
+void UART2_Echo(u8 rcv)
+{
+    rcv = UART2_Get_Data_Byte();
+    if (rcv == '\r') UART2_Send_Data_Byte('\n');
+    if (rcv == 127) {
+        UART2_Send_Data_Byte(8);
+        UART2_Send_Data_Byte(' ');
+        UART2_Send_Data_Byte(8);
+    }
+    else if (rcv == '\\') UART2_Send_String("Hello World!\r\n", 14);
+    else UART2_Send_Data_Byte(rcv);
+}
+
 void main()
 {
     UART2_Init(_8N, 0, UART_RX_TX_ON);
     Init_Delay();
-
-    INTCONbits.MVEC = 1; // Enable multi interrupts
-    __builtin_enable_interrupts();
     
 //    TRISFbits.TRISF1 = 0; //writable
 //    LATFbits.LATF1 = 0;
@@ -81,27 +94,10 @@ void main()
 
     delayms(1000);
     T2CONbits.ON = 1; //start timer at the end
-
-    UART2_Send_String("start", sizeof("start"));
+    ft_putendl("Start");
+    ft_putbinary(42);
     u8 rcv;
     while (1){
-	rcv = UART2_Get_Data_Byte();
-	if (rcv == '\r') UART2_Send_Data_Byte('\n');
-	if (rcv == 127) {
-	    UART2_Send_Data_Byte(8);
-	    UART2_Send_Data_Byte(' ');
-	    UART2_Send_Data_Byte(8);
-	}
-	else if (rcv == '\\') UART2_Send_String("Hello World!\r\n", 14);
-	else UART2_Send_Data_Byte(rcv);
-
-//	UART2_Send_Data_Byte('[');
-//	UART2_Send_Data_Byte('0'+rcv%10);
-//	UART2_Send_Data_Byte('0'+rcv%100/10);
-//	UART2_Send_Data_Byte('0'+rcv/100);
-//	UART2_Send_Data_Byte(']');
+	UART2_Echo(rcv);
     }
-    UART2_Read_String(&rcv, 10);
-    UART2_Send_String(&rcv, 10);
-    while(1) ;
 }

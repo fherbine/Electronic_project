@@ -46,4 +46,9 @@ typedef long s32;
 
 #define UART_BAUD_RATE ((PBCLK/9600/16)-1) // Baud Rate -> 5000
 
+u32     ft_strlen(const char *s);
+void    ft_putnbr_base(s32 nb, int base);
+void    ft_putbinary(u32 nb);
+void    ft_putendl(char *string);
+
 #endif	/* TYPES_H */
