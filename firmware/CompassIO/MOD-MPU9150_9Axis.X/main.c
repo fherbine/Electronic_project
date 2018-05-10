@@ -11,15 +11,6 @@
  * 
  */
 
-void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
-//    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
-//    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
-//    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
-//    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
-//    UART2_Send_String("I'm a hacker", sizeof("I'm a hacker"));
-//    UART2_Send_String("\n\r", sizeof("\n\r"));
-    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
-}
 // #define digitalWrite(pin, val) (_TRIS##(pin) = (val))
 // digitalWrite(F1, 1);
 void delayms(u32 ms) {
@@ -39,26 +30,23 @@ void delays(u32 s) {
 
 void Init_Delay()
 {
-  __builtin_disable_interrupts();
   T3CON = 0;               // 0 on every bit, (timer stop, basic config)
   TMR3 = 2;                // Clean the timer register
   IFS0bits.T3IF = 0;       // Clear interrupt status flag
   T3CONbits.TCKPS = 0b111; // Set scaler 1:256
   PR3 = PBCLK/256/1000;    // Setup the period
   T3CONbits.ON = 1;
-  INTCONbits.MVEC = 1; // Enable multi interrupts
-  __builtin_enable_interrupts();
 }
 
-void Init_T1()
+void Init_T2()
 {
     T2CON = 0;               // 0 on every bit, (timer stop, basic config)
     TMR2 = 0;                // Clean the timer register
     T2CONbits.TCKPS = 0b111; // Set scaler 1:256
-    PR2 = PBCLK/256/1;            // Setup the period
+    PR2 = PBCLK/256/1;       // Setup the period
 }
 
-void Init_T1_Int()
+void Init_T2_Int()
 {
    IPC2bits.T2IP = 3; // Set priority
    IPC2bits.T2IS = 0; // Set subpriority
@@ -66,9 +54,9 @@ void Init_T1_Int()
    IEC0bits.T2IE = 1; // Enable interrupts
 }
 
-void UART2_Echo(u8 rcv)
+void UART2_Echo()
 {
-    rcv = UART2_Get_Data_Byte();
+    u8 rcv = UART2_Get_Data_Byte();
     if (rcv == '\r') UART2_Send_Data_Byte('\n');
     if (rcv == 127) {
         UART2_Send_Data_Byte(8);
@@ -79,25 +67,80 @@ void UART2_Echo(u8 rcv)
     else UART2_Send_Data_Byte(rcv);
 }
 
+
+void MPU9150_Write(u8 addr, u8 data)
+{
+    I2C1_Send_Data(addr, MPU9150_ADDR);
+    I2C1_Send_Data(data, MPU9150_ADDR);
+}
+
+void MPU9150_Read(u8 addr)
+{
+    I2C1_Send_Data(addr, MPU9150_ADDR);
+    ft_putnbr_base((u32)I2C1_Receive_Data(MPU9150_ADDR), 16);
+}
+
+#define PWR_MGMT_1 0x6B
+
+#define GYRO_CONFIG 0x1B
+
+#define MPU9150_GYRO_XOUT_H 0x43
+#define MPU9150_GYRO_XOUT_L 0x44
+#define MPU9150_WHO_I_AM 0x75
+
+void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
+    UART2_Send_String("Read -> ", 8);
+    ft_putnbr_base(MPU9150_GYRO_XOUT_H, 16);
+    MPU9150_Read(MPU9150_GYRO_XOUT_H);
+    UART2_Send_String("Who I am: ", 10);
+    MPU9150_Read(MPU9150_WHO_I_AM);
+    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+}
+
+void MPU9150_Init()
+{
+    MPU9150_Write(0x23, 0xFF);
+    delayms(100);
+    MPU9150_Write(PWR_MGMT_1, 0x01); //0b00010000
+    delayms(100);
+    MPU9150_Write(0x19, 0x04);
+    delayms(100);
+    MPU9150_Write(0x1A, 0x03);
+    delayms(100);
+    MPU9150_Write(0x6A, 0x01);
+    delayms(100);
+    MPU9150_Write(0x1B, 0x18);
+    delayms(100);
+    MPU9150_Write(0x1C, 0x08);
+    delayms(100);
+}
+
 void main()
 {
+    __builtin_disable_interrupts();
     UART2_Init(_8N, 0, UART_RX_TX_ON);
     Init_Delay();
+    Init_T2();
     
 //    TRISFbits.TRISF1 = 0; //writable
 //    LATFbits.LATF1 = 0;
-//    I2C1_Init();
+    I2C1_Init();
     
 //    LATFbits.LATF1 = 1;
-//    I2C1_Send_Data( I2C1_Receive_Data(0b1010101), 0b1010101);
 //    LATFbits.LATF1 = 0;
 
+    Init_T2_Int();
+
+    MPU9150_Init();
+    
     delayms(1000);
     T2CONbits.ON = 1; //start timer at the end
+    INTCONbits.MVEC = 1; // Enable multi interrupts
+    __builtin_enable_interrupts();
     ft_putendl("Start");
-    ft_putbinary(42);
-    u8 rcv;
-    while (1){
-	UART2_Echo(rcv);
+    //ft_putbinary(255);
+
+    MPU9150_Read(MPU9150_GYRO_XOUT_L);
+    while (1) {
     }
 }
