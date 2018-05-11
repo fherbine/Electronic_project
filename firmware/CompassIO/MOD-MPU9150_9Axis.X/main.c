@@ -77,7 +77,7 @@ void MPU9150_Write(u8 addr, u8 data)
 void MPU9150_Read(u8 addr)
 {
     I2C1_Send_Data(addr, MPU9150_ADDR);
-    ft_putnbr_base((u32)I2C1_Receive_Data(MPU9150_ADDR), 16);
+    I2C1_Receive_Data(MPU9150_ADDR);
 }
 
 #define PWR_MGMT_1 0x6B
@@ -89,29 +89,34 @@ void MPU9150_Read(u8 addr)
 #define MPU9150_WHO_I_AM 0x75
 
 void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
-    UART2_Send_String("Read -> ", 8);
-    ft_putnbr_base(MPU9150_GYRO_XOUT_H, 16);
-    MPU9150_Read(MPU9150_GYRO_XOUT_H);
-    UART2_Send_String("Who I am: ", 10);
-    MPU9150_Read(MPU9150_WHO_I_AM);
+//    UART2_Send_String("Read -> ", 8);
+//    ft_putnbr_base(PWR_MGMT_1, 16);
+//    MPU9150_Read(PWR_MGMT_1);
+//    UART2_Send_String("Who I am: ", 10);
+//    MPU9150_Read(MPU9150_WHO_I_AM);
     IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
 }
 
 void MPU9150_Init()
 {
-    MPU9150_Write(0x23, 0xFF);
-    delayms(100);
-    MPU9150_Write(PWR_MGMT_1, 0x01); //0b00010000
-    delayms(100);
-    MPU9150_Write(0x19, 0x04);
-    delayms(100);
-    MPU9150_Write(0x1A, 0x03);
-    delayms(100);
-    MPU9150_Write(0x6A, 0x01);
-    delayms(100);
-    MPU9150_Write(0x1B, 0x18);
-    delayms(100);
+    ft_putendl("Init");
+//    MPU9150_Read(PWR_MGMT_1);
+//    MPU9150_Write(0x24, 0x40);
+//    delayms(100);
+//    MPU9150_Write(PWR_MGMT_1, 0b00000000); //0b00100000
+//    delayms(100);
+//    MPU9150_Write(0x19, 0x04);
+//    delayms(100);
+//    MPU9150_Write(0x1A, 0x03);
+//    delayms(100);
+//    MPU9150_Write(0x6A, 0x01);
+//    delayms(100);
+//    MPU9150_Write(0x1B, 0x18);
+//    delayms(100);
+//    MPU9150_Read(PWR_MGMT_1);
+    MPU9150_Read(0x1C);
     MPU9150_Write(0x1C, 0x08);
+    MPU9150_Read(0x1C);
     delayms(100);
 }
 
@@ -140,7 +145,6 @@ void main()
     ft_putendl("Start");
     //ft_putbinary(255);
 
-    MPU9150_Read(MPU9150_GYRO_XOUT_L);
     while (1) {
     }
 }
