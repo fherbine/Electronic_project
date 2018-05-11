@@ -19,8 +19,8 @@ typedef long s32;
 
 #define PERIOD 32000
 #define LIMIT_SPEED 1250
-#define TRUE 1
-#define FALSE 0
+//#define TRUE 1
+//#define FALSE 0
 
 #define MPU9150_ADDR 0x68
 #define READ_CMD 1
