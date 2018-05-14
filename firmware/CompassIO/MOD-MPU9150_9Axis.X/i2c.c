@@ -51,6 +51,14 @@ void I2C1_Init()
     I2C1CONbits.ON = 1;
 }
 
+void NotAckI2C1()
+{
+    I2C1CONbits.ACKDT = 1;
+    I2C1CONbits.ACKEN = 1;
+    while (I2C1CONbits.ACKEN) ;
+    I2C1CONbits.ACKDT = 0;
+}
+
 void I2C1_Send_Data(u8 data, u8 addr)
 {
     Start_I2CI();
@@ -64,16 +72,34 @@ void I2C1_Send_Data(u8 data, u8 addr)
     Idle_I2CI(); // PEN - Stop Condition Enabled
 }
 
+
+void I2C1_Write_Data(u8 addr, u8 data)
+{
+    Start_I2CI();
+    Idle_I2CI(); // SEN
+    Master_Write_I2C1((MPU9150_ADDR << 1) | WRITE_CMD);
+    //while(MasterWriteI2C1((addr << 1) | WRITE_CMD));
+    Idle_I2CI(); // TBF - Transmit Buffer Full
+    Master_Write_I2C1(addr);
+    Idle_I2CI(); // TBF - Transmit Buffer Full
+    Master_Write_I2C1(data);
+    Idle_I2CI(); // TBF - Transmit Buffer Full
+    //while(MasterWriteI2C1(data));
+    Stop_I2CI();
+    Idle_I2CI(); // PEN - Stop Condition Enabled
+}
+
 u8 I2C1_Receive_Data(u8 addr)
 {
     s8 data;
+    Idle_I2CI();
     Start_I2CI();
     Idle_I2CI(); // SEN
     Master_Write_I2C1((addr << 1) | READ_CMD);
     //while(MasterWriteI2C1((addr << 1) | READ_CMD));
     Idle_I2CI(); // TBF - Transmit Buffer Full
     data = Master_Read_I2C1();
+    NotAckI2C1();
     Stop_I2CI();
-    Idle_I2CI(); // TBF - Transmit Buffer Full
     return data;
 }

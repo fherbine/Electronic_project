@@ -67,7 +67,7 @@ void	        ft_putnbr_base(s32 nb, int base)
 	}
 	if (sign_len[1] == 1)
 		str[sign_len[0]] = '-';
-	ft_putendl(str);
+	ft_putstr(str);
 }
 
 void ft_putbinary(u32 nb)
@@ -80,7 +80,12 @@ void ft_putbinary(u32 nb)
     for (i = 0; i < 32; i++) {
 	str[33-i] = '0' + ((nb >> i) & 1);
     }
-    ft_putendl(str);
+    ft_putstr(str);
+}
+
+void ft_putstr(char *string)
+{
+   UART2_Send_String(string, ft_strlen(string));
 }
 
 void ft_putendl(char *string)
