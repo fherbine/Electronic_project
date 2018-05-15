@@ -23,6 +23,7 @@ typedef long s32;
 #define FALSE 0
 
 #define MPU9150_ADDR 0x68
+#define AK8975_ADDR 0x43
 #define READ_CMD 1
 #define WRITE_CMD 0
 

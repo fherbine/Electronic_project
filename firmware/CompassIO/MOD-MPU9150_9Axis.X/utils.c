@@ -14,6 +14,11 @@ u32		ft_strlen(const char *s)
 	return (s-str);
 }
 
+void ft_putstr(char *string)
+{
+   UART2_Send_String(string, ft_strlen(string));
+}
+
 void *ft_bzero(void *s, u32 size)
 {
     char *str;
@@ -81,11 +86,6 @@ void ft_putbinary(u32 nb)
 	str[33-i] = '0' + ((nb >> i) & 1);
     }
     ft_putstr(str);
-}
-
-void ft_putstr(char *string)
-{
-   UART2_Send_String(string, ft_strlen(string));
 }
 
 void ft_putendl(char *string)

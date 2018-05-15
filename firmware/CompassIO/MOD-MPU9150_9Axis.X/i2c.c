@@ -73,11 +73,11 @@ void I2C1_Send_Data(u8 data, u8 addr)
 }
 
 
-void I2C1_Write_Data(u8 addr, u8 data)
+void I2C1_Write_Data(u8 slave_address, u8 addr, u8 data)
 {
     Start_I2CI();
     Idle_I2CI(); // SEN
-    Master_Write_I2C1((MPU9150_ADDR << 1) | WRITE_CMD);
+    Master_Write_I2C1((slave_address << 1) | WRITE_CMD);
     //while(MasterWriteI2C1((addr << 1) | WRITE_CMD));
     Idle_I2CI(); // TBF - Transmit Buffer Full
     Master_Write_I2C1(addr);
@@ -99,7 +99,7 @@ u8 I2C1_Receive_Data(u8 addr)
     //while(MasterWriteI2C1((addr << 1) | READ_CMD));
     Idle_I2CI(); // TBF - Transmit Buffer Full
     data = Master_Read_I2C1();
-    NotAckI2C1();
+    //NotAckI2C1();
     Stop_I2CI();
     return data;
 }
