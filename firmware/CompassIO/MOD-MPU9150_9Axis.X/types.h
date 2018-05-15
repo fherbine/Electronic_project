@@ -44,7 +44,7 @@ typedef long s32;
 
 #define MAX_BUFFER_SIZE 256
 
-#define UART_BAUD_RATE ((PBCLK/9600/16)-1) // Baud Rate -> 5000
+#define UART_BAUD_RATE ((PBCLK/9600/16)-1)
 
 u32     ft_strlen(const char *s);
 void    ft_putnbr_base(s32 nb, int base);

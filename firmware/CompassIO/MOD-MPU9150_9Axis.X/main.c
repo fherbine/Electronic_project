@@ -42,7 +42,7 @@ void Init_T2()
 {
     T2CON = 0;               // 0 on every bit, (timer stop, basic config)
     TMR2 = 0;                // Clean the timer register
-    T2CONbits.TCKPS = 0b111;   // Set scaler 1:256
+    T2CONbits.TCKPS = 0b111; // Set scaler 1:256
     PR2 = PBCLK/256/1;       // Setup the period
 }
 
@@ -87,6 +87,7 @@ u8 MPU9150_Read(u8 addr)
 #define MPU9150_GYRO_XOUT_H 0x43
 #define MPU9150_GYRO_XOUT_L 0x44
 #define MPU9150_WHO_I_AM 0x75
+#define MPU9150_INT_PIN_CFG 0x37
 
 #define ACCEL_XOUT_H 0x3B // [15:8]
 #define ACCEL_XOUT_L 0x3C // [7:0]
@@ -110,6 +111,8 @@ u8 MPU9150_Read(u8 addr)
 #define MAG_ZOUT_H 0x08
 
 #define MAG_CNTL 0x0A // Control mag module
+#define MAG_STATUS 0x02
+#define MAG_ASTC 0x0C
 
 s16 GetFullNumber(u8 addr1, u8 addr2)
 {
@@ -125,12 +128,19 @@ void GetAccelData()
 {
     ft_putstr("\033[H\033[2J");
     UART2_Send_String("ACCEL X: ", 9);
-    ft_putnbr_base(GetFullNumber(ACCEL_XOUT_H, ACCEL_XOUT_L) / 16384.0, 10);
+    s16 accel_x = GetFullNumber(ACCEL_XOUT_H, ACCEL_XOUT_L) / 16384.0 * 100;
+    ft_putnbr_base(accel_x, 10);
     UART2_Send_String(" ACCEL Y: ", 10);
-    ft_putnbr_base(GetFullNumber(ACCEL_YOUT_H, ACCEL_YOUT_L) / 16384.0, 10);
+    s16 accel_y = GetFullNumber(ACCEL_YOUT_H, ACCEL_YOUT_L) / 16384.0 * 100;
+    ft_putnbr_base(accel_y, 10);
     UART2_Send_String(" ACCEL Z: ", 10);
-    ft_putnbr_base(GetFullNumber(ACCEL_ZOUT_H, ACCEL_ZOUT_L) / 16384.0, 10);
+    s16 accel_z = GetFullNumber(ACCEL_ZOUT_H, ACCEL_ZOUT_L) / 16384.0 * 100;
+    ft_putnbr_base(accel_z, 10);
     ft_putstr("\n\r");
+    if (accel_x > 75 || accel_y > 75 || accel_z > 75)
+    {
+	ft_putendl("Module reversed");
+    }
     UART2_Send_String("GYRO X: ", 7);
     ft_putnbr_base(GetFullNumber(GYRO_XOUT_H, GYRO_XOUT_L) / 131.0, 10);
     UART2_Send_String(" GYRO Y: ", 8);
@@ -145,7 +155,11 @@ void GetAccelData()
     UART2_Send_String(" MAG Z: ", 7);
     ft_putnbr_base(GetFullNumber(MAG_ZOUT_H, MAG_ZOUT_L), 10);
     ft_putstr("\n\r");
+    ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
+    ft_putstr("\n\r");
     ft_putbinary(MPU9150_Read(MAG_CNTL));
+    ft_putstr("\n\r");
+    ft_putbinary(MPU9150_Read(MAG_STATUS));
     ft_putstr("\n\r");
 }
 
@@ -170,18 +184,21 @@ void MPU9150_Init()
     delayms(100);
     I2C1_Write_Data(PWR_MGMT_1, 0x00);
     delayms(100);
-//    MPU9150_Write(0x19, 0x04);
-//    delayms(100);
-//    MPU9150_Write(0x1A, 0x03);
-//    delayms(100);
-//    MPU9150_Write(0x6A, 0x01);
+//    MPU9150_Write(0x19, 109);
 //    delayms(100);
 //    MPU9150_Write(0x1B, 0x18);
+//    delayms(100);
+//   MPU9150_Write(0x1C, 0x08);
+//    delayms(100);
+//    MPU9150_Write(0x, 0x18);
 //    delayms(100);
     ft_putbinary(MPU9150_Read(PWR_MGMT_1));
 //    MPU9150_Read(0x1C);
 //    MPU9150_Read(0x1C);
-    I2C1_Write_Data(MAG_CNTL, 0x0F);
+    I2C1_Write_Data(MAG_CNTL, 0x01);
+    I2C1_Write_Data(MPU9150_INT_PIN_CFG, 0x02);
+//    ft_putbinary(MPU9150_Read(MAG_ASTC));
+    delayms(100);
     ft_putendl("Stop -> Init");
     delayms(100);
 }
