@@ -80,6 +80,8 @@ u8 MAG_Read(u8 addr)
     return I2C1_Receive_Data(AK8975_ADDR);
 }
 
+#define DEBUG_BASE 16
+
 #define PWR_MGMT_1 0x6B
 
 #define GYRO_CONFIG 0x1B
@@ -88,7 +90,22 @@ u8 MAG_Read(u8 addr)
 #define MPU9150_GYRO_XOUT_L 0x44
 #define MPU9150_WHO_I_AM 0x75
 #define MPU9150_I2C_MST_STATUS 0x36
+
+#define MPU9150_I2C_SLV0_ADDR 0x25
+#define I2C_SLV0_RW 0x80
+#define MPU9150_I2C_SLV0_REG 0x26
+#define MPU9150_I2C_SLV0_CTRL 0x27
+#define INT_SLV0_EN 0x80
+#define _8BITS 8
 #define MPU9150_INT_PIN_CFG 0x37
+#define INT_PIN_CFG 0x37
+#define INT_LEVEL (1 < 7)
+#define INT_OPEN (1 < 6)
+#define LATCH_INT_EN (1 < 5)
+#define INT_RD_CLEAR (1 < 4)
+#define FSYNC_INT_LEVEL (1 < 3)
+#define FSYNC_INT_EN (1 < 2)
+#define I2C_BYPASS_EN (1 < 1)
 
 #define ACCEL_XOUT_H 0x3B // [15:8]
 #define ACCEL_XOUT_L 0x3C // [7:0]
@@ -117,24 +134,26 @@ u8 MAG_Read(u8 addr)
 
 s16 GetFullNumber(u8 addr1, u8 addr2)
 {
+    ft_putstr("0b");
     s8 h = MPU9150_Read(addr1);
-//    ft_putnbr_base(h, 2);
+    ft_putnbr_base(h, 2);
     delayms(10);
     s8 l = MPU9150_Read(addr2);
-//    ft_putnbr_base(l, 2);
+    ft_putnbr_base(l, 2);
+    ft_putstr(" ");
     return (s16)((h << 8) | l);
 }
 
-s16 MagGetFullNumber(u8 addr1, u8 addr2)
+u16 MagGetFullNumber(u8 addr1, u8 addr2)
 {
-    s8 h = MAG_Read(addr1);
-    delayms(100);
+        ft_putstr("0x");
+    u8 h = MAG_Read(addr1);
     ft_putnbr_base(h, 2);
-    ft_putstr("-");
-    s8 l = MAG_Read(addr2);
-    ft_putnbr_base(l, 2);
-    ft_putendl("");
-    return (s16)((h << 8) | l);
+    delayms(100);
+    u8 l = MAG_Read(addr2);
+        ft_putnbr_base(l, 2);
+	ft_putstr(" ");
+    return (u16)((h << 8) | l);
 }
 
 void GetData()
@@ -155,11 +174,11 @@ void GetData()
 	ft_putendl("Module reversed");
     }
     UART2_Send_String("GYRO X: ", 7);
-    ft_putnbr_base(GetFullNumber(GYRO_XOUT_H, GYRO_XOUT_L) / 131.0, 10);
+    ft_putnbr_base(GetFullNumber(GYRO_XOUT_H, GYRO_XOUT_L) / 131.0, DEBUG_BASE);
     UART2_Send_String(" GYRO Y: ", 8);
-    ft_putnbr_base(GetFullNumber(GYRO_YOUT_H, GYRO_YOUT_L) / 131.0, 10);
+    ft_putnbr_base(GetFullNumber(GYRO_YOUT_H, GYRO_YOUT_L) / 131.0, DEBUG_BASE);
     UART2_Send_String(" GYRO Z: ", 8);
-    ft_putnbr_base(GetFullNumber(GYRO_ZOUT_H, GYRO_ZOUT_L) / 131.0, 10);
+    ft_putnbr_base(GetFullNumber(GYRO_ZOUT_H, GYRO_ZOUT_L) / 131.0, DEBUG_BASE);
     ft_putstr("\n\r");
     delayms(100);
     //I2C1_Write_Data(MPU9150_ADDR, MPU9150_INT_PIN_CFG, 0x02); //toggle enable data read from magnetometer, no continuous read mode !
@@ -168,11 +187,11 @@ void GetData()
 //    ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
 //    delayms(100);
     UART2_Send_String("MAG X: ", 6);
-    ft_putnbr_base(MagGetFullNumber(MAG_XOUT_H, MAG_XOUT_L), 10);
+    ft_putnbr_base(MagGetFullNumber(MAG_XOUT_H, MAG_XOUT_L), DEBUG_BASE);
     UART2_Send_String(" MAG Y: ", 7);
-    ft_putnbr_base(MagGetFullNumber(MAG_YOUT_H, MAG_YOUT_L), 10);
+    ft_putnbr_base(MagGetFullNumber(MAG_YOUT_H, MAG_YOUT_L), DEBUG_BASE);
     UART2_Send_String(" MAG Z: ", 7);
-    ft_putnbr_base(MagGetFullNumber(MAG_ZOUT_H, MAG_ZOUT_L), 10);
+    ft_putnbr_base(MagGetFullNumber(MAG_ZOUT_H, MAG_ZOUT_L), DEBUG_BASE);
     ft_putstr("\n\r");
     ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
     ft_putstr("\n\r");
@@ -195,44 +214,14 @@ void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
     IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
 }
 
-
-
 void MPU9150_Init()
 {
     ft_putendl("MPU9150 - Start -> Init");
-    I2C1_Write_Data(MPU9150_ADDR, 0x24, 0x40);
+    I2C1_Write_Data(MPU9150_ADDR, INT_PIN_CFG, I2C_BYPASS_EN);
     delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x25, 0x8C);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x26, 0x02);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x27, 0x88);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x28, 0x0C);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x29, 0x0A);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x2A, 0x81);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x64, 0x01);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x67, 0x03);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x01, 0x80);
-    delayms(100);
-
-    I2C1_Write_Data(MPU9150_ADDR, 0x34, 0x04);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x64, 0x00);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x6A, 0x00);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x64, 0x01);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x6A, 0x20);
-    delayms(100);
-    I2C1_Write_Data(MPU9150_ADDR, 0x34, 0x13);
-    delayms(100);
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_ADDR, I2C_SLV0_RW | AK8975_ADDR); // Set mag slave address
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_REG, 0x02);
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_CTRL, INT_SLV0_EN | _8BITS);
     ft_putendl("Stop -> Init");
     delayms(100);
 }
@@ -251,10 +240,11 @@ void MPU9150_On()
 
 void MAG_Init()
 {
+    //
     ft_putendl("MAG - Start -> Init");
-    I2C1_Write_Data(AK8975_ADDR, MAG_CNTL, 0x00); // Power down Mag
+    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x02);
     delayms(100);
-    I2C1_Write_Data(AK8975_ADDR, MAG_CNTL, 0x0F); // Enter Fuse ROM access mode
+//    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x0F); // Enter Fuse ROM access mode
     delayms(100);
 //    MAG_Read(ASAX);
 //    delayms(100);
@@ -262,7 +252,7 @@ void MAG_Init()
 //    delayms(100);
 //    MAG_Read(ASAZ);
 //    delayms(100);
-    I2C1_Write_Data(AK8975_ADDR, MAG_CNTL, 0x00); // Power down Mag
+//    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x00); // Power down Mag
     delayms(100);
     ft_putendl("Stop -> Init");
 }
@@ -284,7 +274,7 @@ void main()
     Init_T2_Int();
 
     MAG_Init();
-    MPU9150_Init();
+    //MPU9150_Init();
     MPU9150_On();
     
     delayms(1000);

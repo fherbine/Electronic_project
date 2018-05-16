@@ -6,6 +6,8 @@
  */
 
 #include "types.h"
+#define ACK 0
+#define NACK 1
 
 void Start_I2CI()
 {
@@ -63,7 +65,8 @@ void I2C1_Send_Data(u8 data, u8 addr)
 {
     Start_I2CI();
     Idle_I2CI(); // SEN
-    Master_Write_I2C1((addr << 1) | WRITE_CMD);
+    if (Master_Write_I2C1((addr << 1) | WRITE_CMD) == NACK)
+	Nop();
     //while(MasterWriteI2C1((addr << 1) | WRITE_CMD));
     Idle_I2CI(); // TBF - Transmit Buffer Full
     Master_Write_I2C1(data);

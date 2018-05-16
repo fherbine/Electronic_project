@@ -50,7 +50,6 @@ void UART1_Read_String(char *string, u32 size)
 }
 
 /* UART2 */
-
 void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
 {
     if (!TRX_Mode) {
