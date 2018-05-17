@@ -82,7 +82,11 @@ u8 MAG_Read(u8 addr)
 
 #define DEBUG_BASE 16
 
+#define MPU9150_USER_CTRL 0x6A
+#define I2C_MST_EN (1 << 5)
 #define PWR_MGMT_1 0x6B
+#define MPU9150_I2C_MST_CTRL 0x24
+#define MULT_MST_EN (1 << 7) | (1 << 4)
 
 #define GYRO_CONFIG 0x1B
 
@@ -96,16 +100,20 @@ u8 MAG_Read(u8 addr)
 #define MPU9150_I2C_SLV0_REG 0x26
 #define MPU9150_I2C_SLV0_CTRL 0x27
 #define INT_SLV0_EN 0x80
-#define _8BITS 8
+#define _9BYTES 9
 #define MPU9150_INT_PIN_CFG 0x37
 #define INT_PIN_CFG 0x37
-#define INT_LEVEL (1 < 7)
-#define INT_OPEN (1 < 6)
-#define LATCH_INT_EN (1 < 5)
-#define INT_RD_CLEAR (1 < 4)
-#define FSYNC_INT_LEVEL (1 < 3)
-#define FSYNC_INT_EN (1 < 2)
-#define I2C_BYPASS_EN (1 < 1)
+#define INT_LEVEL (1 << 7)
+#define INT_OPEN (1 << 6)
+#define LATCH_INT_EN (1 << 5)
+#define INT_RD_CLEAR (1 << 4)
+#define FSYNC_INT_LEVEL (1 << 3)
+#define FSYNC_INT_EN (1 << 2)
+#define I2C_BYPASS_EN (1 << 1)
+
+#define MPU9150_I2C_SLV4_ADDR 0x31
+#define MPU9150_I2C_SLV4_REG 0x32
+#define MPU9150_I2C_SLV4_CTRL 0x34
 
 #define ACCEL_XOUT_H 0x3B // [15:8]
 #define ACCEL_XOUT_L 0x3C // [7:0]
@@ -121,12 +129,12 @@ u8 MAG_Read(u8 addr)
 #define GYRO_ZOUT_H 0x47 // [15:8]
 #define GYRO_ZOUT_L 0x48 // [7:0]
 
-#define MAG_XOUT_L 0x03
-#define MAG_XOUT_H 0x04
-#define MAG_YOUT_L 0x05
-#define MAG_YOUT_H 0x06
-#define MAG_ZOUT_L 0x07
-#define MAG_ZOUT_H 0x08
+#define MAG_XOUT_L 0x4C
+#define MAG_XOUT_H 0x4D
+#define MAG_YOUT_L 0x4E
+#define MAG_YOUT_H 0x4F
+#define MAG_ZOUT_L 0x50
+#define MAG_ZOUT_H 0x51
 
 #define MAG_CNTL 0x0A // Control mag module
 #define MAG_STATUS 0x02
@@ -186,12 +194,13 @@ void GetData()
 //    ft_putstr("\n\r MPU9150_INT_PIN_CFG : ");
 //    ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
 //    delayms(100);
+    I2C1_Write_Data(AK8975_ADDR, MAG_CNTL, 0x01);
     UART2_Send_String("MAG X: ", 6);
-    ft_putnbr_base(MagGetFullNumber(MAG_XOUT_H, MAG_XOUT_L), DEBUG_BASE);
+    ft_putnbr_base(GetFullNumber(MAG_XOUT_H, MAG_XOUT_L), DEBUG_BASE);
     UART2_Send_String(" MAG Y: ", 7);
-    ft_putnbr_base(MagGetFullNumber(MAG_YOUT_H, MAG_YOUT_L), DEBUG_BASE);
+    ft_putnbr_base(GetFullNumber(MAG_YOUT_H, MAG_YOUT_L), DEBUG_BASE);
     UART2_Send_String(" MAG Z: ", 7);
-    ft_putnbr_base(MagGetFullNumber(MAG_ZOUT_H, MAG_ZOUT_L), DEBUG_BASE);
+    ft_putnbr_base(GetFullNumber(MAG_ZOUT_H, MAG_ZOUT_L), DEBUG_BASE);
     ft_putstr("\n\r");
     ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
     ft_putstr("\n\r");
@@ -200,7 +209,10 @@ void GetData()
     ft_putbinary(MPU9150_Read(MPU9150_I2C_MST_STATUS));
     ft_putstr("\n\r MPU9150_INT_PIN_CFG : ");
     ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
+    ft_putstr("\n\r WHO I AM : ");
+    ft_putnbr_base(MPU9150_Read(MPU9150_WHO_I_AM), 16);
     ft_putstr("\n\r");
+    ft_putbinary(MPU9150_Read(0x49)); // I2C DATA
 }
 
 void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
@@ -212,16 +224,62 @@ void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
 //    MPU9150_Read(MPU9150_WHO_I_AM);
     GetData();
     IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+
+    ft_putendl("");
+    ft_putbinary(MPU9150_Read(0x36)); // I2C MASTER STATUS
+    ft_putendl("");
+    delayms(100);
+    ft_putbinary(MPU9150_Read(0x49)); // I2C DATA
+    ft_putendl("");
+    delayms(100);
+    ft_putbinary(MPU9150_Read(MPU9150_I2C_SLV0_ADDR)); // DEBUG
+    ft_putendl("");
+    delayms(100);
+    ft_putnbr_base(MPU9150_Read(0x54), 16);
+    ft_putendl("");
+    delayms(100);
+    ft_putnbr_base(MPU9150_Read(PWR_MGMT_1), 2); // I2C SLAVE4 DI
+    ft_putendl("----");
 }
 
 void MPU9150_Init()
 {
+    ft_putendl("MPU9150 - Reset");
+    //I2C1_Write_Data(MPU9150_ADDR, 0x6b, 0x80);
+    delayms(500);
     ft_putendl("MPU9150 - Start -> Init");
-    I2C1_Write_Data(MPU9150_ADDR, INT_PIN_CFG, I2C_BYPASS_EN);
+    //I2C1_Write_Data(MPU9150_ADDR, INT_PIN_CFG, I2C_BYPASS_EN);
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_MST_CTRL, MULT_MST_EN);
     delayms(100);
     I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_ADDR, I2C_SLV0_RW | AK8975_ADDR); // Set mag slave address
-    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_REG, 0x02);
-    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_CTRL, INT_SLV0_EN | _8BITS);
+    delayms(100);
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_REG, 0x00);
+    delayms(100);
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV0_CTRL, INT_SLV0_EN | 11);
+    delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV4_ADDR, I2C_SLV0_RW | AK8975_ADDR); // Set mag slave address
+//    delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV4_REG, 0x00);
+//    delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, MPU9150_I2C_SLV4_CTRL, 0b10000000); //INT_SLV0_EN | _6BITS);
+//    delayms(100);
+    ft_putbinary(MPU9150_Read(MPU9150_I2C_SLV0_ADDR)); // I2C SLAVE4 DI
+    ft_putendl("----");
+    I2C1_Write_Data(MPU9150_ADDR, MPU9150_USER_CTRL, I2C_MST_EN);
+    delayms(100);
+    ft_putendl("");
+    ft_putbinary(MPU9150_Read(0x36)); // I2C MASTER STATUS
+    delayms(100);
+    ft_putendl("");
+    ft_putbinary(MPU9150_Read(0x49)); // I2C DATA
+    ft_putendl("");
+    delayms(100);
+//    ft_putbinary(MPU9150_Read(MPU9150_I2C_SLV0_ADDR));
+//    ft_putendl("");
+//    ft_putbinary(MPU9150_Read(MPU9150_I2C_SLV0_REG));
+//    ft_putendl("");
+//    ft_putbinary(MPU9150_Read(MPU9150_I2C_SLV0_CTRL));
+//    ft_putendl("");
     ft_putendl("Stop -> Init");
     delayms(100);
 }
@@ -234,18 +292,27 @@ void MPU9150_Init()
 
 void MPU9150_On()
 {
-    I2C1_Write_Data(MPU9150_ADDR, PWR_MGMT_1, 0x00);
+    I2C1_Write_Data(MPU9150_ADDR, PWR_MGMT_1, 0x0);
     delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, PWR_MGMT_1, 0x80);
+//    delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, PWR_MGMT_1, 0x0);
+//    delayms(100);
+    ft_putbinary(MPU9150_Read(PWR_MGMT_1)); // I2C SLAVE4 DI
+    ft_putendl("^---- PWR_MGMT_1");
 }
 
 void MAG_Init()
 {
     //
     ft_putendl("MAG - Start -> Init");
-    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x02);
-    delayms(100);
+//    I2C1_Write_Data(AK8975_ADDR, 0x0A, I2C_BYPASS_EN); // Activate direct acces to slaves
+//    delayms(100);
+    I2C1_Write_Data(AK8975_ADDR, MAG_CNTL, 0x01); // Activate slave
+//    delayms(100);
+//    I2C1_Write_Data(AK8975_ADDR, 0x0A, 0x0); // Desactivate direct acces to slave
 //    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x0F); // Enter Fuse ROM access mode
-    delayms(100);
+//    delayms(100);
 //    MAG_Read(ASAX);
 //    delayms(100);
 //    MAG_Read(ASAY);
@@ -253,7 +320,7 @@ void MAG_Init()
 //    MAG_Read(ASAZ);
 //    delayms(100);
 //    I2C1_Write_Data(MPU9150_ADDR, MAG_CNTL, 0x00); // Power down Mag
-    delayms(100);
+//    delayms(100);
     ft_putendl("Stop -> Init");
 }
 
@@ -274,7 +341,7 @@ void main()
     Init_T2_Int();
 
     MAG_Init();
-    //MPU9150_Init();
+    MPU9150_Init();
     MPU9150_On();
     
     delayms(1000);

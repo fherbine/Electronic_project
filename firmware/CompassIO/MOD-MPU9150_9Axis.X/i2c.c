@@ -85,6 +85,7 @@ void I2C1_Write_Data(u8 slave_address, u8 addr, u8 data)
     Idle_I2CI(); // TBF - Transmit Buffer Full
     Master_Write_I2C1(addr);
     Idle_I2CI(); // TBF - Transmit Buffer Full
+    delayms(100);
     Master_Write_I2C1(data);
     Idle_I2CI(); // TBF - Transmit Buffer Full
     //while(MasterWriteI2C1(data));
