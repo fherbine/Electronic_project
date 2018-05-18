@@ -37,6 +37,8 @@ u8 SPI1_Read_Data_Ready()
 
 u8 SPI1_Write_Data_Ready()
 {
+  /* Automatically cleared in hardware when the SPI module
+     transfers data from SPITXB to SPISR */
   return SPI1STATbits.SPITBE;
 }
 
@@ -66,7 +68,7 @@ void SPI1_Write_String(char *data, unsigned int len)
   while (len)
   {
     SPI1BUF = *data++;
-    while (SPI1STATbits.SPITBF) ; /* Wait SPITBF is cleared */
+    while (SPI1_Write_Data_Ready()) ; /* Wait until SPITBE is cleared */
     len--;
   }
 }
