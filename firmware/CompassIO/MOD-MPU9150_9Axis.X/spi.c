@@ -49,7 +49,7 @@ u8 SPI1_Read()
         SPI1STATbits.SPIROV = 0; // Overflow has occured
       return (SPI1BUF & 0xFF);   // 8-bit mode
     }
-    return (-1);
+    return (0);
 }
 
 // SPIxSR -> SDOxpin

@@ -19,7 +19,6 @@
       <itemPath>configBits.c</itemPath>
       <itemPath>utils.c</itemPath>
       <itemPath>spi.c</itemPath>
-      <itemPath>mpu9150.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
