@@ -67,8 +67,13 @@ void UART2_Echo()
     else UART2_Send_Data_Byte(rcv);
 }
 
+#define IFS0_T2 BITS(8)
+
 void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
-    IFS0bits.T2IF = 0;   // Reset to 0 Interrupt TIMER2
+//    SPI1_Write('*');
+    LATFbits.LATF1 ^= 1;
+    IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
+    //IFS0bits.T2IF = 0;
 }
 
 void main()
@@ -78,20 +83,25 @@ void main()
     Init_Delay();
     Init_T2();
     
-//    TRISFbits.TRISF1 = 0; //writable
+    TRISFbits.TRISF1 = 0; //writable
 //    LATFbits.LATF1 = 0;
-    I2C1_Init();
     
-//    LATFbits.LATF1 = 1;
+    LATFbits.LATF1 ^= 1;
 //    LATFbits.LATF1 = 0;
 
     Init_T2_Int();
+    delayms(100);
 
     /* MPU9150 */
-    MAG_Init();
-    MPU9150_Init();
-    MPU9150_On();
+    //I2C1_Init();
+    //MAG_Init();
+    //MPU9150_Init();
+    //MPU9150_On();
     /* ======= */
+
+    /* SPI */
+    SPI1_Init();
+
 
     delayms(1000);
     T2CONbits.ON = 1; //start timer at the end
@@ -101,5 +111,11 @@ void main()
     //ft_putbinary(255);
 
     while (1) {
+	u8 data = SPI1_Read();
+	if (data == '*')
+	{
+	    ft_putendl("* emitted and received !");
+	    data = 0;
+	}
     }
 }
