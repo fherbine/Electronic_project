@@ -69,12 +69,15 @@ void UART2_Echo()
 
 #define IFS0_T2 BITS(8)
 
-void __ISR(_TIMER_2_VECTOR, IPL3SRS) Timer2Handler(void) {
-//    SPI1_Write('*');
+void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
+    if (SPI2_Write_Data_Ready())
+    {
+	SPI2_Write(42);
+    }
     LATFbits.LATF1 ^= 1;
     IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
     //IFS0bits.T2IF = 0;
-}
+} //, IPL3SRS
 
 void main()
 {
@@ -100,7 +103,7 @@ void main()
     /* ======= */
 
     /* SPI */
-    SPI1_Init();
+    SPI2_Init();
 
 
     delayms(1000);
@@ -111,11 +114,14 @@ void main()
     //ft_putbinary(255);
 
     while (1) {
-	u8 data = SPI1_Read();
-	if (data == '*')
+	if (SPI2_Read_Data_Ready())
 	{
-	    ft_putendl("* emitted and received !");
-	    data = 0;
+	    u8 data = SPI2_Read();
+	    if (data == '*')
+	    {
+		ft_putendl("* emitted and received !");
+		data = 0;
+	    }
 	}
     }
 }
