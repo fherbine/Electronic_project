@@ -70,14 +70,45 @@ void UART2_Echo()
 #define IFS0_T2 BITS(8)
 
 void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
-    if (SPI2_Write_Data_Ready())
-    {
-	SPI2_Write(42);
-    }
+    emmit_SPI();
     LATFbits.LATF1 ^= 1;
     IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
-    //IFS0bits.T2IF = 0;
 } //, IPL3SRS
+
+void emmit_SPI(void)
+{
+    ft_putstr(">>");
+    ft_putnbr_base(SPI2_Write_Data_Ready(), 10);
+    ft_putendl("");
+    if (SPI2_Write_Data_Ready())
+    {
+        ft_putendl("here");
+	SPI2_Write(1);
+        ft_putendl("there");
+    }
+}
+
+void receipt_SPI(void)
+{
+    ft_putendl("Start");
+    u8 data = 0;
+    while (1)
+    {
+        if (SPI2_Read_Data_Ready())
+            ft_putendl("Datas received");
+        data = SPI2_Read();
+
+        ft_putstr("BUFFER STATUS (READ) >> ");
+        ft_putbinary(SPI2BUF);
+        ft_putendl("");
+        if (data != 0xff && data != 0)
+        {
+            ft_putstr("==> ");
+            UART2_Send_Data_Byte(data);
+        }
+        data = 0;
+    }
+}
 
 void main()
 {
@@ -110,18 +141,8 @@ void main()
     T2CONbits.ON = 1; //start timer at the end
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
-    ft_putendl("Start");
     //ft_putbinary(255);
 
-    while (1) {
-	if (SPI2_Read_Data_Ready())
-	{
-	    u8 data = SPI2_Read();
-	    if (data == '*')
-	    {
-		ft_putendl("* emitted and received !");
-		data = 0;
-	    }
-	}
-    }
+    //while (1) ;
+    receipt_SPI();
 }

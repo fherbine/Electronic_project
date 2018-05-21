@@ -20,9 +20,11 @@
 #define IEC0_SPI1E BITS(23)
 #define IEC0_SPI1TX BITS(24)
 #define IEC0_SPI1RX BITS(25)
-#define IEC0_SPI2E BITS(5)
-#define IEC0_SPI2TX BITS(6)
-#define IEC0_SPI2RX BITS(7)
+#define IEC1_SPI2E BITS(5)
+#define IEC1_SPI2TX BITS(6)
+#define IEC1_SPI2RX BITS(7)
+#define MASTER (ON_BIT | SMP_BIT | MSTEN_BIT)
+#define SLAVE ON_BIT
 
 /* == SPI1 == */
 
@@ -92,15 +94,15 @@ void SPI2_Init()
 {
     u8 rData;
 
-    IEC0CLR = IEC0_SPI2E | IEC0_SPI2TX | IEC0_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
-    SPI2CON = 0x0;        // Stop and resets the SPI1
+    IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
+    SPI2CON = 0;        // Stop and resets the SPI1
     rData = SPI2BUF;      // Clears the receive buffer
-    IEC0CLR = IEC0_SPI2E | IEC0_SPI2TX | IEC0_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
+    IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
     /* Here to manage interrupts */
 
     SPI2BRG = SPI_BAUD_RATE; // Set baud rate
     SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
-    SPI2CON = ON_BIT | SMP_BIT | MSTEN_BIT; // MSTEN is to enable master mode
+    SPI2CON = SLAVE; // MSTEN is to enable master mode
 }
 
 u8 SPI2_Read_Data_Ready()
@@ -123,7 +125,10 @@ u8 SPI2_Read()
     if (SPI2STATbits.SPIRBF)     // Receive buffer is full - Auto cleared
     {
       if (SPI2STATbits.SPIROV)
+      {
         SPI2STATbits.SPIROV = 0; // Overflow has occured
+        return (0xff);
+      }
       return (SPI2BUF & 0xFF);   // 8-bit mode
     }
     return (0);
@@ -135,7 +140,19 @@ void SPI2_Write(u8 data)
     if (SPI2STATbits.SPITBE) // SPI Transmit Buffer Full Status bit
     {
 	UART2_Send_Data_Byte(data);
+        ft_putendl(" << Will be send !");
+        ft_putstr("data >> ");
+        ft_putnbr_base(data, 10);
+        ft_putendl("");
+        ft_putstr("buff stat before >> ");
+        ft_putbinary(SPI2BUF);
+        ft_putendl("");
         SPI2BUF = data;
+
+        //data = SPI2BUF; ///////////////////////////////////////////////////////// BEWARE !!!!!!!!!!!
+        ft_putstr("buff stat after >> ");
+        ft_putbinary(SPI2BUF);
+        ft_putendl("");
     }
 }
 
