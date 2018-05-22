@@ -77,14 +77,9 @@ void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
 
 void emmit_SPI(void)
 {
-    ft_putstr(">>");
-    ft_putnbr_base(SPI2_Write_Data_Ready(), 10);
-    ft_putendl("");
     if (SPI2_Write_Data_Ready())
     {
-        ft_putendl("here");
-	SPI2_Write(1);
-        ft_putendl("there");
+	SPI2_Write(0x2A);
     }
 }
 
@@ -143,6 +138,8 @@ void main()
     __builtin_enable_interrupts();
     //ft_putbinary(255);
 
-    //while (1) ;
-    receipt_SPI();
+    ft_putendl("Start");
+    
+    while (1) ;
+    //receipt_SPI();
 }

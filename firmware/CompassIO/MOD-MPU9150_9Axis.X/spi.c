@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-#define SPI_BAUD_RATE 0x01
+#define SPI_BAUD_RATE 1024
 
 /* SPISTAT */
 #define SPIROV_BIT BITS(6)
@@ -102,7 +102,7 @@ void SPI2_Init()
 
     SPI2BRG = SPI_BAUD_RATE; // Set baud rate
     SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
-    SPI2CON = SLAVE; // MSTEN is to enable master mode
+    SPI2CON = MASTER; // MSTEN is to enable master mode
 }
 
 u8 SPI2_Read_Data_Ready()
@@ -140,6 +140,7 @@ void SPI2_Write(u8 data)
     if (SPI2STATbits.SPITBE) // SPI Transmit Buffer Full Status bit
     {
 	UART2_Send_Data_Byte(data);
+	s32 tmp = SPI2BUF;
         ft_putendl(" << Will be send !");
         ft_putstr("data >> ");
         ft_putnbr_base(data, 10);
@@ -147,12 +148,15 @@ void SPI2_Write(u8 data)
         ft_putstr("buff stat before >> ");
         ft_putbinary(SPI2BUF);
         ft_putendl("");
-        SPI2BUF = data;
-
+        SPI2BUF = 'A';
+	
         //data = SPI2BUF; ///////////////////////////////////////////////////////// BEWARE !!!!!!!!!!!
         ft_putstr("buff stat after >> ");
         ft_putbinary(SPI2BUF);
         ft_putendl("");
+	//ft_putstr("Overflow >> ");
+        //ft_putbinary(SPI2STATbits.SPIROV);
+        //ft_putendl("");
     }
 }
 
