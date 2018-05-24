@@ -49,7 +49,7 @@ typedef long s32;
 
 #define BITS(X) (1 << X)
 
-#define SPI_BAUD_RATE 1024
+#define SPI_BAUD_RATE 1
 
 /* SPISTAT */
 #define SPIROV_BIT BITS(6)
@@ -65,7 +65,7 @@ typedef long s32;
 #define IEC1_SPI2E BITS(5)
 #define IEC1_SPI2TX BITS(6)
 #define IEC1_SPI2RX BITS(7)
-#define MASTER (ON_BIT | SMP_BIT | MSTEN_BIT)
+#define MASTER (ON_BIT | MSTEN_BIT)
 #define SLAVE ON_BIT
 
 u32     ft_strlen(const char *s);

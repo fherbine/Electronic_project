@@ -82,7 +82,7 @@ void SPI2_Init()
 
     SPI2BRG = SPI_BAUD_RATE; // Set baud rate
     SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
-    SPI2CON = MASTER; // MSTEN is to enable master mode
+    SPI2CON = SLAVE; // MSTEN is to enable master mode
 }
 
 /*

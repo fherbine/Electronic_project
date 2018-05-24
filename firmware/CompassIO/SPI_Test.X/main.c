@@ -5,7 +5,9 @@
  * Created on May 24, 2018, 10:18 AM
  */
 
-#define SPI_BAUD_RATE 1024
+#include <p32xxxx.h>
+
+#define SPI_BAUD_RATE 1
 
 /*
  * 
@@ -18,9 +20,10 @@ int main()
     SPI2CONbits.ON = 1;
 	while (1)
 	{
+		int i = 3000;
+		while (i--);
 	    while (!SPI2STATbits.SPITBE); // SPI Transmit Buffer Full Status bit
-	    SPI2BUF = 'A';
+	    SPI2BUF = 0b01010101;
 	}
 	return (0);
 }
-

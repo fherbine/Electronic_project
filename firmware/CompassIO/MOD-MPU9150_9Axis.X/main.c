@@ -135,7 +135,6 @@ void main()
     /* SPI */
     SPI2_Init();
 
-
     delayms(1000);
     T2CONbits.ON = 1; //start timer at the end
     INTCONbits.MVEC = 1; // Enable multi interrupts
@@ -147,15 +146,17 @@ void main()
     u32 val;
     while (1)
     {
-		if (Send_SPI)
+		u8 data = SPI2_Read();
+		if (data == 42)
 		{
-		//    ft_putendl("@");
-			SPI2_Write(val);
-			Send_SPI = FALSE;
-			val++;
-			val &= 0xFF;
+			ft_putendl("Data received");
+			data = 0;
 		}
+/*		if (Send_SPI)
+		{
+			SPI2_Write('*');
+			Send_SPI = FALSE;
+		}*/
     }
     //receipt_SPI();
 }
-
