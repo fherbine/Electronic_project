@@ -85,7 +85,6 @@ void SPI2_Init()
     SPI2CON = MASTER; // MSTEN is to enable master mode
 }
 
-
 /*
 void SPI2_Init()
 {

@@ -147,14 +147,14 @@ void main()
     u32 val;
     while (1)
     {
-	if (Send_SPI)
-	{
-	//    ft_putendl("@");
-	    SPI2_Write(val);
-	    Send_SPI = FALSE;
-	    val++;
-	    val &= 0xFF;
-	}
+		if (Send_SPI)
+		{
+		//    ft_putendl("@");
+			SPI2_Write(val);
+			Send_SPI = FALSE;
+			val++;
+			val &= 0xFF;
+		}
     }
     //receipt_SPI();
 }
