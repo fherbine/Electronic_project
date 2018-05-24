@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/C:/Users/bocal/Desktop/MOD-MPU9150_9Axis.X/main.c</file>
+        <file>file:/C:/Users/bocal/Desktop/MOD-MPU9150_9Axis.X/spi.c</file>
+        <file>file:/C:/Users/bocal/Desktop/MOD-MPU9150_9Axis.X/uart.c</file>
+        <file>file:/C:/Users/bocal/Desktop/MOD-MPU9150_9Axis.X/configBits.c</file>
+        <file>file:/C:/Users/bocal/Desktop/MOD-MPU9150_9Axis.X/types.h</file>
+    </open-files>
 </project-private>

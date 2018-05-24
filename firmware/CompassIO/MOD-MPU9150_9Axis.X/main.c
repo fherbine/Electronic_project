@@ -69,19 +69,23 @@ void UART2_Echo()
 
 #define IFS0_T2 BITS(8)
 
-void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
-    emmit_SPI();
-    LATFbits.LATF1 ^= 1;
-    IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
-} //, IPL3SRS
+u8 Send_SPI = FALSE;
 
 void emmit_SPI(void)
 {
-    if (SPI2_Write_Data_Ready())
-    {
-	SPI2_Write(0x2A);
-    }
+	//SPI2CON = MASTER;
+	SPI2_Write(42);
+	ft_putendl("interupt");
+	//u8 rData = SPI2BUF;
+	//SPI2CONCLR = MASTER;
 }
+
+void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
+    IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
+    LATFbits.LATF1 ^= 1;
+    Send_SPI = TRUE;
+    //emmit_SPI();
+} //, IPL3SRS
 
 void receipt_SPI(void)
 {
@@ -139,7 +143,19 @@ void main()
     //ft_putbinary(255);
 
     ft_putendl("Start");
-    
-    while (1) ;
+
+    u32 val;
+    while (1)
+    {
+	if (Send_SPI)
+	{
+	//    ft_putendl("@");
+	    SPI2_Write(val);
+	    Send_SPI = FALSE;
+	    val++;
+	    val &= 0xFF;
+	}
+    }
     //receipt_SPI();
 }
+

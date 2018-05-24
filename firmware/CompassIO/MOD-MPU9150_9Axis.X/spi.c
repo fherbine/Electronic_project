@@ -7,25 +7,6 @@
 
 #include "types.h"
 
-#define SPI_BAUD_RATE 1024
-
-/* SPISTAT */
-#define SPIROV_BIT BITS(6)
-
-/* SPICON */
-#define ON_BIT BITS(15)
-#define SMP_BIT BITS(9)
-#define MSTEN_BIT BITS(5)
-
-#define IEC0_SPI1E BITS(23)
-#define IEC0_SPI1TX BITS(24)
-#define IEC0_SPI1RX BITS(25)
-#define IEC1_SPI2E BITS(5)
-#define IEC1_SPI2TX BITS(6)
-#define IEC1_SPI2RX BITS(7)
-#define MASTER (ON_BIT | SMP_BIT | MSTEN_BIT)
-#define SLAVE ON_BIT
-
 /* == SPI1 == */
 
 void SPI1_Init()
@@ -71,11 +52,10 @@ u8 SPI1_Read()
 // SPIxSR -> SDOxpin
 void SPI1_Write(u8 data)
 {
-    if (SPI1STATbits.SPITBE) // SPI Transmit Buffer Full Status bit
-    {
-	UART2_Send_Data_Byte(data);
-        SPI1BUF = data;
-    }
+
+    while (!SPI1STATbits.SPITBE); // SPI Transmit Buffer Full Status bit
+    UART2_Send_Data_Byte(data);
+    SPI1BUF = data;
 }
 
 void SPI1_Write_String(char *data, unsigned int len)
@@ -104,6 +84,23 @@ void SPI2_Init()
     SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
     SPI2CON = MASTER; // MSTEN is to enable master mode
 }
+
+
+/*
+void SPI2_Init()
+{
+    	    unsigned char tmp;
+
+	        SPI2CON = 0; // Stops and resets the SPI1.
+	        tmp = SPI2BUF; // clears the receive buffer
+
+
+		SPI2BRG = 0x1; // BRG = Baud Rate Generator, SPI clock frequency for proper communication with the SD
+		SPI2STATCLR = 0x40; // clear the Overflow
+		SPI2CON = 0x8220; // SPI ON, 8 bits transfer, SMP=1, Master mode
+		// from now on, the device is ready to transmit and receive data
+}
+ */
 
 u8 SPI2_Read_Data_Ready()
 {
@@ -137,27 +134,8 @@ u8 SPI2_Read()
 // SPIxSR -> SDOxpin
 void SPI2_Write(u8 data)
 {
-    if (SPI2STATbits.SPITBE) // SPI Transmit Buffer Full Status bit
-    {
-	UART2_Send_Data_Byte(data);
-	s32 tmp = SPI2BUF;
-        ft_putendl(" << Will be send !");
-        ft_putstr("data >> ");
-        ft_putnbr_base(data, 10);
-        ft_putendl("");
-        ft_putstr("buff stat before >> ");
-        ft_putbinary(SPI2BUF);
-        ft_putendl("");
-        SPI2BUF = 'A';
-	
-        //data = SPI2BUF; ///////////////////////////////////////////////////////// BEWARE !!!!!!!!!!!
-        ft_putstr("buff stat after >> ");
-        ft_putbinary(SPI2BUF);
-        ft_putendl("");
-	//ft_putstr("Overflow >> ");
-        //ft_putbinary(SPI2STATbits.SPIROV);
-        //ft_putendl("");
-    }
+    while (!SPI2STATbits.SPITBE); // SPI Transmit Buffer Full Status bit
+    SPI2BUF = data;
 }
 
 void SPI2_Write_String(char *data, unsigned int len)
