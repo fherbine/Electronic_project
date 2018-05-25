@@ -72,34 +72,18 @@ void SPI1_Write_String(char *data, unsigned int len)
 
 void SPI2_Init()
 {
-    u8 rData;
+    //u8 rData;
 
-    IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
+    //IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
     SPI2CON = 0;        // Stop and resets the SPI1
-    rData = SPI2BUF;      // Clears the receive buffer
-    IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
+    //rData = SPI2BUF;      // Clears the receive buffer
+    //IEC1CLR = IEC1_SPI2E | IEC1_SPI2TX | IEC1_SPI2RX; // Disable interrupts SPI1 IE20 <25-23>
     /* Here to manage interrupts */
 
     SPI2BRG = SPI_BAUD_RATE; // Set baud rate
-    SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
-    SPI2CON = SLAVE; // MSTEN is to enable master mode
+    //SPI2STATCLR = SPIROV_BIT;    // Clear Receive Overflow Flag Bit
+    SPI2CON = MASTER; // MSTEN is to enable master mode
 }
-
-/*
-void SPI2_Init()
-{
-    	    unsigned char tmp;
-
-	        SPI2CON = 0; // Stops and resets the SPI1.
-	        tmp = SPI2BUF; // clears the receive buffer
-
-
-		SPI2BRG = 0x1; // BRG = Baud Rate Generator, SPI clock frequency for proper communication with the SD
-		SPI2STATCLR = 0x40; // clear the Overflow
-		SPI2CON = 0x8220; // SPI ON, 8 bits transfer, SMP=1, Master mode
-		// from now on, the device is ready to transmit and receive data
-}
- */
 
 u8 SPI2_Read_Data_Ready()
 {

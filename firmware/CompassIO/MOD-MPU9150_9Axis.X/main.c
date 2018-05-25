@@ -109,6 +109,9 @@ void receipt_SPI(void)
     }
 }
 
+#define _CS1_ON() (TRISFbits.TRISF0 = 1)
+#define _CS1_OFF() (TRISFbits.TRISF0 = 0)
+
 void main()
 {
     __builtin_disable_interrupts();
@@ -142,21 +145,34 @@ void main()
     //ft_putbinary(255);
 
     ft_putendl("Start");
-
-    u32 val;
+    _CS1_ON();
+    /* Page program */
+    SPI2_Write(0x06); // Write enable (WEN -> 1)
+    SPI2_Write(0x02); // Page program
+    SPI2_Write(0x01); // Add[1]
+    SPI2_Write(0x00); // Add[2]
+    SPI2_Write(0x00); // Add[3]
+    SPI2_Write('H');
+    SPI2_Write('e');
+    SPI2_Write('l');
+    SPI2_Write('l');
+    SPI2_Write('o');
+    SPI2_Write('!');
+    /* Read page */
+    SPI2_Write(0x06); // Write enable (WEN -> 1)
+    SPI2_Write(0x03); // Read
+    SPI2_Write(0x01); // Add[0]
+    SPI2_Write(0x00); // Add[1]
+    SPI2_Write(0x00); // Add[2]
+    _CS1_OFF();
     while (1)
     {
 		u8 data = SPI2_Read();
-		if (data == 42)
+		if (data != 0)
 		{
-			ft_putendl("Data received");
+			UART1_Send_Data_Byte(data);
 			data = 0;
 		}
-/*		if (Send_SPI)
-		{
-			SPI2_Write('*');
-			Send_SPI = FALSE;
-		}*/
     }
     //receipt_SPI();
 }
