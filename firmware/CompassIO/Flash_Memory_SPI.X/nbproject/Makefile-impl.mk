@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=SPI_Test.X
+PROJECTNAME=Flash_Memory_SPI.X
 
 # Active Configuration
 DEFAULTCONF=default
