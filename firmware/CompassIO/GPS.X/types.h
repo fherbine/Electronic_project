@@ -9,6 +9,7 @@
 #define	TYPES_H
 #include <p32xxxx.h>
 #include "sys/attribs.h"
+#include "xc.h"
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -27,8 +28,8 @@ typedef long s32;
 #define READ_CMD 1
 #define WRITE_CMD 0
 
-#define SYSCLK (8000000/2*20/1) // = 80Mhz
-#define PBCLK (SYSCLK/8) // = 10 Mhz
+#define SYSCLK (8000000/2*20/1) // 80Mhz
+#define PBCLK (SYSCLK/8) // 10Mhz
 #define Fsck 5000
 #define I2C_BAUD_RATE ((PBCLK/2/Fsck)-2)
 
@@ -45,7 +46,7 @@ typedef long s32;
 
 #define MAX_BUFFER_SIZE 256
 
-#define UART_BAUD_RATE ((PBCLK/(16 * (129 + 1))
+#define UART_BAUD_RATE ((PBCLK/4800/16)-1)
 
 #define BITS(X) (1 << X)
 
