@@ -15,7 +15,7 @@
 #pragma config POSCMOD = HS
 
 /*
- * RD4 >> nRST
+ * RD6 >> nRST
  * RD5 >> ON_OFF
  */
 
@@ -27,7 +27,7 @@ void	gps_power_on(void)
 	tmp++;
 	if (tmp == 100 && !rst) // 100ms after PIC power on
 	{
-		LATDbits.LATD4 = 1;
+		LATDbits.LATD6 = 1;
 		rst = 1;
 	}
 	else if (tmp == 110 && !on_off)
@@ -72,8 +72,8 @@ void __ISR(_TIMER_2_VECTOR, IPL1) Timer2Handler(void) {
 int main()
 {
 	__builtin_disable_interrupts();
-	TRISDbits.TRISD4 = 0;				// RD4 is an output
-	LATDbits.LATD4 = 0;					// RD4 is low by default
+	TRISDbits.TRISD6 = 0;				// RD6 is an output
+	LATDbits.LATD6 = 0;					// RD6 is low by default
 
 	TRISDbits.TRISD5 = 0;				// RD5 is an output
 	LATDbits.LATD5 = 0;					// RD5 is low by default
@@ -95,10 +95,11 @@ int main()
 
 	INTCONbits.MVEC = 1; // Enable multi interrupts
 	UART2_Init(0, 1, 0b11);
+	UART1_Init(0, 1, 0b11);
 	__builtin_enable_interrupts();
 
 	while(1)
 	{
-		UART2_Send_Data_Byte('t');
+		UART2_Send_Data_Byte(UART1_Get_Data_Byte());
 	}
 }
