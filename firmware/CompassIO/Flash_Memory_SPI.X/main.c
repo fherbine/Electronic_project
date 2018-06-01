@@ -19,6 +19,13 @@ void SPI1_Write(unsigned char data)
     SPI1BUF = data;
 }
 
+void Handle_SPI(unsigned char input, unsigned char *output)
+{
+    SPI1BUF = input;
+    while (!SPI1STATbits.SPIRBF);
+    *output = SPI1BUF;
+}
+
 unsigned char SPI1_Read()
 {
     if (SPI1STATbits.SPIRBF)     // Receive buffer is full - Auto cleared
@@ -37,53 +44,31 @@ unsigned char SPI1_Read()
 #define _CS1_OFF() (PORTFbits.RF0 = 0)
 
 // DEVCFG2
-//#pragma config FPLLIDIV = DIV_2         // PLL Input Divider (2x Divider)
-//#pragma config FPLLMUL = MUL_20         // PLL Multiplier (20x Multiplier)
-//#pragma config FPLLODIV = DIV_1         // System PLL Output Clock Divider (PLL Divide by 1)
+#pragma config FPLLIDIV = DIV_2         // PLL Input Divider (2x Divider)
+#pragma config FPLLMUL = MUL_20         // PLL Multiplier (20x Multiplier)
+#pragma config FPLLODIV = DIV_1         // System PLL Output Clock Divider (PLL Divide by 1)
 
 // DEVCFG1
-//#pragma config FNOSC = PRIPLL           // Oscillator Selection Bits (Primary Osc w/PLL (XT+,HS+,EC+PLL))
-//#pragma config POSCMOD = HS             // Primary Oscillator Configuration (HS osc mode)
+#pragma config FNOSC = PRIPLL           // Oscillator Selection Bits (Primary Osc w/PLL (XT+,HS+,EC+PLL))
+#pragma config POSCMOD = HS             // Primary Oscillator Configuration (HS osc mode)
 
-//#define SYSCLK (8000000/2*20/1) // = 80Mhz
-//#define PBCLK (SYSCLK/8) // = 10 Mhz //
+#define SYSCLK (8000000/2*20/1) // = 80Mhz
+#define PBCLK (SYSCLK/8) // = 10 Mhz //
 //#define Fsck 5000
 
 int main()
 {
     SPI1CON = 0x8220;
-    SPI1BRG = SPI_BAUD_RATE; // Set baud rate
+    SPI1BRG = 127; // Set baud rate
     SPI1CONbits.MSTEN = 1; // MSTEN is to enable master mode
     SPI1CONbits.ON = 1;
     TRISFbits.TRISF0 = 0; // writeable
+    unsigned char output;
     _CS1_ON();
-    /* Page program */
-//    SPI2_Write(0x06); // Write enable (WEN -> 1)
-//    SPI2_Write(0x02); // Page program
-//    SPI2_Write(0x01); // Add[1]
-//    SPI2_Write(0x00); // Add[2]
-//    SPI2_Write(0x00); // Add[3]
-//    SPI2_Write('H');
-//    SPI2_Write('e');
-//    SPI2_Write('l');
-//    SPI2_Write('l');
-//    SPI2_Write('o');
-//    SPI2_Write('!');
-//    /* Read page */
-    _CS1_OFF();
-//    SPI2_Write(0x03); // Read
-//    SPI2_Write(0x01); // Add[0]
-//    SPI2_Write(0x00); // Add[1]
-//    SPI2_Write(0x00); // Add[2]
-//    _CS1_ON();
-    SPI1_Write(0xAB);
-    SPI1_Write(0);
-    SPI1_Write(0);
-    SPI1_Write(0);
-    char myData;
-    while (1) {
-        SPI1_Write(0);
-        myData = SPI1_Read();
-    }
+    Handle_SPI(0xAB, &output);
+    Handle_SPI(0, &output);
+    Handle_SPI(0, &output);
+    Handle_SPI(0, &output);
+     _CS1_OFF();
     return (0);
 }
