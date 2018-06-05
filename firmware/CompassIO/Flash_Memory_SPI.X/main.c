@@ -25,6 +25,7 @@
 
 #define SPI_BAUD_RATE 1
 typedef unsigned char u8;
+typedef unsigned short u16;
 typedef unsigned long u32;
 typedef long s32;
 
@@ -32,6 +33,24 @@ typedef long s32;
 
 #define UART_BAUD_RATE ((PBCLK/9600/16)-1)
 
+
+void Init_Delay()
+{
+  T3CON = 0;               // 0 on every bit, (timer stop, basic config)
+  TMR3 = 2;                // Clean the timer register
+  IFS0bits.T3IF = 0;       // Clear interrupt status flag
+  T3CONbits.TCKPS = 0b111; // Set scaler 1:256
+  PR3 = PBCLK/256/1000;    // Setup the period
+  T3CONbits.ON = 1;
+}
+
+void delayms(u32 ms) {
+    while (ms)
+	if (IFS0bits.T3IF == 1) {
+	    IFS0bits.T3IF = 0;
+	    ms--;
+	}
+}
 /*
  * 
  */
@@ -182,6 +201,65 @@ unsigned char SPI2_Read()
 #define FM_WRITE_ENABLE 0x06
 #define FM_PAGE_PROGRAM 0x02
 #define FM_READ 0x03
+#define FM_STATUS_REGISTER_READ 0x05
+#define FM_ERASE_SECTOR 0xD8
+
+void send_addr(u32 addr)
+{
+    //ft_putnbr_base((addr >> 16) & 0xFF, 16);
+   // ft_putnbr_base((addr >> 8) & 0xFF, 16);
+    //ft_putnbr_base(addr & 0xFF, 16);
+    //ft_putstr("\n\r");
+    u8 output;
+
+    Handle_SPI((addr >> 16) & 0xFF, &output);
+    Handle_SPI((addr >> 8) & 0xFF, &output);
+    Handle_SPI(addr & 0xFF, &output);
+}
+
+void erase_sector(u32 addr)
+{
+    u8 output;
+
+    _CS1_ON();
+    Handle_SPI(FM_ERASE_SECTOR, &output);
+    send_addr(addr);
+    _CS1_OFF();
+}
+
+void write_data(u32 addr, u8 *data, u32 size)
+{
+    u32 i = 0;
+    u8 output;
+
+    _CS1_ON();
+    Handle_SPI(FM_WRITE_ENABLE, &output);
+    Handle_SPI(FM_PAGE_PROGRAM, &output);
+    send_addr(addr);
+    while (i < size)
+    {
+	Handle_SPI(data[i], &output);
+        i++;
+    }
+    _CS1_OFF();
+}
+
+void read_data(u32 addr, u32 size)
+{
+    u32 i = 0;
+    u8 output;
+
+    _CS1_ON();
+    Handle_SPI(FM_READ, &output);
+    send_addr(addr);
+    while(i < size)
+    {
+        Handle_SPI(0x00, &output);
+        ft_putbinary(output);
+        i++;
+    }
+    _CS1_OFF();
+}
 
 int main()
 {
@@ -193,55 +271,46 @@ int main()
 	SPI2CONbits.CKP = 0;
     SPI2CONbits.ON = 1;
     TRISDbits.TRISD5 = 0; // writeable
-    unsigned char output;
-	_CS1_OFF();
-    _CS1_ON();
-/*	Read JEDECID
-    Handle_SPI(FM_JEDECID, &output);
-    Handle_SPI(0, &output);
-	ft_putnbr_base(output, 16);
-    Handle_SPI(0, &output);
-	ft_putnbr_base(output, 16);
-    Handle_SPI(0, &output);
-	ft_putnbr_base(output, 16);
-	Handle_SPI(0, &output);
-	ft_putnbr_base(output, 16);
-	Read ID
-    Handle_SPI(FM_ID, &output);
-    Handle_SPI(0, &output);
-    Handle_SPI(0, &output);
-    Handle_SPI(0, &output);
-	Handle_SPI(0, &output);
-	ft_putnbr_base(output, 16);*/
-	/* Write */
-//	Handle_SPI(FM_WRITE_ENABLE, &output);
-//	Handle_SPI(FM_PAGE_PROGRAM, &output);
-//	Handle_SPI(0x02, &output);
-//	Handle_SPI(0x0, &output);
-//	Handle_SPI(0x0, &output);
-//	Handle_SPI('H', &output);
-//	Handle_SPI('e', &output);
-//	Handle_SPI('l', &output);
-//	Handle_SPI('l', &output);
-//	Handle_SPI('o', &output);
-//	Handle_SPI('!', &output);
-//	_CS1_OFF();
-//    _CS1_ON();
-	/* Read */
-	Handle_SPI(FM_READ, &output);
-	Handle_SPI(0x01, &output);
-	Handle_SPI(0x0, &output);
-	Handle_SPI(0x0, &output);
-	Handle_SPI(0x0, &output);
-	UART2_Send_Data_Byte(output);
-	Handle_SPI(0x0, &output);
-	UART2_Send_Data_Byte(output);
-	Handle_SPI(0x0, &output);
-	UART2_Send_Data_Byte(output);
-	Handle_SPI(0x0, &output);
-	UART2_Send_Data_Byte(output);
-	Handle_SPI(0x0, &output);
-	UART2_Send_Data_Byte(output);
+
+    Init_Delay();
+
+    ft_putstr("Yes!\n\r");
     _CS1_OFF();
+/*	Read JEDECID */
+//    Handle_SPI(FM_JEDECID, &output);
+//    Handle_SPI(0, &output);
+//	ft_putnbr_base(output, 16);
+//    Handle_SPI(0, &output);
+//	ft_putnbr_base(output, 16);
+//    Handle_SPI(0, &output);
+//	ft_putnbr_base(output, 16);
+//	Handle_SPI(0, &output);
+//	ft_putnbr_base(output, 16);
+/* Read ID */
+//    Handle_SPI(FM_ID, &output);
+//    Handle_SPI(0, &output);
+//    Handle_SPI(0, &output);
+//    Handle_SPI(0, &output);
+//    Handle_SPI(0, &output);
+//    ft_putnbr_base(output, 16);
+    erase_sector(0x05f000);
+    delayms(85);
+	/* Write */
+                                               write_data(0x05f000, "hello", 5);
+                                               delayms(4);
+//        u32 i = 48;
+//        while (i < 0x7FF)
+//        {
+//            Handle_SPI(0, &output);
+//            i += 8;
+//        }
+//    _CS1_OFF();
+//    _CS1_ON();
+    /* Read */
+                                                read_data(0x05f000, 10);
+    /* Read status register */
+//    Handle_SPI(FM_STATUS_REGISTER_READ, &output);
+//    Handle_SPI(0x0, &output);
+//    ft_putnbr_base(output, 16);
     return (0);
 }
