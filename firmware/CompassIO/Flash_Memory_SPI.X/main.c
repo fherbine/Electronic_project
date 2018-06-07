@@ -207,10 +207,6 @@ unsigned char SPI2_Read()
 
 void send_addr(u32 addr)
 {
-    //ft_putnbr_base((addr >> 16) & 0xFF, 16);
-   // ft_putnbr_base((addr >> 8) & 0xFF, 16);
-    //ft_putnbr_base(addr & 0xFF, 16);
-    //ft_putstr("\n\r");
     u8 output;
 
     Handle_SPI((addr >> 16) & 0xFF, &output);
@@ -224,6 +220,9 @@ void erase_sector(u32 addr)
 
     _CS1_ON();
     Handle_SPI(FM_WRITE_ENABLE, &output);
+    _CS1_OFF();
+    delayms(100);
+    _CS1_ON();
     Handle_SPI(FM_ERASE_SECTOR, &output);
     send_addr(addr);
     _CS1_OFF();
@@ -234,8 +233,13 @@ void write_data(u32 addr, u8 *data, u32 size)
     u32 i = 0;
     u8 output;
 
+    erase_sector(addr);
+    delayms(200);
     _CS1_ON();
     Handle_SPI(FM_WRITE_ENABLE, &output);
+    _CS1_OFF();
+    delayms(100);
+    _CS1_ON();
     Handle_SPI(FM_PAGE_PROGRAM, &output);
     send_addr(addr);
     while (i < size)
@@ -257,7 +261,8 @@ void read_data(u32 addr, u32 size)
     while(i < size)
     {
         Handle_SPI(0x00, &output);
-        ft_putbinary(output);
+        if (output <= 127)
+            UART2_Send_Data_Byte(output);
         i++;
     }
     _CS1_OFF();
@@ -297,38 +302,55 @@ void read_status_register()
     _CS1_ON();
     u8 output;
     Handle_SPI(FM_WRITE_ENABLE, &output);
+    _CS1_OFF();
+    delayms(100);
+    _CS1_ON();
     Handle_SPI(FM_STATUS_REGISTER_READ, &output);
-    Handle_SPI(0x0, &output);
+   // Handle_SPI(0x0, &output);
     ft_putnbr_base(output, 16);
     Handle_SPI(FM_WRITE_DISABLE, &output);
+    _CS1_OFF();
+    delayms(100);
+    _CS1_ON();
     Handle_SPI(FM_STATUS_REGISTER_READ, &output);
     Handle_SPI(0x0, &output);
     ft_putnbr_base(output, 16);
     _CS1_OFF();
 }
 
-int main()
+void Init_SPI2()
 {
-	UART2_Init(0, 0, 3);
-//    SPI1CON = 0x8220;
     SPI2BRG = 127; // Set baud rate
     SPI2CONbits.MSTEN = 1; // MSTEN is to enable master mode
-	SPI2CONbits.CKE = 1;
-	SPI2CONbits.CKP = 0;
+    SPI2CONbits.CKE = 1;
+    SPI2CONbits.CKP = 0;
     SPI2CONbits.ON = 1;
     TRISDbits.TRISD5 = 0; // writeable
+}
 
+int main()
+{
+    UART2_Init(0, 0, 3);
+    Init_SPI2();
     Init_Delay();
 
+    delayms(100);
     ft_putstr("Yes!\n\r");
     _CS1_OFF();
-    read_id();
-//    erase_sector(0x05f000);
-//    delayms(85);
-//                                               write_data(0x05f000, "hello", 5);
-//                                               delayms(4);
-//                                               read_data(0x05f000, 10);
+//    read_id();
+    read_data(0x030000, 10);
+    delayms(85);
+    ft_putstr("-------------------\n\r");
+    erase_sector(0x030000);
+    delayms(200);
+    read_data(0x030000, 10);
+    delayms(85);
+    ft_putstr("-------------------\n\r");
+    write_data(0x030000, "Hello\0", 6);
+    delayms(85);
+    read_data(0x030000, 10);
+    ft_putstr("-------------------\n\r");
     /* Read status register */
-//    read_status_register();
+    read_status_register();
     return (0);
 }
