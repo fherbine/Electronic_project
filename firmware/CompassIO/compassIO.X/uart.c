@@ -8,15 +8,8 @@
 #include "types.h"
 
 /* UART2 */
-void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
+void UART2_Int()
 {
-    if (!TRX_Mode) {
-	return;
-    }
-    U2BRG = UART_BAUD_RATE;
-    U2MODEbits.PDSEL = parityDataBits;
-    U2MODEbits.STSEL = stopBits;
-
 	/* Set priorities */
 	IPC8bits.U2IP = 1;
 	IPC8bits.U2IS = 0;
@@ -32,10 +25,20 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
 	/* Enable transmit/reception interrupt */
 	U2STAbits.UTXISEL = 1;
 	U2STAbits.URXISEL = 1;
+}
 
+void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
+{
+    if (!TRX_Mode) {
+	return;
+    }
+    U2BRG = UART_BAUD_RATE;
+    U2MODEbits.PDSEL = parityDataBits;
+    U2MODEbits.STSEL = stopBits;
+	UART2_Int();
     U2STAbits.URXEN = TRX_Mode != 1; // Enable reception
     U2MODEbits.ON = 1; // Enable UART2 Module
-    U2STAbits.UTXEN = TRX_Mode & 1; // Enable transmission and set UxTXIF (Int)
+    U2STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
 }
 
 void UART2_Send_Data_Byte(u8 data)
@@ -50,13 +53,12 @@ u8 UART2_Send_String(const char *string, u32 size)
 	return (-1);
     u32 i;
     for (i = 0; i < size; i++)
-	UART2_Send_Data_Byte(string[i]);
+		UART2_Send_Data_Byte(string[i]);
     return (0);
 }
 
 u8 UART2_Get_Data_Byte()
 {
-    while (!U2STAbits.URXDA); // The buffer U2RXREG contains data - Can be handled with interrupt
     return (U2RXREG); // Return the FIFO data
 }
 
