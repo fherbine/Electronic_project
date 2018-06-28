@@ -278,6 +278,10 @@ DocumentUniqueId=ATFTABDD
 DocumentPath=Project Outputs for CompassIO_Project\BOM\Bill of Materials-CompassIO_Project.xlsx
 DItemRevisionGUID=
 
+[GeneratedDocument2]
+DocumentPath=Project Outputs for CompassIO_Project\Design Rule Check - PCB2.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Default Configuration
 ParameterCount=0
