@@ -28,7 +28,7 @@ PowerPortNamesTakePriority=0
 PushECOToAnnotationFile=1
 DItemRevisionGUID=
 ReportSuppressedErrorsInMessages=0
-OutputPath=
+OutputPath=Project Outputs for CompassIO_Project
 LogFolderPath=
 ManagedProjectGUID=
 
@@ -274,12 +274,109 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=ATFTABDD
 
+[Document15]
+DocumentPath=CAMtastic1.Cam
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
 [GeneratedDocument1]
 DocumentPath=Project Outputs for CompassIO_Project\BOM\Bill of Materials-CompassIO_Project.xlsx
 DItemRevisionGUID=
 
 [GeneratedDocument2]
 DocumentPath=Project Outputs for CompassIO_Project\Design Rule Check - PCB2.html
+DItemRevisionGUID=
+
+[GeneratedDocument3]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.1
+DItemRevisionGUID=
+
+[GeneratedDocument4]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.EXTREP
+DItemRevisionGUID=
+
+[GeneratedDocument5]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GBL
+DItemRevisionGUID=
+
+[GeneratedDocument6]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GBO
+DItemRevisionGUID=
+
+[GeneratedDocument7]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GBP
+DItemRevisionGUID=
+
+[GeneratedDocument8]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GBS
+DItemRevisionGUID=
+
+[GeneratedDocument9]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GD1
+DItemRevisionGUID=
+
+[GeneratedDocument10]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GKO
+DItemRevisionGUID=
+
+[GeneratedDocument11]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GM1
+DItemRevisionGUID=
+
+[GeneratedDocument12]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GM3
+DItemRevisionGUID=
+
+[GeneratedDocument13]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GM15
+DItemRevisionGUID=
+
+[GeneratedDocument14]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GML
+DItemRevisionGUID=
+
+[GeneratedDocument15]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GPB
+DItemRevisionGUID=
+
+[GeneratedDocument16]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GPT
+DItemRevisionGUID=
+
+[GeneratedDocument17]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GTL
+DItemRevisionGUID=
+
+[GeneratedDocument18]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GTO
+DItemRevisionGUID=
+
+[GeneratedDocument19]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GTP
+DItemRevisionGUID=
+
+[GeneratedDocument20]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.GTS
+DItemRevisionGUID=
+
+[GeneratedDocument21]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.REP
+DItemRevisionGUID=
+
+[GeneratedDocument22]
+DocumentPath=Project Outputs for CompassIO_Project\Gerber\PCB2.RUL
 DItemRevisionGUID=
 
 [Configuration1]
@@ -293,7 +390,7 @@ GenerateBOM=1
 OutputJobsCount=0
 
 [Generic_EDE]
-OutputDir=
+OutputDir=Project Outputs for CompassIO_Project
 
 [OutputGroup1]
 Name=Netlist Outputs
@@ -631,6 +728,8 @@ OutputName5=Gerber Files
 OutputDocumentPath5=
 OutputVariantName5=[No Variations]
 OutputDefault5=0
+Configuration5_Name1=OutputConfigurationParameter1
+Configuration5_Item1=AddToAllLayerClasses.Set= |AddToAllPlots.Set=SerializeLayerHash.Version~2,ClassName~TLayerToBoolean|CentrePlots=False|DrillDrawingSymbol=GraphicsSymbol|DrillDrawingSymbolSize=500000|EmbeddedApertures=True|FilmBorderSize=10000000|FilmXSize=200000000|FilmYSize=160000000|FlashAllFills=False|FlashPadShapes=True|G54OnApertureChange=False|GenerateDRCRulesFile=True|GenerateReliefShapes=True|GerberUnit=Imperial|IncludeUnconnectedMidLayerPads=False|LayerClassesMirror.Set= |LayerClassesPlot.Set= |LeadingAndTrailingZeroesMode=SuppressLeadingZeroes|MaxApertureSize=2500000|MinusApertureTolerance=50|Mirror.Set=SerializeLayerHash.Version~2,ClassName~TLayerToBoolean|MirrorDrillDrawingPlots=False|MirrorDrillGuidePlots=False|NoRegularPolygons=True|NumberOfDecimals=5|OptimizeChangeLocationCommands=True|OriginPosition=Relative|Panelize=False|Plot.Set=SerializeLayerHash.Version~2,ClassName~TLayerToBoolean|PlotPositivePlaneLayers=False|PlotUsedDrillDrawingLayerPairs=False|PlotUsedDrillGuideLayerPairs=False|PlusApertureTolerance=50|Record=GerberView|SoftwareArcs=False|Sorted=False
 OutputType6=Mask
 OutputName6=Solder/Paste Mask Prints
 OutputDocumentPath6=

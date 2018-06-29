@@ -1,14 +1,33 @@
 Project Outputs Generation Report
 ---------------------------------
-Start Output Generation At 6:43:50 PM On 5/4/2018
+Start Output Generation At 7:13:42 PM On 6/29/2018
 
-Output: Bill of Materials
-Type  : BOM
-From  : Variant [[No Variations]] of Project [CompassIO_Project.PrjPcb]
-   Generated File[Bill of Materials-CompassIO_Project.xlsx]
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of PCB Document [PCB2.PcbDoc]
+   Generated File[PCB2.GTL]
+   Generated File[PCB2.GBL]
+   Generated File[PCB2.GPB]
+   Generated File[PCB2.GPT]
+   Generated File[PCB2.GTO]
+   Generated File[PCB2.GTP]
+   Generated File[PCB2.GTS]
+   Generated File[PCB2.GBS]
+   Generated File[PCB2.GBP]
+   Generated File[PCB2.GBO]
+   Generated File[PCB2.GKO]
+   Generated File[PCB2.GM1]
+   Generated File[PCB2.GM3]
+   Generated File[PCB2.GM15]
+   Generated File[PCB2.GML]
+   Generated File[PCB2.1]
+   Generated File[PCB2.GD1]
+   Generated File[PCB2.RUL]
+   Generated File[PCB2.EXTREP]
+   Generated File[PCB2.REP]
 
 
-Files Generated   : 1
+Files Generated   : 20
 Documents Printed : 0
 
-Finished Output Generation At 6:44:35 PM On 5/4/2018
+Finished Output Generation At 7:13:47 PM On 6/29/2018
