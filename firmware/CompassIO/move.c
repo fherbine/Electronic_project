@@ -30,6 +30,9 @@ unsigned long int		ft_strlen(char *s)
 #define NMEA_GPRMC_LATITUDE 2
 #define NMEA_GPRMC_LONGITUDE 4
 
+// NMEA
+// Latitude -> DDmm.mmmm
+// Longitude -> DDDmm.mmmm
 void parse_nmea_gps(char *data)
 {
   int size = ft_strlen(data);
@@ -54,8 +57,8 @@ void parse_nmea_gps(char *data)
 						}
 						degrees = (data[i+1] - '0') * 10 + (data[i+2] - '0');
 						min = (data[i+3] - '0') * 10 + (data[i+4] - '0');
-						sec = (data[i+6] - '0') * 1000 + (data[i+7] - '0') * 100 + (data[i+8] - '0') * 10 + (data[i+9] - '0');
-						lat = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0 / 100.0;
+						sec = ((data[i+6] - '0') * 1000 + (data[i+7] - '0') * 100 + (data[i+8] - '0') * 10 + (data[i+9] - '0')) * 60.0 / 10000.0;
+						lat = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0;
 						i += 9;
 					} else if (separatorCount == NMEA_GPRMC_LONGITUDE) {
 						if (i + 10 + 1 > size) {
@@ -63,8 +66,8 @@ void parse_nmea_gps(char *data)
 						}
 						degrees = (data[i+1] - '0') * 100 + (data[i+2] - '0') * 10 + (data[i+3] - '0');
 						min = (data[i+4] - '0') * 10 + (data[i+5] - '0');
-						sec = (data[i+7] - '0') * 1000 + (data[i+8] - '0') * 100 + (data[i+9] - '0') * 10 + (data[i+10] - '0');
-						lon = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0 / 100.0;
+						sec = ((data[i+7] - '0') * 1000 + (data[i+8] - '0') * 100 + (data[i+9] - '0') * 10 + (data[i+10] - '0')) * 60 / 10000;
+						lon = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0;
 						i += 10;
 					}
 					separatorCount++;
@@ -98,7 +101,7 @@ short get_direction(double lat1, double long1, double lat2, double long2)
 
 int main()
 {
-  printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
+  //printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
   parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,00219.1216,E,1.74,74.12,010618,,,A*54\n"); //48.896118°N 2.318693°E https://rl.se/gprmc
   return (0);
 }
