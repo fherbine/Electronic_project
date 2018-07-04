@@ -11,22 +11,53 @@ unsigned long int		ft_strlen(char *s)
 	return (s-str);
 }
 
+#define NMEA_GPRMC_LATITUDE 2
+#define NMEA_GPRMC_LONGITUDE 4
+
 void parse_nmea_gps(char *data)
 {
   int size = ft_strlen(data);
+	char separatorCount = 0;
+	double lat = 0.0;
+	double lon = 0.0;
   if (size > 6)
   {
     if (data[0] == '$' && data[1] == 'G' && data[2] == 'P' && data[3] == 'R' &&
     data[4] == 'M' && data[5] == 'C')
     {
       int i = 0;
+			int degrees = 0;
+			int min = 0;
+			int sec = 0;
       while (i < size && data[i] != '\n')
       {
-        printf("%c", data[i]);
+				if (data[i] == ',') {
+					if (separatorCount == NMEA_GPRMC_LATITUDE) {
+						if (i + 9 + 1 > size) {
+							return;
+						}
+						degrees = (data[i+1] - '0') * 10 + (data[i+2] - '0');
+						min = (data[i+3] - '0') * 10 + (data[i+4] - '0');
+						sec = (data[i+6] - '0') * 1000 + (data[i+7] - '0') * 100 + (data[i+8] - '0') * 10 + (data[i+9] - '0');
+						lat = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0 / 100.0;
+						i += 9;
+					} else if (separatorCount == NMEA_GPRMC_LONGITUDE) {
+						if (i + 10 + 1 > size) {
+							return;
+						}
+						degrees = (data[i+1] - '0') * 100 + (data[i+2] - '0') * 10 + (data[i+3] - '0');
+						min = (data[i+4] - '0') * 10 + (data[i+5] - '0');
+						sec = (data[i+7] - '0') * 1000 + (data[i+8] - '0') * 100 + (data[i+9] - '0') * 10 + (data[i+10] - '0');
+						lon = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0 / 100.0;
+						i += 10;
+					}
+					separatorCount++;
+				}
         i++;
       }
     }
   }
+	printf("Latitude: %f - Longitude: %f\n", lat, lon);
 }
 
 short get_direction(double lat1, double long1, double lat2, double long2)
@@ -52,7 +83,9 @@ short get_direction(double lat1, double long1, double lat2, double long2)
 int main()
 {
   //printf("%d\n", get_direction(48.89666249816737, 2.3183298110961914, 50.040144614786946, 2.341561138008501));
-  parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,00219.1216,E,1.74,74.12,010618,,,A*54\n");
+  parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,17019.9999,E,1.74,74.12,010618,,,A*54\n");
+	parse_nmea_gps("$GPRMC,164933.270,A,4253.7071,N,02219.1216,E,1.74,74.12,010618,,,A*54\n");
+	parse_nmea_gps("$GPRMC,164933.270,A,4823.7571,N,00319.0016,E,1.74,74.12,010618,,,A*54\n");
   return (0);
 }
 
