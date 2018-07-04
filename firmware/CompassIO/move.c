@@ -4,6 +4,22 @@
 #define toRad(angle) ((angle) * M_PI / 180)
 #define toDeg(angle) ((angle) / M_PI * 180)
 
+#define DISTANCE_KM 6371
+
+double get_distance(double lat1, double long1, double lat2, double long2)
+{
+	return (
+		2 * DISTANCE_KM * asin(
+	    sqrt(
+	      pow(sin(toRad(lat2 - lat1) / 2.0), 2.0) +
+	      cos(toRad(lat1)) *
+	      cos(toRad(lat2)) *
+	      pow(sin(toRad(long2 - long1) / 2.0), 2.0)
+	    )
+	  )
+	);
+}
+
 unsigned long int		ft_strlen(char *s)
 {
 	char *str = s;
@@ -82,7 +98,7 @@ short get_direction(double lat1, double long1, double lat2, double long2)
 
 int main()
 {
-  //printf("%d\n", get_direction(48.89666249816737, 2.3183298110961914, 50.040144614786946, 2.341561138008501));
+  printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
   parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,17019.9999,E,1.74,74.12,010618,,,A*54\n");
 	parse_nmea_gps("$GPRMC,164933.270,A,4253.7071,N,02219.1216,E,1.74,74.12,010618,,,A*54\n");
 	parse_nmea_gps("$GPRMC,164933.270,A,4823.7571,N,00319.0016,E,1.74,74.12,010618,,,A*54\n");
