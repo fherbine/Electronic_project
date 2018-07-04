@@ -27,4 +27,33 @@ short get_direction(double lat1, double long1, double lat2, double long2)
 main()
 {
   printf("%d\n", get_direction(48.89666249816737, 2.3183298110961914, 50.040144614786946, 2.341561138008501));
+//   printf("%d\n", sizeof(double));
+//
+//
+// //send
+//   double lat;
+//   for (char i = 0; i < 8; i++) {
+//     sendchar(lat & 255)
+//     lat >>= 8;
+//   }
+//   double lon;
+//   for (char i = 0; i < 8; i++) {
+//     sendchar(lon & 255)
+//     lon >>= 8;
+//   }
+// //end send
+//
+// //receive
+//   double lat = 0;
+//   for (char i = 0; i < 8; i++) {
+//     char tmp = readchar();
+//     lat |= tmp;
+//     lat <<= 8;
+//   }
+//   double lon = 0;
+//   for (char i = 0; i < 8; i++) {
+//     char tmp = readchar();
+//     lon |= tmp;
+//     lon <<= 8;
+//   }
 }
