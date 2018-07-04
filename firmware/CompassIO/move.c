@@ -99,9 +99,7 @@ short get_direction(double lat1, double long1, double lat2, double long2)
 int main()
 {
   printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
-  parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,17019.9999,E,1.74,74.12,010618,,,A*54\n");
-	parse_nmea_gps("$GPRMC,164933.270,A,4253.7071,N,02219.1216,E,1.74,74.12,010618,,,A*54\n");
-	parse_nmea_gps("$GPRMC,164933.270,A,4823.7571,N,00319.0016,E,1.74,74.12,010618,,,A*54\n");
+  parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,00219.1216,E,1.74,74.12,010618,,,A*54\n"); //48.896118°N 2.318693°E https://rl.se/gprmc
   return (0);
 }
 
