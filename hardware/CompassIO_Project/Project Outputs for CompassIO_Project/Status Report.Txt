@@ -1,14 +1,14 @@
 Project Outputs Generation Report
 ---------------------------------
-Start Output Generation At 7:12:46 PM On 7/2/2018
+Start Output Generation At 8:15:05 PM On 7/5/2018
 
-Output: Bill of Materials
-Type  : BOM
-From  : Variant [[No Variations]] of Project [CompassIO_Project.PrjPcb]
-   Generated File[Bill of Materials-CompassIO_Project.xlsx]
+Output: Generates pick and place files
+Type  : Pick Place
+From  : Variant [[No Variations]] of PCB Document [PCB2.PcbDoc]
+   Generated File[Pick Place for PCB2.txt]
 
 
 Files Generated   : 1
 Documents Printed : 0
 
-Finished Output Generation At 7:12:56 PM On 7/2/2018
+Finished Output Generation At 8:15:06 PM On 7/5/2018
