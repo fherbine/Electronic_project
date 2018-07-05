@@ -1,14 +1,13 @@
-Project Outputs Generation Report
----------------------------------
-Start Output Generation At 8:15:05 PM On 7/5/2018
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [PCB2.PcbDoc]
+   Generated File[PCB2.TXT]
+   Generated File[PCB2-BoardEdgeRout.TXT]
+   Generated File[PCB2.LDP]
+   Generated File[PCB2.DRR]
 
-Output: Generates pick and place files
-Type  : Pick Place
-From  : Variant [[No Variations]] of PCB Document [PCB2.PcbDoc]
-   Generated File[Pick Place for PCB2.txt]
 
-
-Files Generated   : 1
+Files Generated   : 4
 Documents Printed : 0
 
-Finished Output Generation At 8:15:06 PM On 7/5/2018
+Finished Output Generation At 9:47:00 PM On 7/5/2018
