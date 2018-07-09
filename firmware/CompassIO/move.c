@@ -4,6 +4,24 @@
 #define toRad(angle) ((angle) * M_PI / 180)
 #define toDeg(angle) ((angle) / M_PI * 180)
 
+int		ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	unsigned char *new_s1;
+	unsigned char *new_s2;
+
+	new_s1 = (unsigned char*)s1;
+	new_s2 = (unsigned char*)s2;
+	while ((*new_s1 || *new_s2) && n > 0)
+	{
+		if (*new_s1 != *new_s2)
+			return (*new_s1 - *new_s2);
+		new_s1++;
+		new_s2++;
+		n--;
+	}
+	return (0);
+}
+
 #define DISTANCE_KM 6371
 
 double get_distance(double lat1, double long1, double lat2, double long2)
@@ -22,9 +40,16 @@ double get_distance(double lat1, double long1, double lat2, double long2)
 
 unsigned long int		ft_strlen(char *s)
 {
-	char *str = s;
-	while (*s++);
-	return (s-str);
+	int count;
+
+	count = 0;
+	if (!s)
+		return (0);
+	while (s[count])
+	{
+		count++;
+	}
+	return (count);
 }
 
 #define NMEA_GPRMC_LATITUDE 2
@@ -99,10 +124,67 @@ short get_direction(double lat1, double long1, double lat2, double long2)
   return brng;
 }
 
+double parse_float(char *data)
+{
+	long long offset = 1;
+	long long floatValue = 1;
+	long long result = 0;
+	short neg = 1;
+	int i = ft_strlen(data);
+	printf("%s|%d\n", data, i);
+	while (i)
+	{
+		if (i - 1 == 0 && data[0] == '-')
+		{
+			neg = -1;
+			break;
+		}
+		if (data[i - 1] != '.' && data[i - 1] != '-')
+		{
+			result += (data[i - 1] - '0') * offset;
+			offset *= 10;
+		} else if (data[i - 1] == '.')
+			floatValue = offset;
+		else if (data[i - 1] < '0' && data[i - 1] > '9') // Handle wrong format
+			return (999.999);
+		i--;
+	}
+	printf("(double)(%lld / %lld) * %d\n", result, floatValue, neg);
+	return (((double)result/(double)floatValue) * (double)neg);
+}
+
+// lat xx.xxxxxx\n
+// long xxx.xxxxxx\n
+double parser_gps_bluetooth(char *data)
+{
+	double output = 0.0;
+	if (!ft_strncmp(data, "lat ", 4))
+	{
+		data += 4;
+		output = parse_float(data);
+		if (output < -90 || output > 90) {
+			printf("Wrong latitude data");
+		}
+		// Store data in flash memory
+	} else if (!ft_strncmp(data, "long ", 5))
+	{
+		data += 5;
+		output = parse_float(data);
+		if (output < -180 || output > 180) {
+			printf("Wrong longitude data");
+		}
+		// Store data in flash memory
+	}
+	printf(">%f<\n", output);
+	return (0.0);
+}
+
 int main()
 {
   //printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
   parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,00219.1216,E,1.74,74.12,010618,,,A*54\n"); //48.896118°N 2.318693°E https://rl.se/gprmc
+  parser_gps_bluetooth("lat 85.999999");
+  parser_gps_bluetooth("lat 89.99999");
   return (0);
 }
 
