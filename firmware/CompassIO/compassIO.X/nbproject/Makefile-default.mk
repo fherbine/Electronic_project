@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c utils.c configBits.c delay.c i2c.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c utils.c configBits.c delay.c i2c.c communication.c lib.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/i2c.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/utils.o.d ${OBJECTDIR}/configBits.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/i2c.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/communication.o ${OBJECTDIR}/lib.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/utils.o.d ${OBJECTDIR}/configBits.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/i2c.o.d ${OBJECTDIR}/communication.o.d ${OBJECTDIR}/lib.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/i2c.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/utils.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/i2c.o ${OBJECTDIR}/communication.o ${OBJECTDIR}/lib.o
 
 # Source Files
-SOURCEFILES=main.c uart.c utils.c configBits.c delay.c i2c.c
+SOURCEFILES=main.c uart.c utils.c configBits.c delay.c i2c.c communication.c lib.c
 
 
 CFLAGS=
@@ -130,6 +130,18 @@ ${OBJECTDIR}/i2c.o: i2c.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/i2c.o 
 	@${FIXDEPS} "${OBJECTDIR}/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/i2c.o.d" -o ${OBJECTDIR}/i2c.o i2c.c   
 	
+${OBJECTDIR}/communication.o: communication.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/communication.o.d 
+	@${RM} ${OBJECTDIR}/communication.o 
+	@${FIXDEPS} "${OBJECTDIR}/communication.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/communication.o.d" -o ${OBJECTDIR}/communication.o communication.c   
+	
+${OBJECTDIR}/lib.o: lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lib.o.d 
+	@${RM} ${OBJECTDIR}/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lib.o.d" -o ${OBJECTDIR}/lib.o lib.c   
+	
 else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -166,6 +178,18 @@ ${OBJECTDIR}/i2c.o: i2c.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/i2c.o.d 
 	@${RM} ${OBJECTDIR}/i2c.o 
 	@${FIXDEPS} "${OBJECTDIR}/i2c.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/i2c.o.d" -o ${OBJECTDIR}/i2c.o i2c.c   
+	
+${OBJECTDIR}/communication.o: communication.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/communication.o.d 
+	@${RM} ${OBJECTDIR}/communication.o 
+	@${FIXDEPS} "${OBJECTDIR}/communication.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/communication.o.d" -o ${OBJECTDIR}/communication.o communication.c   
+	
+${OBJECTDIR}/lib.o: lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lib.o.d 
+	@${RM} ${OBJECTDIR}/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lib.o.d" -o ${OBJECTDIR}/lib.o lib.c   
 	
 endif
 

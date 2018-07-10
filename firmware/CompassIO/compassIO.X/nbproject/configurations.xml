@@ -19,6 +19,8 @@
       <itemPath>configBits.c</itemPath>
       <itemPath>delay.c</itemPath>
       <itemPath>i2c.c</itemPath>
+      <itemPath>communication.c</itemPath>
+      <itemPath>lib.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

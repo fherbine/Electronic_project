@@ -7,12 +7,12 @@
 
 #include "types.h"
 
-u32		ft_strlen(const char *s)
-{
-	char *str = s;
-	while (*s++);
-	return (s-str);
-}
+//u32		ft_strlen(const char *s)
+//{
+//	char *str = s;
+//	while (*s++);
+//	return (s-str);
+//}
 
 void ft_putstr(char *string)
 {

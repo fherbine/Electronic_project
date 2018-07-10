@@ -34,6 +34,13 @@ typedef long s32;
 
 /* UART */
 
+#define U1E_IFS1 BITS(26)
+#define U1E_IEC1 BITS(26)
+#define U1RX_IFS1 BITS(27)
+#define U1RX_IEC1 BITS(27)
+#define U1TX_IFS1 BITS(28)
+#define U1TX_IEC1 BITS(28)
+
 #define U2E_IFS1 BITS(8)
 #define U2E_IEC1 BITS(8)
 #define U2RX_IFS1 BITS(9)
@@ -76,7 +83,6 @@ typedef long s32;
 #define MASTER (ON_BIT | MSTEN_BIT)
 #define SLAVE ON_BIT
 
-u32     ft_strlen(const char *s);
 void    ft_putnbr_base(s32 nb, int base);
 void    ft_putbinary(u32 nb);
 void    ft_putendl(char *string);
