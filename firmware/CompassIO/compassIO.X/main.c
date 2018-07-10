@@ -12,7 +12,7 @@ char buffBT[500];
 #define NEWLINE 13
 
 /* UART -> Bluetooth/GPS */
-void __ISR(_UART1_VECTOR, IPL1SRS) UART1Handler(void) {
+void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
@@ -37,7 +37,7 @@ void __ISR(_UART1_VECTOR, IPL1SRS) UART1Handler(void) {
 }
 
 /* UART -> GPS/Debug */
-void __ISR(_UART2_VECTOR, IPL1SRS) UART2Handler(void) {
+void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
@@ -59,6 +59,7 @@ void main()
 	UART2_Init(_8N, 0, UART_RX_TX_ON);
 	UART1_Init(_8N, 0, UART_RX_TX_ON);
 	Init_Delay();
+	init_servo();
 	
 	INTCONbits.MVEC = 1; // Enable multi interrupts
 	__builtin_enable_interrupts();

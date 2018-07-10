@@ -21,6 +21,7 @@
       <itemPath>i2c.c</itemPath>
       <itemPath>communication.c</itemPath>
       <itemPath>lib.c</itemPath>
+      <itemPath>servomotor.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
