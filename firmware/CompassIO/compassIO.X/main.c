@@ -16,15 +16,16 @@ void __ISR(_UART1_VECTOR, IPL1SRS) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
+		// Store input in buffer
 		u32 dest_len = ft_strlen(buffBT);
 		buffBT[dest_len] = UART1_Get_Data_Byte();
-		UART2_Send_Data_Byte(buffBT[dest_len]);
+//		UART2_Send_Data_Byte(buffBT[dest_len]);
 		buffBT[dest_len + 1] = '\0';
 		if (buffBT[dest_len] == NEWLINE) {
+			buffBT[dest_len] = '\0';
 			parser_gps_bluetooth(buffBT);
 			ft_bzero(buffBT, 500);
 		}
-//		ft_putnbr_base(buffBT[dest_len], 10);
 		LATFbits.LATF1 ^= 1;
 	}
 	// Transmit
