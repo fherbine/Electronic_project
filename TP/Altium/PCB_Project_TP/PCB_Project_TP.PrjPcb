@@ -28,7 +28,7 @@ PowerPortNamesTakePriority=0
 PushECOToAnnotationFile=1
 DItemRevisionGUID=
 ReportSuppressedErrorsInMessages=0
-OutputPath=Project Outputs for PCB_Project_TP
+OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 
@@ -190,7 +190,7 @@ GenerateClassCluster=0
 DocumentUniqueId=GRVXHAHN
 
 [Document10]
-DocumentPath=Z:\Documents\vomnes\TP\Altium\PCB_Project_TP\CAMtastic_true.cam
+DocumentPath=CAMtastic_true.cam
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -309,7 +309,7 @@ GenerateBOM=1
 OutputJobsCount=0
 
 [Generic_EDE]
-OutputDir=Project Outputs for PCB_Project_TP
+OutputDir=
 
 [OutputGroup1]
 Name=Netlist Outputs
