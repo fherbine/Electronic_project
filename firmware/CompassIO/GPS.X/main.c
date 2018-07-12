@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.c
  * Author: bocal
  *
@@ -69,63 +69,81 @@ void __ISR(_TIMER_2_VECTOR, IPL1) Timer2Handler(void) {
 	IFS0bits.T2IF = 0;
 }
 
-void *ft_bzero(void *s, u32 size)
-{
-    char *str;
-
-    str = (char*)s;
-    while (size--)
-    {
-	*str = 0;
-	str++;
-    }
-    return (s);
-}
-
-static s32	ft_count(s32 nb, char base)
-{
-	int count;
-
-	count = 0;
-	if (nb == 0)
-		return (1);
-	while (nb > 0)
+void HandleGPS(void) {
+	// Store input in buffer
+	u32 dest_len = ft_strlen(buffBT);
+	buffGPS[dest_len] = UART1_Get_Data_Byte();
+	UART2_Send_Data_Byte(buffGPS[dest_len]);
+	buffBT[dest_len + 1] = '\0';
+	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
 	{
-		nb = nb / base;
-		count++;
+		ft_putstr("NL");
+		dest_len = 0;
+		ft_bzero(buffGPS, 500);
 	}
-	return (count);
+	LATFbits.LATF1 ^= 1;
 }
 
-void	        ft_putnbr_base(s32 nb, int base)
-{
-	s32	n;
-	int	sign_len[2];
-	char	str[32];
-
-	n = nb;
-	sign_len[1] = 0;
-	if (n < 0)
-		n = -n;
-	if (n < 0 && base == 10)
-		sign_len[1] = 1;
-	ft_bzero(str, 32);
-	sign_len[0] = ft_count(n, base) + sign_len[1];
-	sign_len[0]--;
-	if (nb == 0)
-		str[sign_len[0]] = '0';
-	while (n)
-	{
-		(n % base <= 9) ? (str[sign_len[0]--] = (n % base) + '0') :
-		(str[sign_len[0]--] = (n % base) + 'A' - 10);
-		n /= base;
+/* UART -> Bluetooth */
+void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
+	// Reception
+	if (IFS0bits.U1RXIF) {
+		IFS0CLR = U1RX_IFS1;
+		HandleGPS();
 	}
-	if (sign_len[1] == 1)
-		str[sign_len[0]] = '-';
-	ft_putstr(str);
+	// Transmit
+	if (IFS0bits.U1TXIF)
+		IFS0CLR = U1TX_IFS1;
+	// Error
+	if (IFS0bits.U1EIF)
+		IFS0CLR = U1E_IFS1;
 }
 
-#define NEWLINE '\n'
+/* UART -> GPS/Debug */
+void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
+	// Reception
+	if (IFS1bits.U2RXIF) {
+		IFS1CLR = U2RX_IFS1;
+		UART1_Send_Data_Byte(UART2_Get_Data_Byte());
+		LATFbits.LATF1 ^= 1;
+	}
+	// Transmit
+	if (IFS1bits.U2TXIF)
+		IFS1CLR = U2TX_IFS1;
+	// Error
+	if (IFS1bits.U2EIF)
+		IFS1CLR = U2E_IFS1;
+}
+
+//ft_putstr(buffGPS[dest_len]);
+//	ft_putnbr_base(dest_len, 10);
+//buffGPS[dest_len + 1] = '\0';
+//if (FALSE && dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10) {
+//		buffGPS[dest_len] = '\0';
+//		buffGPS[dest_len - 1] = '\0';
+//		dest_len--;
+//		res = parse_nmea_gps(buffGPS, &coord);
+//		ft_putstr("res : ");
+//		ft_putnbr_base(res, 10);
+//		ft_putstr("lat : ");
+//		ft_putnbr_base(coord.lat, 10);
+//		ft_putstr("long : ");
+//		ft_putnbr_base(coord.lon, 10);
+//		ft_putstr("\n");
+//		ft_bzero(buffGPS, 500);
+//		dest_len = 0;
+//	}
+//	else
+//	{
+//		ft_putstr("NOLINE >> ");
+	//ft_putstr(buffGPS);
+//		ft_putstr("\n");
+//}
+
+int res = -1;
+char buffGPS[500];
+
+t_coord coord;
 
 int main()
 {
@@ -144,10 +162,10 @@ int main()
 	T2CONbits.TCKPS = 0b110; // Set scaler 1:256
 	PR2 = PBCLK/64/1000;    // Setup the period > Periph. Bus Clk (set by user) / scaler > sec | 20ms
 
-    IPC2bits.T2IP = 1; // Set priority
-    IPC2bits.T2IS = 2; // Set subpriority
-    IFS0bits.T2IF = 0; // Clear interrupt status flag
-    IEC0bits.T2IE = 1; // Enable interrupts
+  IPC2bits.T2IP = 1; // Set priority
+  IPC2bits.T2IS = 2; // Set subpriority
+  IFS0bits.T2IF = 0; // Clear interrupt status flag
+  IEC0bits.T2IE = 1; // Enable interrupts
 	T2CONbits.ON = 1;
 
 
@@ -156,62 +174,8 @@ int main()
 	UART1_Init(0, 1, 0b11);
 	__builtin_enable_interrupts();
 
-	int res = -1;
-	char buffGPS[500];
-
-	t_coord coord;
 	coord.lat = 0.0;
 	coord.lon = 0.0;
 	ft_bzero(buffGPS, 500);
-	u32 dest_len = 0;
-	while(1)
-	{
-		if (dest_len >= 499)
-		{
-			dest_len = 0;
-			ft_bzero(buffGPS, 500);
-		}
-		//UART2_Send_Data_Byte(UART1_Get_Data_Byte());
-		// Store input in buffer
-		buffGPS[dest_len] = UART1_Get_Data_Byte();
-		UART2_Send_Data_Byte(buffGPS[dest_len]);
-		//ft_putstr(buffGPS[dest_len]);
-		ft_putstr("<");
-		ft_putnbr_base(dest_len, 10);
-		ft_putstr("-");
-		ft_putnbr_base(buffGPS[dest_len - 1], 10);
-		ft_putstr("-");
-		ft_putnbr_base(buffGPS[dest_len], 10);
-		ft_putstr(">");
-		if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
-		{
-			ft_putstr("NL");
-			dest_len = 0;
-			ft_bzero(buffGPS, 500);
-		}
-	//	ft_putnbr_base(dest_len, 10);
-		//buffGPS[dest_len + 1] = '\0';
-		//if (FALSE && dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10) {
-	//		buffGPS[dest_len] = '\0';
-	//		buffGPS[dest_len - 1] = '\0';
-	//		dest_len--;
-	//		res = parse_nmea_gps(buffGPS, &coord);
-	//		ft_putstr("res : ");
-	//		ft_putnbr_base(res, 10);
-	//		ft_putstr("lat : ");
-	//		ft_putnbr_base(coord.lat, 10);
-	//		ft_putstr("long : ");
-	//		ft_putnbr_base(coord.lon, 10);
-	//		ft_putstr("\n");
-	//		ft_bzero(buffGPS, 500);
-	//		dest_len = 0;
-	//	}
-	//	else
-	//	{
-	//		ft_putstr("NOLINE >> ");
-			//ft_putstr(buffGPS);
-	//		ft_putstr("\n");
-		//}
-		dest_len++;
-	}
+	while(1) ;
 }
