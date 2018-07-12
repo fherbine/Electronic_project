@@ -50,4 +50,10 @@ typedef long s32;
 
 #define BITS(X) (1 << X)
 
+typedef struct	s_coord
+{
+	double		lat;
+	double		lon;
+}				t_coord;
+
 #endif	/* TYPES_H */
