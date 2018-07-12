@@ -11,7 +11,7 @@ char buffBT[500];
 
 #define NEWLINE 13
 
-/* UART -> Bluetooth/GPS */
+/* UART -> Bluetooth */
 void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {

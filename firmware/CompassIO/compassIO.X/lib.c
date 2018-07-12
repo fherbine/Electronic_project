@@ -21,13 +21,20 @@ u32		ft_strlen(char *s)
 	return (count);
 }
 
-char	*ft_strcat(char dest[500], const char c)
+int		ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	size_t		dest_len;
-	size_t		i;
+	unsigned char *new_s1;
+	unsigned char *new_s2;
 
-	dest_len = ft_strlen(dest);
-	dest[dest_len + i] = c;
-	dest[dest_len + i] = '\0';
-	return (dest);
+	new_s1 = (unsigned char*)s1;
+	new_s2 = (unsigned char*)s2;
+	while ((*new_s1 || *new_s2) && n > 0)
+	{
+		if (*new_s1 != *new_s2)
+			return (*new_s1 - *new_s2);
+		new_s1++;
+		new_s2++;
+		n--;
+	}
+	return (0);
 }

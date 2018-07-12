@@ -7,24 +7,6 @@
 
 #include "types.h"
 
-int		ft_strncmp(const char *s1, const char *s2, size_t n)
-{
-	unsigned char *new_s1;
-	unsigned char *new_s2;
-
-	new_s1 = (unsigned char*)s1;
-	new_s2 = (unsigned char*)s2;
-	while ((*new_s1 || *new_s2) && n > 0)
-	{
-		if (*new_s1 != *new_s2)
-			return (*new_s1 - *new_s2);
-		new_s1++;
-		new_s2++;
-		n--;
-	}
-	return (0);
-}
-
 double parse_float(char *data)
 {
 	long long offset = 1;
@@ -32,9 +14,6 @@ double parse_float(char *data)
 	long long result = 0;
 	short neg = 1;
 	int i = ft_strlen(data);
-	ft_putnbr_base(i, 10);
-	ft_putstr("<=>");
-	ft_putendl(data);
 	while (i)
 	{
 		UART2_Send_String(data[i]);
@@ -50,10 +29,7 @@ double parse_float(char *data)
 		} else if (data[i - 1] == '.')
 			floatValue = offset;
 		else if (data[i - 1] < '0' || data[i - 1] > '9') // Handle wrong format
-		{
-			ft_putendl("Error !!");
 			return (999.999);
-		}
 		i--;
 	}
 	return (((double)result/(double)floatValue) * (double)neg);
