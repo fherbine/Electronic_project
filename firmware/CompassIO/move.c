@@ -64,6 +64,7 @@ void parse_nmea_gps(char *data)
 	char separatorCount = 0;
 	double lat = 0.0;
 	double lon = 0.0;
+	printf("%s\n", data);
   if (size > 6)
   {
     if (data[0] == '$' && data[1] == 'G' && data[2] == 'P' && data[3] == 'R' &&
@@ -77,23 +78,31 @@ void parse_nmea_gps(char *data)
       {
 				if (data[i] == ',') {
 					if (separatorCount == NMEA_GPRMC_LATITUDE) {
-						if (i + 9 + 1 > size) {
+						if (i + 9 + 1 > size)
 							return;
+						if (data[i+1] == ',') {
+							//printf("Empty value [1]\n");
+							return; // Empty value
+						} else {
+							degrees = (data[i+1] - '0') * 10 + (data[i+2] - '0');
+							min = (data[i+3] - '0') * 10 + (data[i+4] - '0');
+							sec = ((data[i+6] - '0') * 1000 + (data[i+7] - '0') * 100 + (data[i+8] - '0') * 10 + (data[i+9] - '0')) * 60.0 / 10000.0; // Get secondes from xx.mmmm
+							lat = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0; // Degrees, Minutes and Secondes to Digital degrees
+							i += 9;
 						}
-						degrees = (data[i+1] - '0') * 10 + (data[i+2] - '0');
-						min = (data[i+3] - '0') * 10 + (data[i+4] - '0');
-						sec = ((data[i+6] - '0') * 1000 + (data[i+7] - '0') * 100 + (data[i+8] - '0') * 10 + (data[i+9] - '0')) * 60.0 / 10000.0; // Get secondes from xx.mmmm
-						lat = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0; // Degrees, Minutes and Secondes to Digital degrees
-						i += 9;
 					} else if (separatorCount == NMEA_GPRMC_LONGITUDE) {
-						if (i + 10 + 1 > size) {
+						if (i + 10 + 1 > size)
 							return;
+						if (data[i+1] == ',') {
+							//printf("Empty value [2]\n");
+							return; // Empty value
+						} else {
+							degrees = (data[i+1] - '0') * 100 + (data[i+2] - '0') * 10 + (data[i+3] - '0');
+							min = (data[i+4] - '0') * 10 + (data[i+5] - '0');
+							sec = ((data[i+7] - '0') * 1000 + (data[i+8] - '0') * 100 + (data[i+9] - '0') * 10 + (data[i+10] - '0')) * 60 / 10000; // Get secondes from xx.mmmm
+							lon = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0; // Degrees, Minutes and Secondes to Digital degrees
+							i += 10;
 						}
-						degrees = (data[i+1] - '0') * 100 + (data[i+2] - '0') * 10 + (data[i+3] - '0');
-						min = (data[i+4] - '0') * 10 + (data[i+5] - '0');
-						sec = ((data[i+7] - '0') * 1000 + (data[i+8] - '0') * 100 + (data[i+9] - '0') * 10 + (data[i+10] - '0')) * 60 / 10000; // Get secondes from xx.mmmm
-						lon = (double)degrees + (double)min / 60.0 + (double)sec / 3600.0; // Degrees, Minutes and Secondes to Digital degrees
-						i += 10;
 					}
 					separatorCount++;
 				}
@@ -183,8 +192,9 @@ int main()
 {
   //printf("%f\n", get_distance(48.42133629395918, -4.553162271750807, 48.421042385350674, -4.553355834360332));
   parse_nmea_gps("$GPRMC,164933.270,A,4853.7671,N,00219.1216,E,1.74,74.12,010618,,,A*54\n"); //48.896118°N 2.318693°E https://rl.se/gprmc
-  parser_gps_bluetooth("lat 85.999999");
-  parser_gps_bluetooth("lat 89.99999");
+	parse_nmea_gps("$GPRMC,,,,,,,1.74,74.12,010618,,,A*54\n");
+  // parser_gps_bluetooth("lat 85.999999");
+  // parser_gps_bluetooth("lat 89.99999");
   return (0);
 }
 
