@@ -1,5 +1,10 @@
 #include "types.h"
 
+void ft_putstr(char *string)
+{
+   UART2_Send_String(string, ft_strlen(string));
+}
+
 void *ft_bzero(void *s, u32 size)
 {
     char *str;

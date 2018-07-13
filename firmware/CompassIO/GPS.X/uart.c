@@ -130,8 +130,3 @@
      for (i = 0; i < size; i++)
  	   string[i] = UART2_Get_Data_Byte();
  }
-
-void ft_putstr(char *string)
-{
-   UART2_Send_String(string, ft_strlen(string));
-}

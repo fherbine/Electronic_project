@@ -50,6 +50,20 @@ typedef long s32;
 
 #define BITS(X) (1 << X)
 
+#define U1E_IFS1 BITS(26)
+#define U1E_IEC1 BITS(26)
+#define U1RX_IFS1 BITS(27)
+#define U1RX_IEC1 BITS(27)
+#define U1TX_IFS1 BITS(28)
+#define U1TX_IEC1 BITS(28)
+
+#define U2E_IFS1 BITS(8)
+#define U2E_IEC1 BITS(8)
+#define U2RX_IFS1 BITS(9)
+#define U2RX_IEC1 BITS(9)
+#define U2TX_IFS1 BITS(10)
+#define U2TX_IEC1 BITS(10)
+
 typedef struct	s_coord
 {
 	double		lat;

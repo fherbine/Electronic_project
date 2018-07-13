@@ -17,6 +17,7 @@
       <itemPath>uart.c</itemPath>
       <itemPath>configBits.c</itemPath>
       <itemPath>gps.c</itemPath>
+      <itemPath>lib.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

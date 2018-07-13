@@ -69,7 +69,7 @@ int		parse_nmea_gps(char *data, t_coord *coord)
 						if (i + 9 + 1 > size)
 							return (0);
 						if (data[i+1] == ',') {
-							return (0); // Empty value
+							return (999); // Empty value
 						} else {
 							if (data[i + 1] == '-')
 							{
@@ -86,7 +86,7 @@ int		parse_nmea_gps(char *data, t_coord *coord)
 						if (i + 10 + 1 > size)
 							return (0);
 						if (data[i+1] == ',') {
-							return (0); // Empty value
+							return (999); // Empty value
 						} else {
 							if (data[i + 1] == '-')
 							{

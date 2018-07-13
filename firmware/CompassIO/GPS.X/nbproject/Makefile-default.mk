@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c configBits.c gps.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c uart.c configBits.c gps.c lib.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/gps.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/configBits.o.d ${OBJECTDIR}/gps.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/gps.o ${OBJECTDIR}/lib.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/configBits.o.d ${OBJECTDIR}/gps.o.d ${OBJECTDIR}/lib.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/gps.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/configBits.o ${OBJECTDIR}/gps.o ${OBJECTDIR}/lib.o
 
 # Source Files
-SOURCEFILES=main.c uart.c configBits.c gps.c
+SOURCEFILES=main.c uart.c configBits.c gps.c lib.c
 
 
 CFLAGS=
@@ -118,6 +118,12 @@ ${OBJECTDIR}/gps.o: gps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/gps.o 
 	@${FIXDEPS} "${OBJECTDIR}/gps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/gps.o.d" -o ${OBJECTDIR}/gps.o gps.c   
 	
+${OBJECTDIR}/lib.o: lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lib.o.d 
+	@${RM} ${OBJECTDIR}/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lib.o.d" -o ${OBJECTDIR}/lib.o lib.c   
+	
 else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -142,6 +148,12 @@ ${OBJECTDIR}/gps.o: gps.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/gps.o.d 
 	@${RM} ${OBJECTDIR}/gps.o 
 	@${FIXDEPS} "${OBJECTDIR}/gps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/gps.o.d" -o ${OBJECTDIR}/gps.o gps.c   
+	
+${OBJECTDIR}/lib.o: lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/lib.o.d 
+	@${RM} ${OBJECTDIR}/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/lib.o.d" -o ${OBJECTDIR}/lib.o lib.c   
 	
 endif
 

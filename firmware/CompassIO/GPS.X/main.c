@@ -19,6 +19,11 @@
  * RD5 >> ON_OFF
  */
 
+int res = -1;
+char buffGPS[500];
+
+t_coord coord;
+
 unsigned char  rst = 0, tr0 = 0, on_off = 0, gps = 0;
 unsigned short tmp = 0, tmp2 = 0;
 
@@ -69,15 +74,30 @@ void __ISR(_TIMER_2_VECTOR, IPL1) Timer2Handler(void) {
 	IFS0bits.T2IF = 0;
 }
 
+void ft_putfloat(double nb) { int tmp; if (nb < 0) { UART2_Send_Data_Byte('-'); nb = -nb; } tmp = nb; ft_putnbr_base(tmp, 10); nb = (nb - tmp) * 1000000 + 0.5; UART2_Send_Data_Byte('.'); tmp = nb; ft_putnbr_base(tmp, 10); }
+
 void HandleGPS(void) {
 	// Store input in buffer
-	u32 dest_len = ft_strlen(buffBT);
+	u32 dest_len = ft_strlen(buffGPS);
 	buffGPS[dest_len] = UART1_Get_Data_Byte();
-	UART2_Send_Data_Byte(buffGPS[dest_len]);
-	buffBT[dest_len + 1] = '\0';
+//	ft_putnbr_base(UART1_Get_Data_Byte(), 10);
+//	UART2_Send_Data_Byte(UART1_Get_Data_Byte());
+//	UART2_Send_Data_Byte(buffGPS[dest_len]);
+	buffGPS[dest_len + 1] = '\0';
+//	ft_putstr("Here");
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
 	{
-		ft_putstr("NL");
+		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
+			buffGPS[dest_len - 1] = '\0';
+			buffGPS[dest_len] = '\0';
+			res = parse_nmea_gps(buffGPS, &coord);
+			if (res == 1)
+			{
+				ft_putfloat(coord.lat);
+				UART2_Send_Data_Byte('-');
+				ft_putfloat(coord.lon);
+			}
+		}
 		dest_len = 0;
 		ft_bzero(buffGPS, 500);
 	}
@@ -104,7 +124,6 @@ void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
-		UART1_Send_Data_Byte(UART2_Get_Data_Byte());
 		LATFbits.LATF1 ^= 1;
 	}
 	// Transmit
@@ -114,36 +133,6 @@ void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
 	if (IFS1bits.U2EIF)
 		IFS1CLR = U2E_IFS1;
 }
-
-//ft_putstr(buffGPS[dest_len]);
-//	ft_putnbr_base(dest_len, 10);
-//buffGPS[dest_len + 1] = '\0';
-//if (FALSE && dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10) {
-//		buffGPS[dest_len] = '\0';
-//		buffGPS[dest_len - 1] = '\0';
-//		dest_len--;
-//		res = parse_nmea_gps(buffGPS, &coord);
-//		ft_putstr("res : ");
-//		ft_putnbr_base(res, 10);
-//		ft_putstr("lat : ");
-//		ft_putnbr_base(coord.lat, 10);
-//		ft_putstr("long : ");
-//		ft_putnbr_base(coord.lon, 10);
-//		ft_putstr("\n");
-//		ft_bzero(buffGPS, 500);
-//		dest_len = 0;
-//	}
-//	else
-//	{
-//		ft_putstr("NOLINE >> ");
-	//ft_putstr(buffGPS);
-//		ft_putstr("\n");
-//}
-
-int res = -1;
-char buffGPS[500];
-
-t_coord coord;
 
 int main()
 {
@@ -177,5 +166,5 @@ int main()
 	coord.lat = 0.0;
 	coord.lon = 0.0;
 	ft_bzero(buffGPS, 500);
-	while(1) ;
+	while(1);
 }
