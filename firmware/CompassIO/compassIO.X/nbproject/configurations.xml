@@ -4,7 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>types.h</itemPath>
+      <itemPath>sources/types.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -13,15 +13,17 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>main.c</itemPath>
-      <itemPath>uart.c</itemPath>
-      <itemPath>utils.c</itemPath>
-      <itemPath>configBits.c</itemPath>
-      <itemPath>delay.c</itemPath>
-      <itemPath>i2c.c</itemPath>
-      <itemPath>communication.c</itemPath>
-      <itemPath>lib.c</itemPath>
-      <itemPath>servomotor.c</itemPath>
+      <itemPath>sources/communication.c</itemPath>
+      <itemPath>sources/configBits.c</itemPath>
+      <itemPath>sources/delay.c</itemPath>
+      <itemPath>sources/i2c.c</itemPath>
+      <itemPath>sources/lib.c</itemPath>
+      <itemPath>sources/main.c</itemPath>
+      <itemPath>sources/servomotor.c</itemPath>
+      <itemPath>sources/spi.c</itemPath>
+      <itemPath>sources/uart.c</itemPath>
+      <itemPath>sources/utils.c</itemPath>
+      <itemPath>sources/flashmemory.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

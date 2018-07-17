@@ -54,17 +54,24 @@ void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
 
 void main()
 {
-	LATFbits.LATF1 = 0;
-	__builtin_disable_interrupts();
-	UART2_Init(_8N, 0, UART_RX_TX_ON);
-	UART1_Init(_8N, 0, UART_RX_TX_ON);
-	Init_Delay();
-	init_servo();
-	
-	INTCONbits.MVEC = 1; // Enable multi interrupts
-	__builtin_enable_interrupts();
+    LATFbits.LATF1 = 0;
+    __builtin_disable_interrupts();
+    UART2_Init(_8N, 0, UART_RX_TX_ON);
+    UART1_Init(_8N, 0, UART_RX_TX_ON);
+    Init_Delay();
+    init_servo();
+    Init_SPI2();
 
-	delayms(1000);
-	ft_putendl("Start");
-	while (1) ;
+    INTCONbits.MVEC = 1; // Enable multi interrupts
+    __builtin_enable_interrupts();
+
+    delayms(1000);
+    ft_putendl("Start");
+    delayms(100);
+    store_double(0x030000, 999);
+    delayms(85);
+    read_data(0x030000, 8);
+    /* Read status register */
+    //read_status_register();
+    while (1) ;
 }

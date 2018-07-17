@@ -16,6 +16,7 @@ typedef unsigned long u32;
 typedef char s8;
 typedef short s16;
 typedef long s32;
+typedef double s64;
 
 #define PERIOD 32000
 #define LIMIT_SPEED 1250
@@ -83,8 +84,28 @@ typedef long s32;
 #define MASTER (ON_BIT | MSTEN_BIT)
 #define SLAVE ON_BIT
 
+#define _CS1_ON() (PORTDbits.RD5 = 0)
+#define _CS1_OFF() (PORTDbits.RD5 = 1)
+
+
+#define FM_JEDECID 0x9F
+#define FM_ID 0xAB
+#define FM_WRITE_ENABLE 0x06
+#define FM_WRITE_DISABLE 0x04
+#define FM_PAGE_PROGRAM 0x02
+#define FM_READ 0x03
+#define FM_STATUS_REGISTER_READ 0x05
+#define FM_ERASE_SECTOR 0xD8
+
 void    ft_putnbr_base(s32 nb, int base);
 void    ft_putbinary(u32 nb);
 void    ft_putendl(char *string);
+void    Init_SPI2();
+void    Handle_SPI(u8 input, u8 *output);
+u8      SPI2_Read();
+void    delayms(u32 ms);
+void    read_data(u32 addr, u32 size);
+void    store_double(u32 addr, s64 data);
+void    store_int(u32 addr, u32 data);
 
 #endif	/* TYPES_H */
