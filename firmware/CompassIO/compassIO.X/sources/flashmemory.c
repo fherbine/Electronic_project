@@ -47,10 +47,11 @@ void write_data(u32 addr, s64 data, u32 size)
     _CS1_OFF();
 }
 
-void    read_data(u32 addr, u32 size)
+s32		read_data(u32 addr, u32 size)
 {
     u32 i = 0;
     u8 output;
+	s32	funcOut = 0;
 
     _CS1_ON();
     Handle_SPI(FM_READ, &output);
@@ -58,10 +59,11 @@ void    read_data(u32 addr, u32 size)
     while(i < size)
     {
         Handle_SPI(0x00, &output);
-        ft_putbinary(output);
+		funcOut = (output << (i * 8)) | output;
         i++;
     }
     _CS1_OFF();
+	return (funcOut);
 }
 
 void read_id()
@@ -108,15 +110,6 @@ void read_status_register()
  *
  *
  */
-
-void store_double(u32 addr, s64 data)
-{
-    _CS1_OFF();
-    erase_sector(addr);
-    delayms(200);
-    write_data(addr, data, 8);
-    delayms(85);
-}
 
 void store_int(u32 addr, u32 data)
 {
