@@ -112,29 +112,29 @@ void MPU9150GetData()
 {
     ft_putstr("\033[H\033[2J");
     UART2_Send_String("ACCEL X: ", 9);
-    s16 accel_x = GetFullNumber(ACCEL_XOUT_H, ACCEL_XOUT_L) / 16384.0 * 100;
-    ft_putnbr_base(accel_x, 10);
+    double accel_x = GetFullNumber(ACCEL_XOUT_H, ACCEL_XOUT_L) / 16384.0;
+    ft_putfloat(accel_x);
     UART2_Send_String(" ACCEL Y: ", 10);
-    s16 accel_y = GetFullNumber(ACCEL_YOUT_H, ACCEL_YOUT_L) / 16384.0 * 100;
-    ft_putnbr_base(accel_y, 10);
+    double accel_y = GetFullNumber(ACCEL_YOUT_H, ACCEL_YOUT_L) / 16384.0;
+    ft_putfloat(accel_y);
     UART2_Send_String(" ACCEL Z: ", 10);
-    s16 accel_z = GetFullNumber(ACCEL_ZOUT_H, ACCEL_ZOUT_L) / 16384.0 * 100;
-    ft_putnbr_base(accel_z, 10);
+    double accel_z = GetFullNumber(ACCEL_ZOUT_H, ACCEL_ZOUT_L) / 16384.0;
+    ft_putfloat(accel_z);
     ft_putstr("\n\r");
     if (accel_x > 75 || accel_y > 75 || accel_z > 75)
     {
 	ft_putendl("Module reversed");
     }
-    UART2_Send_String("GYRO X: ", 7);
-    ft_putnbr_base(GetFullNumber(GYRO_XOUT_H, GYRO_XOUT_L) / 131.0, DEBUG_BASE);
-    UART2_Send_String(" GYRO Y: ", 8);
-    ft_putnbr_base(GetFullNumber(GYRO_YOUT_H, GYRO_YOUT_L) / 131.0, DEBUG_BASE);
-    UART2_Send_String(" GYRO Z: ", 8);
-    ft_putnbr_base(GetFullNumber(GYRO_ZOUT_H, GYRO_ZOUT_L) / 131.0, DEBUG_BASE);
-    ft_putstr("\n\r");
-    delayms(100);
-    //I2C1_Write_Data(MPU9150_ADDR, MPU9150_INT_PIN_CFG, 0x02); //toggle enable data read from magnetometer, no continuous read mode !
-    //delayms(100);
+//    UART2_Send_String("GYRO X: ", 7);
+//    ft_putnbr_base(GetFullNumber(GYRO_XOUT_H, GYRO_XOUT_L) / 131.0, DEBUG_BASE);
+//    UART2_Send_String(" GYRO Y: ", 8);
+//    ft_putnbr_base(GetFullNumber(GYRO_YOUT_H, GYRO_YOUT_L) / 131.0, DEBUG_BASE);
+//    UART2_Send_String(" GYRO Z: ", 8);
+//    ft_putnbr_base(GetFullNumber(GYRO_ZOUT_H, GYRO_ZOUT_L) / 131.0, DEBUG_BASE);
+//    ft_putstr("\n\r");
+//    delayms(100);
+//    I2C1_Write_Data(MPU9150_ADDR, MPU9150_INT_PIN_CFG, 0x02); //toggle enable data read from magnetometer, no continuous read mode !
+//    delayms(100);
 //    ft_putstr("\n\r MPU9150_INT_PIN_CFG : ");
 //    ft_putbinary(MPU9150_Read(MPU9150_INT_PIN_CFG));
 //    delayms(100);

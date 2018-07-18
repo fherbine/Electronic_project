@@ -54,63 +54,13 @@ void Init_T2_Int()
    IEC0bits.T2IE = 1; // Enable interrupts
 }
 
-void UART2_Echo()
-{
-    u8 rcv = UART2_Get_Data_Byte();
-    if (rcv == '\r') UART2_Send_Data_Byte('\n');
-    if (rcv == 127) {
-        UART2_Send_Data_Byte(8);
-        UART2_Send_Data_Byte(' ');
-        UART2_Send_Data_Byte(8);
-    }
-    else if (rcv == '\\') UART2_Send_String("Hello World!\r\n", 14);
-    else UART2_Send_Data_Byte(rcv);
-}
-
 #define IFS0_T2 BITS(8)
-
-u8 Send_SPI = FALSE;
-
-void emmit_SPI(void)
-{
-	//SPI2CON = MASTER;
-	SPI2_Write(42);
-	ft_putendl("interupt");
-	//u8 rData = SPI2BUF;
-	//SPI2CONCLR = MASTER;
-}
 
 void __ISR(_TIMER_2_VECTOR) Timer2Handler(void) {
     IFS0CLR = IFS0_T2; // Reset to 0 Interrupt TIMER2
     LATFbits.LATF1 ^= 1;
-    Send_SPI = TRUE;
-    //emmit_SPI();
+    MPU9150GetData();
 } //, IPL3SRS
-
-void receipt_SPI(void)
-{
-    ft_putendl("Start");
-    u8 data = 0;
-    while (1)
-    {
-        if (SPI2_Read_Data_Ready())
-            ft_putendl("Datas received");
-        data = SPI2_Read();
-
-        ft_putstr("BUFFER STATUS (READ) >> ");
-        ft_putbinary(SPI2BUF);
-        ft_putendl("");
-        if (data != 0xff && data != 0)
-        {
-            ft_putstr("==> ");
-            UART2_Send_Data_Byte(data);
-        }
-        data = 0;
-    }
-}
-
-#define _CS1_ON() (TRISFbits.TRISF0 = 1)
-#define _CS1_OFF() (TRISFbits.TRISF0 = 0)
 
 void main()
 {
@@ -129,14 +79,11 @@ void main()
     delayms(100);
 
     /* MPU9150 */
-    //I2C1_Init();
-    //MAG_Init();
-    //MPU9150_Init();
-    //MPU9150_On();
+    I2C1_Init();
+    MAG_Init();
+    MPU9150_Init();
+    MPU9150_On();
     /* ======= */
-
-    /* SPI */
-    SPI2_Init();
 
     delayms(1000);
     T2CONbits.ON = 1; //start timer at the end
@@ -145,34 +92,5 @@ void main()
     //ft_putbinary(255);
 
     ft_putendl("Start");
-    _CS1_ON();
-    /* Page program */
-    SPI2_Write(0x06); // Write enable (WEN -> 1)
-    SPI2_Write(0x02); // Page program
-    SPI2_Write(0x01); // Add[1]
-    SPI2_Write(0x00); // Add[2]
-    SPI2_Write(0x00); // Add[3]
-    SPI2_Write('H');
-    SPI2_Write('e');
-    SPI2_Write('l');
-    SPI2_Write('l');
-    SPI2_Write('o');
-    SPI2_Write('!');
-    /* Read page */
-    SPI2_Write(0x06); // Write enable (WEN -> 1)
-    SPI2_Write(0x03); // Read
-    SPI2_Write(0x01); // Add[0]
-    SPI2_Write(0x00); // Add[1]
-    SPI2_Write(0x00); // Add[2]
-    _CS1_OFF();
-    while (1)
-    {
-		u8 data = SPI2_Read();
-		if (data != 0)
-		{
-			UART1_Send_Data_Byte(data);
-			data = 0;
-		}
-    }
-    //receipt_SPI();
+    while (1) ;
 }
