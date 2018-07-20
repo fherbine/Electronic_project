@@ -35,9 +35,9 @@ void UART1_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     U1BRG = UART_BAUD_RATE;
     U1MODEbits.PDSEL = parityDataBits;
     U1MODEbits.STSEL = stopBits;
-	UART1_Int();
+    UART1_Int();
     U1STAbits.URXEN = TRX_Mode != 1; // Enable reception
-    U1MODEbits.ON = 1; // Enable UART2 Module
+    U1MODEbits.ON = 1; // Enable UART1 Module
     U1STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
 }
 

@@ -104,7 +104,7 @@ void    Init_SPI2();
 void    Handle_SPI(u8 input, u8 *output);
 u8      SPI2_Read();
 void    delayms(u32 ms);
-void    read_data(u32 addr, u32 size);
+s32     read_data(u32 addr, u32 size);
 void    store_double(u32 addr, s64 data);
 void    store_int(u32 addr, u32 data);
 
