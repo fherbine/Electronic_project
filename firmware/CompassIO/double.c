@@ -16,5 +16,10 @@ int main()
   }
   /* Store float * 1000 used as flat by divinding by 1000 */
   printf("%f\n", output / 1000.0);
+
+  short h = 0b11000001;
+  unsigned char l = 0b10000000;
+  short nb = ((h << 8) | l);
+  printf("%d\n", nb);
   return (0);
 }

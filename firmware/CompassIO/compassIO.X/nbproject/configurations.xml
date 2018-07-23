@@ -24,6 +24,7 @@
       <itemPath>sources/uart.c</itemPath>
       <itemPath>sources/utils.c</itemPath>
       <itemPath>sources/flashmemory.c</itemPath>
+      <itemPath>sources/mag.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -31,6 +32,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>sources</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">

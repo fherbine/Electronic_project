@@ -55,10 +55,11 @@ void	        ft_putnbr_base(s32 nb, int base)
 
 	n = nb;
 	sign_len[1] = 0;
-	if (n < 0)
-		n = -n;
 	if (n < 0 && base == 10)
+	{
+		n = -n;
 		sign_len[1] = 1;
+	}
 	ft_bzero(str, 32);
 	sign_len[0] = ft_count(n, base) + sign_len[1];
 	sign_len[0]--;

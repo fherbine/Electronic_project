@@ -120,10 +120,12 @@ void global_init()
     UART2_Init(_8N, 0, UART_RX_TX_ON);
     init_servo();
     Init_SPI2();
+	I2C1_Init();
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
     delayms(1000);
     ft_putendl("Start");
+	init_mag();
     /* GPS */
     LATDbits.LATD6 = 0; // Set nRST GPS
     LATDbits.LATD5 = 0; // Set ON_OFF GPS
@@ -157,7 +159,8 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL6) MainButtonHandler(void) {
         {
             if (devicePowered)
             {
-                ft_putendl("destination switch");
+                //ft_putendl("destination switch");
+				Mag_Get_Data();
             }
             else
             {
