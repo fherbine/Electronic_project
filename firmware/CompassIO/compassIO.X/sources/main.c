@@ -82,7 +82,7 @@ void	gps_power_on(void)
 	{
 		gpsTmp = 0;
 		gps = 1;
-                powerOnProcess = FALSE;
+        powerOnProcess = FALSE;
 	}
 }
 
@@ -101,6 +101,7 @@ void	gps_power_off(void)
 #define MAX_U16 0xFFFF
 
 void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
+	IFS0bits.T3IF = 0;
     /* Power Off 2 Sec */
     if (countTimeEnable && countTime < MAX_U16)
         countTime++;
@@ -110,7 +111,27 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
     if (powerOffProcess)
         gps_power_off();
     gpsTmp++;
-    IFS0bits.T3IF = 0;
+}
+
+void __ISR(_TIMER_4_VECTOR, IPL1) Timer4Handler(void) {
+    IFS0bits.T4IF = 0;
+	Mag_Get_Data();
+	ft_putstr("This is timer4 !\n\r");
+}
+
+void Init_Timer4()
+{
+  T4CON = 0;               // 0 on every bit, (timer stop, basic config)
+  TMR4 = 2;                // Clean the timer register
+
+  IPC4bits.T4IP = 1; // Set priority
+  IPC4bits.T4IS = 1; // Set subpriority
+  IFS0bits.T4IF = 0;       // Clear interrupt status flag
+  IEC0bits.T4IE = 1; // Enable interrupts
+
+  T4CONbits.TCKPS = 0b111; // Set scaler 1:256
+  PR4 = PBCLK/256/1000;    // Setup the period
+  T4CONbits.ON = 1;
 }
 
 void global_init()
@@ -121,6 +142,7 @@ void global_init()
     init_servo();
     Init_SPI2();
 	I2C1_Init();
+	Init_Timer4();
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
     delayms(1000);
@@ -159,8 +181,9 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL6) MainButtonHandler(void) {
         {
             if (devicePowered)
             {
-                //ft_putendl("destination switch");
-				Mag_Get_Data();
+
+                ft_putendl("destination switch");
+				ft_putnbr_base(countTime, 10);
             }
             else
             {

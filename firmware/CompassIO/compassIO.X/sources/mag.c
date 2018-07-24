@@ -40,17 +40,20 @@ void init_mag()
 s16 MagGetFullNumber(u8 addr1, u8 addr2)
 {
     s16 h = MAG_Read(addr1);
-    delayms(100);
+    //delayms(100);
     u8 l = MAG_Read(addr2);
     return ((h << 8) | l);
 }
 
 void Mag_Get_Data()
 {
-	ft_putstr("\n\r");
-	ft_putnbr_base(MagGetFullNumber(MAG_X_H, MAG_X_L) - 1085, 10);
-	ft_putstr(" ");
-	ft_putnbr_base(MagGetFullNumber(MAG_Y_H, MAG_Y_L), 10);
-	ft_putstr(" ");
-	ft_putnbr_base(MagGetFullNumber(MAG_Z_H, MAG_Z_L) + 766, 10);
+//	ft_putstr("\n\r");
+	s16 x = MagGetFullNumber(MAG_X_H, MAG_X_L);
+//	ft_putnbr_base(x, 10);
+//	ft_putstr(" ");
+	s16 y = MagGetFullNumber(MAG_Y_H, MAG_Y_L);
+//	ft_putnbr_base(y, 10);
+//	ft_putstr(" ");
+	s16 z = MagGetFullNumber(MAG_Z_H, MAG_Z_L);
+//	ft_putnbr_base(z, 10);
 }

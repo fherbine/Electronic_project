@@ -94,6 +94,7 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     if (!TRX_Mode) {
 	return;
     }
+	//U2MODEbits.BRGH = 1; // Activate for 38400 BR
     U2BRG = UART_BAUD_RATE;
     U2MODEbits.PDSEL = parityDataBits;
     U2MODEbits.STSEL = stopBits;
