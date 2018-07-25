@@ -100,6 +100,21 @@ void	gps_power_off(void)
 
 #define MAX_U16 0xFFFF
 
+/* Calibrate MAG3110 */
+s16	x_min = 0x7FFF;
+s16	x_max = 0x8000;
+s16	y_min = 0x7FFF;
+s16	y_max = 0x8000;
+
+s16 offset_x = 0;
+s16 offset_y = 0;
+
+float x_scale = 0;
+float y_scale = 0;
+
+s32 TimerCalMode = 0;
+u8 IsCalMode = FALSE;
+
 void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 	IFS0bits.T3IF = 0;
     /* Power Off 2 Sec */
@@ -110,13 +125,83 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
         gps_power_on();
     if (powerOffProcess)
         gps_power_off();
+	if (IsCalMode)
+		TimerCalMode++;
     gpsTmp++;
 }
 
-void __ISR(_TIMER_4_VECTOR, IPL1) Timer4Handler(void) {
+void calibrateMag(s16 x, s16 y)
+{
+	if (IsCalMode == TRUE)
+	{
+		if(x < x_min)
+		  x_min = x;
+		if(x > x_max)
+		  x_max = x;
+		if(y < y_min)
+		  y_min = y;
+		if(y > y_max)
+		  y_max = y;
+		if(TimerCalMode > 5000) // Exit calibration
+		{
+			IsCalMode = FALSE;
+			LATFbits.LATF1 = 0;
+			ft_putstr("x_min: ");
+			ft_putnbr_base(x_min, 10);
+			ft_putstr(" x_max: ");
+			ft_putnbr_base(x_max, 10);
+			ft_putstr(" y_min: ");
+			ft_putnbr_base(y_min, 10);
+			ft_putstr(" y_max: ");
+			ft_putnbr_base(y_max, 10);
+			ft_putstr("\n\r");
+			offset_x = (x_min + x_max) / 2;
+			offset_y = (y_min + y_max) / 2;
+			ft_putstr(" offset x: ");
+			ft_putnbr_base(offset_x, 10);
+			ft_putstr(" offset y: ");
+			ft_putnbr_base(offset_y, 10);
+			ft_putstr("\n\r");
+			x_scale = 1.0/(float)(x_max - x_min);
+			y_scale = 1.0/(float)(y_max - y_min);
+			ft_putstr(" x_scale: ");
+			ft_putnbr_base(x_scale, 10);
+			ft_putstr(" y_scale: ");
+			ft_putnbr_base(y_scale, 10);
+			ft_putstr("\n\r");
+		}
+	}
+}
+
+#define DEG_PER_RAD (180.0/3.14159265358979)
+
+s16 readHeading(s16 x, s16 y)
+{
+	float xf = (float) x * 1.0f;
+	float yf = (float) y * 1.0f;
+
+	//Calculate the heading
+	ft_putstr("*");
+	ft_putfloat(atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
+	ft_putstr("[]");
+	return (atan2(-yf*y_scale, xf*x_scale));
+}
+
+void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
     IFS0bits.T4IF = 0;
-	Mag_Get_Data();
-	ft_putstr("This is timer4 !\n\r");
+	if (devicePowered) {
+		s16 x = 0.0;
+		s16 y = 0.0;
+		s16 z = 0.0;
+		readMag(&x, &y, &z);
+		calibrateMag(x, z);
+		readHeading(x - offset_x, z - offset_y);
+		ft_putnbr_base(x - offset_x, 10);
+		ft_putstr(" ");
+		ft_putnbr_base(z - offset_y, 10);
+		ft_putstr("\n\r");
+	}
+	//ft_putstr("This is timer4 !\n\r");
 }
 
 void Init_Timer4()
@@ -124,13 +209,13 @@ void Init_Timer4()
   T4CON = 0;               // 0 on every bit, (timer stop, basic config)
   TMR4 = 2;                // Clean the timer register
 
-  IPC4bits.T4IP = 1; // Set priority
+  IPC4bits.T4IP = 6; // Set priority
   IPC4bits.T4IS = 1; // Set subpriority
   IFS0bits.T4IF = 0;       // Clear interrupt status flag
   IEC0bits.T4IE = 1; // Enable interrupts
 
   T4CONbits.TCKPS = 0b111; // Set scaler 1:256
-  PR4 = PBCLK/256/1000;    // Setup the period
+  PR4 = PBCLK/256/10;    // Setup the period
   T4CONbits.ON = 1;
 }
 
@@ -166,10 +251,18 @@ void global_off()
 }
 
 #define ONE_HALF_SEC 1500
+#define FIVE_SEC 5000
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL6) MainButtonHandler(void) {
+void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
     if (INTCONbits.INT1EP == 1) { // Button Released
-        if (devicePowered && countTime > ONE_HALF_SEC)
+		if (devicePowered && countTime > FIVE_SEC)
+        {
+            ft_putendl("Enter in calibration mode");
+			IsCalMode = TRUE;
+			LATFbits.LATF1 = 1;
+			TimerCalMode = 0;
+        }
+		else if (devicePowered && countTime > ONE_HALF_SEC)
         {
             powerOffProcess = TRUE;
             gpsTmp = 0;
@@ -181,7 +274,6 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL6) MainButtonHandler(void) {
         {
             if (devicePowered)
             {
-
                 ft_putendl("destination switch");
 				ft_putnbr_base(countTime, 10);
             }
@@ -210,7 +302,7 @@ void init_button()
     INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt se produit
 
     // INT1 - Button
-    IPC1bits.INT1IP = 6;
+    IPC1bits.INT1IP = 1;
     IPC1bits.INT1IS = 0;
     IFS0bits.INT1IF = 0;
     IEC0bits.INT1IE = 1;
@@ -218,11 +310,12 @@ void init_button()
 
 void main()
 {
+	TRISFbits.TRISF1 = 0; // LED writable
     LATFbits.LATF1 = 0;
     TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
     LATDbits.LATD6 = 1;
     TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
-    
+
     __builtin_disable_interrupts();
     Init_Delay();
     init_button();

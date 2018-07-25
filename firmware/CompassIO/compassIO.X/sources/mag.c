@@ -45,15 +45,9 @@ s16 MagGetFullNumber(u8 addr1, u8 addr2)
     return ((h << 8) | l);
 }
 
-void Mag_Get_Data()
+void readMag(s16 *x, s16 *y, s16 *z)
 {
-//	ft_putstr("\n\r");
-	s16 x = MagGetFullNumber(MAG_X_H, MAG_X_L);
-//	ft_putnbr_base(x, 10);
-//	ft_putstr(" ");
-	s16 y = MagGetFullNumber(MAG_Y_H, MAG_Y_L);
-//	ft_putnbr_base(y, 10);
-//	ft_putstr(" ");
-	s16 z = MagGetFullNumber(MAG_Z_H, MAG_Z_L);
-//	ft_putnbr_base(z, 10);
+	*x = MagGetFullNumber(MAG_X_H, MAG_X_L);
+	*y = MagGetFullNumber(MAG_Y_H, MAG_Y_L);
+	*z = MagGetFullNumber(MAG_Z_H, MAG_Z_L);
 }

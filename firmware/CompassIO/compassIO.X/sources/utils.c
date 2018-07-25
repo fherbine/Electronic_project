@@ -94,3 +94,5 @@ void ft_putendl(char *string)
    UART2_Send_String(string, ft_strlen(string));
    UART2_Send_String("\n\r", 2);
 }
+
+void ft_putfloat(double nb) { int tmp; if (nb < 0) { UART2_Send_Data_Byte('-'); nb = -nb; } tmp = nb; ft_putnbr_base(tmp, 10); nb = (nb - tmp) * 1000000 + 0.5; UART2_Send_Data_Byte('.'); tmp = nb; ft_putnbr_base(tmp, 10); }

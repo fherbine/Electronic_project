@@ -9,6 +9,7 @@
 #define	TYPES_H
 #include <p32xxxx.h>
 #include "sys/attribs.h"
+#include "math.h"
 
 typedef unsigned char u8;
 typedef unsigned short u16;
