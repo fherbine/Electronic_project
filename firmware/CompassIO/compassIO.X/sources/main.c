@@ -169,6 +169,9 @@ void calibrateMag(s16 x, s16 y)
 			ft_putstr(" y_scale: ");
 			ft_putnbr_base(y_scale, 10);
 			ft_putstr("\n\r");
+
+			PR4 = PBCLK/256/2;
+			TMR4 = 0;
 		}
 	}
 }
@@ -181,11 +184,11 @@ s16 readHeading(s16 x, s16 y)
 	float yf = (float) y * 1.0f;
 
 	//Calculate the heading
-	ft_putstr("*");
 	ft_putfloat(atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
 	ft_putstr("[]");
-	return (atan2(-yf*y_scale, xf*x_scale));
+	return (atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
 }
+
 
 void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
     IFS0bits.T4IF = 0;
@@ -194,11 +197,18 @@ void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
 		s16 y = 0.0;
 		s16 z = 0.0;
 		readMag(&x, &y, &z);
-		calibrateMag(x, z);
-		readHeading(x - offset_x, z - offset_y);
+		calibrateMag(x, y);
+		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
+		if (degrees < -90 || degrees > 90)
+			degrees = (degrees > 90) ? 0 : 180;
+		else
+			degrees = 90 - degrees;
+		ft_putnbr_base(degrees, 10);
+		ft_putstr("#");
+		ServoMotorSetAngle(degrees);
 		ft_putnbr_base(x - offset_x, 10);
 		ft_putstr(" ");
-		ft_putnbr_base(z - offset_y, 10);
+		ft_putnbr_base(y - offset_y, 10);
 		ft_putstr("\n\r");
 	}
 	//ft_putstr("This is timer4 !\n\r");
@@ -215,7 +225,7 @@ void Init_Timer4()
   IEC0bits.T4IE = 1; // Enable interrupts
 
   T4CONbits.TCKPS = 0b111; // Set scaler 1:256
-  PR4 = PBCLK/256/10;    // Setup the period
+  PR4 = PBCLK/256/2;    // Setup the period
   T4CONbits.ON = 1;
 }
 
@@ -258,6 +268,8 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 		if (devicePowered && countTime > FIVE_SEC)
         {
             ft_putendl("Enter in calibration mode");
+			PR4 = PBCLK/256/10;
+			TMR4 = 0;
 			IsCalMode = TRUE;
 			LATFbits.LATF1 = 1;
 			TimerCalMode = 0;
@@ -319,6 +331,8 @@ void main()
     __builtin_disable_interrupts();
     Init_Delay();
     init_button();
+	init_servo();
+	ServoMotorSetAngle(180);
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
 

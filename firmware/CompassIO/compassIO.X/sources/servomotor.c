@@ -28,6 +28,6 @@ void init_servo()
 	T2CONbits.ON = 1;
 
 	OC1CONbits.OCM = 0b110;
-	ServoMotorSetAngle(90);
+	ServoMotorSetAngle(0);
 	OC1CONbits.ON = 1;
 }
