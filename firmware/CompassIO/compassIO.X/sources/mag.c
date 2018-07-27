@@ -81,6 +81,11 @@ void calibrateMag(s16 x, s16 y)
 		{
 			IsCalMode = FALSE;
 			LATFbits.LATF1 = 0;
+      offset_x = (x_min + x_max) / 2;
+      offset_y = (y_min + y_max) / 2;
+      x_scale = 1.0 / (float)(x_max - x_min);
+      y_scale = 1.0 / (float)(y_max - y_min);
+      set_timer4(TIMER4_500MS);
 			ft_putstr("x_min: ");
 			ft_putnbr_base(x_min, 10);
 			ft_putstr(" x_max: ");
@@ -90,21 +95,16 @@ void calibrateMag(s16 x, s16 y)
 			ft_putstr(" y_max: ");
 			ft_putnbr_base(y_max, 10);
 			ft_putstr("\n\r");
-			offset_x = (x_min + x_max) / 2;
-			offset_y = (y_min + y_max) / 2;
 			ft_putstr(" offset x: ");
 			ft_putnbr_base(offset_x, 10);
 			ft_putstr(" offset y: ");
 			ft_putnbr_base(offset_y, 10);
 			ft_putstr("\n\r");
-			x_scale = 1.0/(float)(x_max - x_min);
-			y_scale = 1.0/(float)(y_max - y_min);
 			ft_putstr(" x_scale: ");
 			ft_putnbr_base(x_scale, 10);
 			ft_putstr(" y_scale: ");
 			ft_putnbr_base(y_scale, 10);
 			ft_putstr("\n\r");
-      set_timer4(TIMER4_500MS);
 		}
 	}
 }
@@ -117,7 +117,5 @@ s16 readHeading(s16 x, s16 y)
 	float yf = (float) y * 1.0f;
 
 	//Calculate the heading
-	ft_putfloat(atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
-	ft_putstr("[]");
 	return (atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
 }

@@ -88,8 +88,7 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
         }
         countTime = 0;
         countTimeEnable = FALSE;
-        INTCONbits.INT1EP = 0;
-        // Get button pushing instead of getting release
+        INTCONbits.INT1EP = 0; // Get button pushing instead of getting release
     } else { // Button pressed
         countTimeEnable = TRUE;
         INTCONbits.INT1EP = 1; // Active button release mode
