@@ -1,3 +1,4 @@
 build/default/production/sources/utils.o:  \
 sources/utils.c  \
-sources/types.h 
+sources/types.h  \
+ sources/export.h 

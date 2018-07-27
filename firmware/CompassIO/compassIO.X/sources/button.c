@@ -18,6 +18,8 @@ void init_button()
     IEC0bits.INT1IE = 1;
 }
 
+
+
 void global_init()
 {
     __builtin_disable_interrupts();
@@ -49,10 +51,7 @@ void global_off()
     T2CONbits.ON = 0;  // Disable Timer2 Servomotor
 }
 
-#define ONE_HALF_SEC 1500
-#define FIVE_SEC 5000
-
-void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
+void __ISR(_EXTERNAL_1_VECTOR, IPL1SRS) MainButtonHandler(void) {
     if (INTCONbits.INT1EP == 1) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
         {

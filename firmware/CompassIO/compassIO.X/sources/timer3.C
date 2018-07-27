@@ -7,15 +7,6 @@
 
 #include "types.h"
 
-u16 countTime = 0;
-u8  countTimeEnable = FALSE;
-u8  devicePowered = FALSE;
-unsigned char  rst = 0, on_off = 0, gps = 0;
-unsigned short gpsTmp = 0;
-
-u8 powerOnProcess = FALSE;
-u8 powerOffProcess = FALSE;
-
 void	gps_power_on(void)
 {
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
@@ -55,7 +46,7 @@ void	gps_power_off(void)
 
 #define MAX_U16 0xFFFF
 
-void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
+void __ISR(_TIMER_3_VECTOR, IPL1SRS) Timer3Handler(void) {
 	IFS0bits.T3IF = 0;
     /* Power Off 2 Sec */
     if (countTimeEnable && countTime < MAX_U16)

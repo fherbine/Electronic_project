@@ -7,6 +7,26 @@
 
 #include "types.h"
 
+u8  devicePowered = FALSE;
+u16 countTime = 0;
+u8  countTimeEnable = FALSE;
+unsigned char  rst = 0, on_off = 0, gps = 0;
+unsigned short gpsTmp = 0;
+
+u8 powerOnProcess = FALSE;
+u8 powerOffProcess = FALSE;
+
+/* Calibrate MAG3110 */
+s16	x_min = 0x7FFF, x_max = 0x8000, y_min = 0x7FFF, y_max = 0x8000, offset_x = 0, offset_y = 0;
+
+float x_scale = 0, y_scale = 0;
+
+s32 TimerCalMode = 0;
+u8 IsCalMode = FALSE;
+
+s16 mag_x = 0.0;
+s16 mag_y = 0.0;
+
 void main()
 {
 	TRISFbits.TRISF1 = 0; // LED writable

@@ -7,17 +7,11 @@
 
 #include "types.h"
 
-#define TIMER4_100MS 10
-#define TIMER4_500MS 2
-
 void set_timer4(u8 timerms)
 {
 	PR4 = PBCLK/256/timerms;
 	TMR4 = 0;
 }
-
-s16 mag_x = 0.0;
-s16 mag_y = 0.0;
 
 void handleMaxMinDegrees(s16 *degrees)
 {
@@ -27,18 +21,21 @@ void handleMaxMinDegrees(s16 *degrees)
     *degrees = 90 - *degrees;
 }
 
-void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
-  IFS0bits.T4IF = 0;
-	if (devicePowered) {
-		readMag(&mag_x, &mag_y);
-		calibrateMag(mag_x, mag_y);
-		s16 degrees = (int)readHeading(mag_x - offset_x, mag_y - offset_y);
-    ft_putstr("[");
-    ft_putfloat(degrees);
-    ft_putstr("°]\n\r");
-    handleMaxMinDegrees(&degrees);
-		ServoMotorSetAngle(degrees);
-	}
+void __ISR(_TIMER_4_VECTOR, IPL6SRS) Timer4Handler(void) {
+    IFS0bits.T4IF = 0;
+    if (devicePowered) {
+	readMag(&mag_x, &mag_y);
+	calibrateMag(mag_x, mag_y);
+	s16 degrees = (int)readHeading(mag_x, mag_y);
+        ft_putstr("[");
+        ft_putnbr_base(degrees, 10);
+        ft_putstr("]\n\r");
+        ft_putnbr_base(mag_x, 10);
+        ft_putstr("-");
+        ft_putnbr_base(mag_y, 10);
+        handleMaxMinDegrees(&degrees);
+        ServoMotorSetAngle(degrees);
+    }
 }
 
 void Init_Timer4()
@@ -52,7 +49,7 @@ void Init_Timer4()
   IEC0bits.T4IE = 1; // Enable interrupts
 
   T4CONbits.TCKPS = 0b111; // Set scaler 1:256
-	set_timer4(TIMER4_500MS);
+  set_timer4(TIMER4_500MS);
   PR4 = PBCLK/256/2;    // Setup the period on 500ms
   T4CONbits.ON = 1;
 }
