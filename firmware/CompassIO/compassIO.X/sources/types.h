@@ -19,8 +19,6 @@ typedef short s16;
 typedef long s32;
 typedef double s64;
 
-#include "export.h"
-
 #define PERIOD 32000
 #define LIMIT_SPEED 1250
 #define TRUE 1
@@ -99,12 +97,6 @@ typedef double s64;
 #define FM_READ 0x03
 #define FM_STATUS_REGISTER_READ 0x05
 #define FM_ERASE_SECTOR 0xD8
-
-#define TIMER4_100MS 10
-#define TIMER4_500MS 2
-
-#define ONE_HALF_SEC 1500
-#define FIVE_SEC 5000
 
 void    ft_putnbr_base(s32 nb, int base);
 void    ft_putbinary(u32 nb);
