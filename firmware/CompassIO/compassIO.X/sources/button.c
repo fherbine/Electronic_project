@@ -35,8 +35,8 @@ void global_init()
     ft_putendl("Start");
 	init_mag();
     /* GPS */
-    LATDbits.LATD6 = 0; // Set nRST GPS
-    LATDbits.LATD5 = 0; // Set ON_OFF GPS
+    LATDbits.LATD3 = 0; // Set nRST GPS
+    LATDbits.LATD4 = 0; // Set ON_OFF GPS
     rst = 0;
     on_off = 0;
     gps = 0;
@@ -51,11 +51,34 @@ void global_off()
     T2CONbits.ON = 0;  // Disable Timer2 Servomotor
 }
 
+void power_on_signal()
+{
+    u8 i;
+    for (i = 0; i < 5; i++) {
+    LATDbits.LATD5 = 1;
+    delayms(200);
+    LATDbits.LATD5 = 0;
+    delayms(100);
+    }
+}
+
+void calibration_signal()
+{
+    u8 i;
+    for (i = 0; i < 3; i++) {
+    LATDbits.LATD5 = 1;
+    delayms(900);
+    LATDbits.LATD5 = 0;
+    delayms(100);
+    }
+}
+
 void __ISR(_EXTERNAL_1_VECTOR, IPL1SRS) MainButtonHandler(void) {
     if (INTCONbits.INT1EP == 1) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
         {
-            ft_putendl("Enter in calibration mode");
+            //ft_putendl("Enter in calibration mode");
+            //calibration_signal();
 			set_timer4(TIMER4_100MS);
 			IsCalMode = TRUE;
 			LATFbits.LATF1 = 1;
@@ -68,13 +91,14 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1SRS) MainButtonHandler(void) {
             ft_putendl("GLOBAL POWER OFF");
             global_off();
             devicePowered = FALSE;
+            power_on_signal();
         }
         else
         {
             if (devicePowered)
             {
                 ft_putendl("destination switch");
-								ft_putnbr_base(countTime, 10);
+                ft_putnbr_base(countTime, 10);
             }
             else
             {
@@ -82,6 +106,7 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1SRS) MainButtonHandler(void) {
                 gpsTmp = 0;
                 global_init();
                 ft_putendl("first time = GLOBAL POWER ON");
+                power_on_signal();
                 devicePowered = TRUE;
             }
         }

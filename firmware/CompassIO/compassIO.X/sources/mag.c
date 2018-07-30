@@ -39,6 +39,20 @@ void init_mag()
 	I2C1_Write_Data(MAG_ADDR, MAG_CTRL_REG2, 0x80); // Enable AutoMRST_EN bit
 	delayms(15);
 	I2C1_Write_Data(MAG_ADDR, MAG_CTRL_REG1, 1); // Enable MAG3110
+
+        ft_putstr("\n\rOffsetXX:");
+    ft_putnbr_base(offset_x, 16);
+    ft_putstr(" ");
+    ft_putnbr_base(MAG_Read(MAG_OFF_X_H), 16);
+    ft_putstr(" ");
+    ft_putnbr_base(MAG_Read(MAG_OFF_X_L), 16);
+    ft_putstr("\n\rOffsetYY:");
+    ft_putnbr_base(offset_y, 16);
+    ft_putstr(" ");
+    ft_putnbr_base(MAG_Read(MAG_OFF_Y_H), 16);
+    ft_putstr(" ");
+    ft_putnbr_base(MAG_Read(MAG_OFF_Y_L), 16);
+    ft_putstr("\n\r");
 }
 
 s16 MagGetFullNumber(u8 addr1, u8 addr2)
@@ -50,11 +64,8 @@ s16 MagGetFullNumber(u8 addr1, u8 addr2)
 
 void readMag(s16 *x, s16 *y)
 {
-	*x = MagGetFullNumber(MAG_X_H, MAG_X_L);
-	*y = MagGetFullNumber(MAG_Y_H, MAG_Y_L);
-        ft_putstr("\n\rSYSMOD:");
-        ft_putnbr_base(MAG_Read(0x08), 16);
-        ft_putstr("\n\r");
+	*x = MagGetFullNumber(MAG_X_H, MAG_X_L) - offset_x;
+	*y = MagGetFullNumber(MAG_Y_H, MAG_Y_L) - offset_y;
 }
 
 void updateOffsetMag(s16 offset_x, s16 offset_y)
@@ -111,7 +122,7 @@ void calibrateMag(s16 x, s16 y)
                     LATFbits.LATF1 = 0;
                     offset_x = (x_min + x_max) / 2;
                     offset_y = (y_min + y_max) / 2;
-                    updateOffsetMag(offset_x, offset_y);
+//                    updateOffsetMag(offset_x, offset_y);
                     x_scale = 1.0 / (float)(x_max - x_min);
                     y_scale = 1.0 / (float)(y_max - y_min);
                     set_timer4(TIMER4_500MS);

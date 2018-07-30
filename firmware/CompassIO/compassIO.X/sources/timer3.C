@@ -11,17 +11,17 @@ void	gps_power_on(void)
 {
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
 	{
-		LATDbits.LATD6 = 1;
+		LATDbits.LATD3 = 1;
 		rst = 1;
 	}
 	else if (gpsTmp == 110 && !on_off)
 	{
-		LATDbits.LATD5 = 1;
+		LATDbits.LATD4 = 1;
 		on_off = 1;
 	}
 	else if (gpsTmp == 310 && on_off)
 	{
-		LATDbits.LATD5 = 0;
+		LATDbits.LATD4 = 0;
 		on_off = 0;
 	}
 	else if (gpsTmp > 310)
@@ -35,10 +35,10 @@ void	gps_power_on(void)
 void	gps_power_off(void)
 {
 	if (gpsTmp == 0)
-		LATDbits.LATD5 = 1;
+		LATDbits.LATD4 = 1;
 	else if (gpsTmp == 200)
         {
-           	LATDbits.LATD5 = 0;
+           	LATDbits.LATD4 = 0;
                 powerOffProcess = FALSE;
         }
 	gpsTmp++;

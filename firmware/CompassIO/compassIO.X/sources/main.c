@@ -31,9 +31,12 @@ void main()
 {
 	TRISFbits.TRISF1 = 0; // LED writable
     LATFbits.LATF1 = 0;
-    TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
-    LATDbits.LATD6 = 1;
-    TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
+    TRISDbits.TRISD3 = 0; // RD3 is an output -> RST GPS
+    TRISDbits.TRISD4 = 0; // RD4 is an output -> On_off
+    TRISDbits.TRISD5 = 0; // main LED
+    LATDbits.LATD4 = 0;
+    LATDbits.LATD3 = 0;
+    LATDbits.LATD5 = 0;
 
     __builtin_disable_interrupts();
     Init_Delay();
