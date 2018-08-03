@@ -1,7 +1,4 @@
-
 #include "types.h"
-
-
 
 void Init_SPI2()
 {
@@ -10,7 +7,7 @@ void Init_SPI2()
     SPI2CONbits.CKE = 1;
     SPI2CONbits.CKP = 0;
     SPI2CONbits.ON = 1;
-    TRISDbits.TRISD5 = 0; // writeable
+    TRISGbits.TRISG9 = 0; // writeable
 }
 
 void SPI2_Write(unsigned char data)

@@ -8,6 +8,7 @@
 #include "types.h"
 
 char buffBT[500];
+struct s_taskflag thisTaskFlag;
 
 #define NEWLINE 13
 
@@ -111,7 +112,6 @@ float x_scale = 0;
 float y_scale = 0;
 
 s32 TimerCalMode = 0;
-u8 IsCalMode = FALSE;
 
 void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 	IFS0bits.T3IF = 0;
@@ -123,55 +123,57 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
         gps_power_on();
     if (powerOffProcess)
         gps_power_off();
-	if (IsCalMode)
+	if (thisTaskFlag.CalMag)
 		TimerCalMode++;
     gpsTmp++;
 }
 
 void calibrateMag(s16 x, s16 y)
 {
-	if (IsCalMode == TRUE)
+	if(x < x_min)
+	  x_min = x;
+	if(x > x_max)
+	  x_max = x;
+	if(y < y_min)
+	  y_min = y;
+	if(y > y_max)
+	  y_max = y;
+	if(TimerCalMode > 5000) // Exit calibration
 	{
-		if(x < x_min)
-		  x_min = x;
-		if(x > x_max)
-		  x_max = x;
-		if(y < y_min)
-		  y_min = y;
-		if(y > y_max)
-		  y_max = y;
-		if(TimerCalMode > 5000) // Exit calibration
-		{
-			IsCalMode = FALSE;
-			LATFbits.LATF1 = 0;
-       			offset_x = (x_min + x_max) / 2;
-			offset_y = (y_min + y_max) / 2;
-                        x_scale = 1.0/(float)(x_max - x_min);
-			y_scale = 1.0/(float)(y_max - y_min);
-                        /* Back Timer4 on 500ms frequency */
-                        PR4 = PBCLK/256/2;
-			TMR4 = 0;
-                        /* ======================= */
-			ft_putstr("x_min: ");
-			ft_putnbr_base(x_min, 10);
-			ft_putstr(" x_max: ");
-			ft_putnbr_base(x_max, 10);
-			ft_putstr(" y_min: ");
-			ft_putnbr_base(y_min, 10);
-			ft_putstr(" y_max: ");
-			ft_putnbr_base(y_max, 10);
-			ft_putstr("\n\r");
-			ft_putstr(" offset x: ");
-			ft_putnbr_base(offset_x, 10);
-			ft_putstr(" offset y: ");
-			ft_putnbr_base(offset_y, 10);
-			ft_putstr("\n\r");
-			ft_putstr(" x_scale: ");
-			ft_putnbr_base(x_scale, 10);
-			ft_putstr(" y_scale: ");
-			ft_putnbr_base(y_scale, 10);
-			ft_putstr("\n\r");
-		}
+		thisTaskFlag.CalMag = FALSE;
+		LATFbits.LATF1 = 0;
+		offset_x = (x_min + x_max) / 2;
+		offset_y = (y_min + y_max) / 2;
+		x_scale = 1.0/(float)(x_max - x_min);
+		y_scale = 1.0/(float)(y_max - y_min);
+		/* Back Timer4 on 500ms frequency */
+		PR4 = PBCLK/256/2;
+		TMR4 = 0;
+		/* ======================= */
+		ft_putstr("x_min: ");
+		ft_putnbr_base(x_min, 10);
+		ft_putstr(" x_max: ");
+		ft_putnbr_base(x_max, 10);
+		ft_putstr(" y_min: ");
+		ft_putnbr_base(y_min, 10);
+		ft_putstr(" y_max: ");
+		ft_putnbr_base(y_max, 10);
+		ft_putstr("\n\r");
+		ft_putstr(" offset x: ");
+		ft_putnbr_base(offset_x, 10);
+		ft_putstr(" offset y: ");
+		ft_putnbr_base(offset_y, 10);
+		ft_putstr("\n\r");
+		ft_putstr(" x_scale: ");
+		ft_putnbr_base(x_scale, 10);
+		ft_putstr(" y_scale: ");
+		ft_putnbr_base(y_scale, 10);
+		ft_putstr("\n\r");
+		erase_sector(0x0);
+		delayms(200);
+		write_data(STORE_MAG_OFFSET_X, offset_x, 2);
+		delayms(85);
+		write_data(STORE_MAG_OFFSET_Y, offset_y, 2);
 	}
 }
 
@@ -189,26 +191,7 @@ s16 readHeading(s16 x, s16 y)
 
 void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
     IFS0bits.T4IF = 0;
-	if (devicePowered) {
-		s16 x = 0.0, y = 0.0, z = 0.0;
-		readMag(&x, &y, &z);
-		calibrateMag(x, y);
-		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-               	ft_putfloat(degrees);
-        	ft_putstr("degrees");
-		if (degrees < -90 || degrees > 90)
-			degrees = (degrees > 90) ? 0 : 180;
-		else
-			degrees = 90 - degrees;
-		ft_putnbr_base(degrees, 10);
-		ft_putstr("#");
-		ServoMotorSetAngle(degrees);
-		ft_putnbr_base(x - offset_x, 10);
-		ft_putstr(" ");
-		ft_putnbr_base(y - offset_y, 10);
-		ft_putstr("\n\r");
-	}
-	//ft_putstr("This is timer4 !\n\r");
+	thisTaskFlag.Mag = 1;
 }
 
 void Init_Timer4()
@@ -265,15 +248,15 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 	if (devicePowered && countTime > FIVE_SEC)
         {
             ft_putendl("Enter in calibration mode");
-            /* Set Timer4 on 100ms frequency */.
+            /* Set Timer4 on 100ms frequency */
             PR4 = PBCLK/256/10;
             TMR4 = 0;
             /* ============================== */
-            IsCalMode = TRUE;
+            thisTaskFlag.CalMag = TRUE;
             LATFbits.LATF1 = 1;
             TimerCalMode = 0;
         }
-	else if (devicePowered && countTime > ONE_HALF_SEC)
+		else if (devicePowered && countTime > ONE_HALF_SEC)
         {
             powerOffProcess = TRUE;
             gpsTmp = 0;
@@ -285,8 +268,14 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
         {
             if (devicePowered)
             {
+				ft_putstr("Flash Memory Data: ");
+				ft_putnbr_base(read_data(STORE_MAG_OFFSET_X, 2), 16);
+				ft_putstr(" ");
+				delayms(85);
+				ft_putnbr_base(read_data(STORE_MAG_OFFSET_Y, 2), 16);
+				ft_putstr("\n\r");
                 ft_putendl("destination switch");
-		ft_putnbr_base(countTime, 10);
+				ft_putnbr_base(countTime, 10);
             }
             else
             {
@@ -318,6 +307,20 @@ void init_button()
     IFS0bits.INT1IF = 0;
     IEC0bits.INT1IE = 1;
 }
+
+void Mag(s16 x, s16 y) {
+	if (devicePowered) {
+		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
+        ft_putnbr_base(degrees, 10);
+        ft_putstr("\n\r");
+		if (degrees < -90 || degrees > 90)
+			degrees = (degrees > 90) ? 0 : 180;
+		else
+			degrees = 90 - degrees;
+		thisTaskFlag.Mag = 0;
+	}
+}
+
 void main()
 {
     TRISFbits.TRISF1 = 0; // LED writable
@@ -333,24 +336,19 @@ void main()
     ServoMotorSetAngle(180);
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
-
-    while (1);
+	thisTaskFlag.Mag = 0;
+	thisTaskFlag.CalMag = 0;
+	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
+    while (1) {
+		if (thisTaskFlag.Mag == 1) {
+			readMag(&mag_x, &mag_y, &mag_z);
+			Mag(mag_x, mag_y);
+			if (thisTaskFlag.CalMag == 1) {
+				calibrateMag(mag_x, mag_y);
+			}
+		}
+	}
 }
-
-//void main()
-//{
-//    TRISDbits.TRISD8 = 1;
-//
-////    LATDbits.LATD8 = 1;
-//    __builtin_disable_interrupts();
-//    UART2_Init(_8N, 0, UART_RX_TX_ON);
-//    INTCONbits.MVEC = 1; // Enable multi interrupts
-//    __builtin_enable_interrupts();
-//     while (1) {
-//         ft_putendl("toto");
-//         ft_putnbr_base(PORTDbits.RD8, 10);
-//     }
-//}
 
 /*
  *

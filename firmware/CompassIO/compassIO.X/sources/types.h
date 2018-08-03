@@ -85,8 +85,8 @@ typedef double s64;
 #define MASTER (ON_BIT | MSTEN_BIT)
 #define SLAVE ON_BIT
 
-#define _CS1_ON() (PORTDbits.RD5 = 0)
-#define _CS1_OFF() (PORTDbits.RD5 = 1)
+#define _CS1_ON() (PORTGbits.RG9 = 0)
+#define _CS1_OFF() (PORTGbits.RG9 = 1)
 
 
 #define FM_JEDECID 0x9F
@@ -97,6 +97,15 @@ typedef double s64;
 #define FM_READ 0x03
 #define FM_STATUS_REGISTER_READ 0x05
 #define FM_ERASE_SECTOR 0xD8
+
+/* Flash Memory Space Sharing */
+#define STORE_MAG_OFFSET_X 0x0
+#define STORE_MAG_OFFSET_Y 0x1000
+
+struct s_taskflag {
+	u8 Mag;
+	u8 CalMag;
+};
 
 void    ft_putnbr_base(s32 nb, int base);
 void    ft_putbinary(u32 nb);
