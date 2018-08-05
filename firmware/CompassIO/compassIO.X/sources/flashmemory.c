@@ -23,7 +23,22 @@ void erase_sector(u32 addr)
     _CS1_OFF();
 }
 
-void write_data(u32 addr, s64 data, u32 size)
+void erase_small_sector(u32 addr)
+{
+    u8 output;
+
+    _CS1_ON();
+    Handle_SPI(FM_WRITE_ENABLE, &output);
+    _CS1_OFF();
+    delayms(100);
+    _CS1_ON();
+    Handle_SPI(FM_ERASE_SMALL_SECTOR, &output);
+    send_addr(addr);
+    _CS1_OFF();
+	delayms(50);
+}
+
+void write_data(u32 addr, s32 data, u32 size)
 {
     u32 i = 0;
     long long output;
@@ -41,7 +56,7 @@ void write_data(u32 addr, s64 data, u32 size)
     output = data;                    // Int
     while (i < size)
     {
-        Handle_SPI((int)((long long)output >> (i * 8)) & 0xFF, &output);
+        Handle_SPI((int)((long long)data >> (i * 8)) & 0xFF, &output);
         i++;
     }
     _CS1_OFF();
@@ -59,7 +74,7 @@ s32		read_data(u32 addr, u32 size)
     while(i < size)
     {
         Handle_SPI(0x00, &output);
-		funcOut = (output << (i * 8)) | output;
+		funcOut = (int)((long long)output << (i * 8)) | funcOut;
         i++;
     }
     _CS1_OFF();

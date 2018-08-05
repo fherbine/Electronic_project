@@ -128,6 +128,24 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
     gpsTmp++;
 }
 
+void storeMagData(s16 offset_x, s16 offset_y, float x_scale, float y_scale) {
+	erase_sector(STORE_MAG_OFFSET_X);
+	delayms(85);
+	write_data(STORE_MAG_OFFSET_X, offset_x, 2);
+	delayms(85);
+	erase_sector(STORE_MAG_OFFSET_Y);
+	delayms(85);
+	write_data(STORE_MAG_OFFSET_Y, offset_y, 2);
+	delayms(85);
+	erase_sector(STORE_MAG_SCALE_X);
+	delayms(85);
+	write_data(STORE_MAG_SCALE_X, (int)(x_scale * 10000), 3);
+	delayms(85);
+	erase_sector(STORE_MAG_SCALE_Y);
+	delayms(85);
+	write_data(STORE_MAG_SCALE_Y, (int)(y_scale * 10000), 3);
+}
+
 void calibrateMag(s16 x, s16 y)
 {
 	if(x < x_min)
@@ -165,15 +183,11 @@ void calibrateMag(s16 x, s16 y)
 		ft_putnbr_base(offset_y, 10);
 		ft_putstr("\n\r");
 		ft_putstr(" x_scale: ");
-		ft_putnbr_base(x_scale, 10);
+		ft_putfloat(x_scale);
 		ft_putstr(" y_scale: ");
-		ft_putnbr_base(y_scale, 10);
+		ft_putfloat(y_scale);
 		ft_putstr("\n\r");
-		erase_sector(0x0);
-		delayms(200);
-		write_data(STORE_MAG_OFFSET_X, offset_x, 2);
-		delayms(85);
-		write_data(STORE_MAG_OFFSET_Y, offset_y, 2);
+		storeMagData(offset_x, offset_y, x_scale, y_scale);
 	}
 }
 
@@ -220,8 +234,6 @@ void global_init()
     Init_Timer4();
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
-    delayms(1000);
-    ft_putendl("Start");
     init_mag();
     /* GPS */
     LATDbits.LATD6 = 0; // Set nRST GPS
@@ -229,6 +241,24 @@ void global_init()
     rst = 0;
     on_off = 0;
     gps = 0;
+	/* MAG - OFFSET */
+	offset_x = (s16)read_data(STORE_MAG_OFFSET_X, 2);
+	delayms(85);
+	offset_y = (s16)read_data(STORE_MAG_OFFSET_Y, 2);
+	delayms(85);
+	x_scale = (s16)read_data(STORE_MAG_SCALE_X, 2);
+	delayms(85);
+	y_scale = (s16)read_data(STORE_MAG_SCALE_Y, 2);
+    delayms(1000);
+    ft_putendl("Start");
+	ft_putnbr_base((s16)offset_x, 10);
+	ft_putstr(" ");
+	ft_putnbr_base((s16)offset_y, 10);
+	ft_putstr(" ");
+	ft_putnbr_base((s16)x_scale, 10);
+	ft_putstr(" ");
+	ft_putnbr_base((s16)y_scale, 10);
+	ft_putstr(" ");
 }
 
 void global_off()
@@ -252,6 +282,9 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
             PR4 = PBCLK/256/10;
             TMR4 = 0;
             /* ============================== */
+			// Clear offset
+			offset_x = 0;
+			offset_y = 0;
             thisTaskFlag.CalMag = TRUE;
             LATFbits.LATF1 = 1;
             TimerCalMode = 0;
@@ -268,12 +301,6 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
         {
             if (devicePowered)
             {
-				ft_putstr("Flash Memory Data: ");
-				ft_putnbr_base(read_data(STORE_MAG_OFFSET_X, 2), 16);
-				ft_putstr(" ");
-				delayms(85);
-				ft_putnbr_base(read_data(STORE_MAG_OFFSET_Y, 2), 16);
-				ft_putstr("\n\r");
                 ft_putendl("destination switch");
 				ft_putnbr_base(countTime, 10);
             }
@@ -310,6 +337,7 @@ void init_button()
 
 void Mag(s16 x, s16 y) {
 	if (devicePowered) {
+		LATFbits.LATF1 ^= 1;
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
         ft_putnbr_base(degrees, 10);
         ft_putstr("\n\r");

@@ -96,11 +96,14 @@ typedef double s64;
 #define FM_PAGE_PROGRAM 0x02
 #define FM_READ 0x03
 #define FM_STATUS_REGISTER_READ 0x05
+#define FM_ERASE_SMALL_SECTOR 0x20
 #define FM_ERASE_SECTOR 0xD8
 
 /* Flash Memory Space Sharing */
 #define STORE_MAG_OFFSET_X 0x0
-#define STORE_MAG_OFFSET_Y 0x1000
+#define STORE_MAG_OFFSET_Y 0x10000
+#define STORE_MAG_SCALE_X 0x20000
+#define STORE_MAG_SCALE_Y 0x30000
 
 struct s_taskflag {
 	u8 Mag;
