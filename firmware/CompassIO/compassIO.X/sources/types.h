@@ -100,10 +100,10 @@ typedef double s64;
 #define FM_ERASE_SECTOR 0xD8
 
 /* Flash Memory Space Sharing */
-#define STORE_MAG_OFFSET_X 0x0
-#define STORE_MAG_OFFSET_Y 0x10000
-#define STORE_MAG_SCALE_X 0x20000
-#define STORE_MAG_SCALE_Y 0x30000
+#define STORE_MAG_MAX_X 0x0
+#define STORE_MAG_MIN_X 0x10000
+#define STORE_MAG_MAX_Y 0x20000
+#define STORE_MAG_MIN_Y 0x30000
 
 struct s_taskflag {
 	u8 Mag;
