@@ -10,23 +10,14 @@
 char buffBT[500];
 struct s_taskflag thisTaskFlag;
 
-#define NEWLINE 13
+#define NEWLINE '#'
 
 /* UART -> Bluetooth */
 void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
-		// Store input in buffer
-		u32 dest_len = ft_strlen(buffBT);
-		buffBT[dest_len] = UART1_Get_Data_Byte();
-		UART2_Send_Data_Byte(buffBT[dest_len]);
-		buffBT[dest_len + 1] = '\0';
-		if (buffBT[dest_len] == NEWLINE) {
-			buffBT[dest_len] = '\0';
-			parser_gps_bluetooth(buffBT);
-			ft_bzero(buffBT, 500);
-		}
+            	UART2_Send_Data_Byte(UART1_Get_Data_Byte());
 	}
 	// Transmit
 	if (IFS0bits.U1TXIF)
@@ -41,7 +32,16 @@ void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
-		UART1_Send_Data_Byte(UART2_Get_Data_Byte());
+          	// Store input in buffer
+		u32 dest_len = ft_strlen(buffBT);
+		buffBT[dest_len] = UART2_Get_Data_Byte();
+		UART1_Send_Data_Byte(buffBT[dest_len]);
+		buffBT[dest_len + 1] = '\0';
+		if (buffBT[dest_len] == NEWLINE) {
+			buffBT[dest_len] = '\0';
+			parser_gps_bluetooth(buffBT);
+			ft_bzero(buffBT, 500);
+		}
 	}
 	// Transmit
 	if (IFS1bits.U2TXIF)
@@ -100,10 +100,10 @@ void	gps_power_off(void)
 #define MAX_U16 0xFFFF
 
 /* Calibrate MAG3110 */
-s16	x_min = 0x7FFF;
-s16	x_max = 0x8000;
-s16	y_min = 0x7FFF;
-s16	y_max = 0x8000;
+s16	x_min;
+s16	x_max;
+s16	y_min;
+s16	y_max;
 
 s16 offset_x = 0;
 s16 offset_y = 0;
@@ -128,22 +128,22 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
     gpsTmp++;
 }
 
-void storeMagData(s16 max_x, s16 min_x, s16 max_y, s16 min_y) {
+void storeMagData(s16 x_max, s16 x_min, s16 y_max, s16 y_min) {
 	erase_sector(STORE_MAG_MAX_X);
 	delayms(85);
-	write_data(STORE_MAG_MAX_X, max_x, 2);
+	write_data(STORE_MAG_MAX_X, x_max, 2);
 	delayms(85);
 	erase_sector(STORE_MAG_MIN_X);
 	delayms(85);
-	write_data(STORE_MAG_MIN_X, min_x, 2);
+	write_data(STORE_MAG_MIN_X, x_min, 2);
 	delayms(85);
 	erase_sector(STORE_MAG_MAX_Y);
 	delayms(85);
-	write_data(STORE_MAG_MAX_Y, max_y, 2);
+	write_data(STORE_MAG_MAX_Y, y_max, 2);
 	delayms(85);
 	erase_sector(STORE_MAG_MIN_Y);
 	delayms(85);
-	write_data(STORE_MAG_MIN_Y, min_y, 2);
+	write_data(STORE_MAG_MIN_Y, y_min, 2);
 	delayms(85);
 }
 
@@ -165,30 +165,11 @@ void calibrateMag(s16 x, s16 y)
 		offset_y = (y_min + y_max) / 2;
 		x_scale = 1.0/(float)(x_max - x_min);
 		y_scale = 1.0/(float)(y_max - y_min);
-		storeMagData(offset_x, offset_y, x_scale, y_scale);
 		/* Back Timer4 on 500ms frequency */
 		PR4 = PBCLK/256/2;
 		TMR4 = 0;
 		/* ======================= */
-		ft_putstr("x_min: ");
-		ft_putnbr_base(x_min, 10);
-		ft_putstr(" x_max: ");
-		ft_putnbr_base(x_max, 10);
-		ft_putstr(" y_min: ");
-		ft_putnbr_base(y_min, 10);
-		ft_putstr(" y_max: ");
-		ft_putnbr_base(y_max, 10);
-		ft_putstr("\n\r");
-		ft_putstr(" offset x: ");
-		ft_putnbr_base(offset_x, 10);
-		ft_putstr(" offset y: ");
-		ft_putnbr_base(offset_y, 10);
-		ft_putstr("\n\r");
-		ft_putstr(" x_scale: ");
-		ft_putfloat(x_scale);
-		ft_putstr(" y_scale: ");
-		ft_putfloat(y_scale);
-		ft_putstr("\n\r");
+                storeMagData(x_max, x_min, y_max, y_min);
 	}
 }
 
@@ -242,28 +223,28 @@ void global_init()
     rst = 0;
     on_off = 0;
     gps = 0;
-	/* MAG - OFFSET */
-	max_x = (s16)read_data(STORE_MAG_MAX_X, 2);
-	delayms(85);
-	min_x = (s16)read_data(STORE_MAG_MIN_X, 2);
-	delayms(85);
-	max_y = (s16)read_data(STORE_MAG_MAX_Y, 2);
-	delayms(85);
-	min_y = (s16)read_data(STORE_MAG_MIN_Y, 2);
-	offset_x = (x_min + x_max) / 2;
-	offset_y = (y_min + y_max) / 2;
-	x_scale = 1.0/(float)(x_max - x_min);
-	y_scale = 1.0/(float)(y_max - y_min);
-  delayms(1000);
-  ft_putendl("Start");
-	ft_putnbr_base((s16)offset_x, 10);
-	ft_putstr(" ");
-	ft_putnbr_base((s16)offset_y, 10);
-	ft_putstr(" ");
-	ft_putnbr_base((s16)x_scale, 10);
-	ft_putstr(" ");
-	ft_putnbr_base((s16)y_scale, 10);
-	ft_putstr(" ");
+    /* MAG - OFFSET */
+    x_max = (s16)read_data(STORE_MAG_MAX_X, 2);
+    delayms(85);
+    x_min = (s16)read_data(STORE_MAG_MIN_X, 2);
+    delayms(85);
+    y_max = (s16)read_data(STORE_MAG_MAX_Y, 2);
+    delayms(85);
+    y_min = (s16)read_data(STORE_MAG_MIN_Y, 2);
+    offset_x = (x_min + x_max) / 2;
+    offset_y = (y_min + y_max) / 2;
+    x_scale = 1.0/(float)(x_max - x_min);
+    y_scale = 1.0/(float)(y_max - y_min);
+    delayms(1000);
+    ft_putendl("Start");
+    //ft_putnbr_base((s16)x_max, 10);
+    //ft_putstr(" ");
+    //ft_putnbr_base((s16)x_min, 10);
+    //ft_putstr(" ");
+    //ft_putnbr_base((s16)y_max, 10);
+    //ft_putstr(" ");
+    //ft_putnbr_base((s16)y_min, 10);
+    //ft_putstr(" ");
 }
 
 void global_off()
@@ -287,9 +268,13 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
             PR4 = PBCLK/256/10;
             TMR4 = 0;
             /* ============================== */
-						// Clear offset
-						offset_x = 0;
-						offset_y = 0;
+            // Clear offset
+            offset_x = 0;
+            offset_y = 0;
+            x_min = 0x7FFF;
+            x_max = 0x8000;
+            y_min = 0x7FFF;
+            y_max = 0x8000;
             thisTaskFlag.CalMag = TRUE;
             LATFbits.LATF1 = 1;
             TimerCalMode = 0;
@@ -344,8 +329,8 @@ void Mag(s16 x, s16 y) {
 	if (devicePowered) {
 		LATFbits.LATF1 ^= 1;
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-        ft_putnbr_base(degrees, 10);
-        ft_putstr("\n\r");
+//        ft_putnbr_base(degrees, 10);
+//        ft_putstr("\n\r");
 		if (degrees < -90 || degrees > 90)
 			degrees = (degrees > 90) ? 0 : 180;
 		else

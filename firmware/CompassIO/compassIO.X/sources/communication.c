@@ -7,60 +7,86 @@
 
 #include "types.h"
 
-double parse_float(char *data)
+double parse_float(char *data, unsigned int size)
 {
 	long long offset = 1;
 	long long floatValue = 1;
 	long long result = 0;
 	short neg = 1;
-	int i = ft_strlen(data);
+	int i = size;
 	while (i)
 	{
-		UART2_Send_String(data[i]);
 		if (i - 1 == 0 && data[0] == '-')
 		{
 			neg = -1;
 			break;
 		}
-		if (data[i - 1] != '.' && data[i - 1] != '-' && data[i - 1] >= '0' && data[i - 1] <= '9')
+		if (data[i - 1] != '.' && data[i - 1] != '-')
 		{
 			result += (data[i - 1] - '0') * offset;
 			offset *= 10;
 		} else if (data[i - 1] == '.')
 			floatValue = offset;
-		else if (data[i - 1] < '0' || data[i - 1] > '9') // Handle wrong format
+		else if (data[i - 1] < '0' && data[i - 1] > '9') // Handle wrong format
 			return (999.999);
 		i--;
 	}
 	return (((double)result/(double)floatValue) * (double)neg);
 }
 
-// lat xx.xxxxxx\n
-// long xxx.xxxxxx\n
-void parser_gps_bluetooth(char *data)
+char	*ft_strchr(const char *s, int c)
 {
-	double output = 0.0;
-	ft_putendl("Analysing !");
-	if (!ft_strncmp(data, "lat ", 4))
-	{
-		data += 4;
-		output = parse_float(data);
-		if (output < -90 || output > 90) {
-			ft_putendl("Wrong latitude data");
+	while (*s != (char)c && *s != '\0')
+		s++;
+	if (*s == (char)c)
+		return ((char*)s);
+	return (NULL);
+}
+
+int	ft_index(const char *s, int c)
+{
+	char *ptr;
+
+	ptr = ft_strchr(s, c);
+	if (ptr == NULL)
+		return (-1);
+	else
+		return (ptr - s);
+}
+
+// lat xx.xxxxxx;long xxx.xxxxxx\n
+double parser_gps_bluetooth(char *data)
+{
+	double lat = 0.0;
+	double lon = 0.0;
+	int separatorIndex = ft_index(data, ';');
+	if (separatorIndex >= 0) {
+		if (!ft_strncmp(data, "lat ", 4))
+		{
+			data += 4;
+			lat = parse_float(data, separatorIndex - 4);
+			if (lat < -90 || lat > 90) {
+				ft_putendl("Wrong latitude data");
+			}
+			// Store data in flash memory
+			data += separatorIndex - 4 + 1; // - "lat " (4) + ";" (1)
+			if (!ft_strncmp(data, "long ", 5))
+			{
+				data += 5;
+				lon = parse_float(data, ft_strlen(data));
+				if (lon < -180 || lon > 180) {
+					ft_putendl("Wrong longitude data");
+				}
+				// Store data in flash memory
+			}
 		} else {
-			ft_putendl("Latitude received");
+
 		}
-		// Store data in flash memory
-	} else if (!ft_strncmp(data, "long ", 5))
-	{
-		data += 5;
-		output = parse_float(data);
-		if (output < -180 || output > 180) {
-			ft_putendl("Wrong longitude data");
-		} else {
-			ft_putendl("Longitude received");
-		}
-		// Store data in flash memory
+	} else {
+            return (-1);
 	}
-	ft_putendl("Done");
+        ft_putfloat(lat);
+        ft_putstr(" ");
+        ft_putfloat(lon);
+	return (0.0);
 }
