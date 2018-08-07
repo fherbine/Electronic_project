@@ -1995,7 +1995,7 @@ LOAD data_init
 .text           0x9d000000     0x2c34
  .text          0x9d000000     0x12e0 build/default/production/sources/main.o
                 0x9d000000                UART1Handler
-                0x9d000110                UART2Handler
+                0x9d0001c0                UART2Handler
                 0x9d0002c4                gps_power_on
                 0x9d0003bc                gps_power_off
                 0x9d000438                Timer3Handler

@@ -26,7 +26,7 @@ void UART1_Int()
 	U1STAbits.UTXISEL = 1;
 	U1STAbits.URXISEL = 1;
 }
-
+ 
 void UART1_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
 {
     if (!TRX_Mode) {
