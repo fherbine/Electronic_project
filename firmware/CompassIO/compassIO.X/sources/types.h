@@ -104,10 +104,13 @@ typedef double s64;
 #define STORE_MAG_MIN_X 0x10000
 #define STORE_MAG_MAX_Y 0x20000
 #define STORE_MAG_MIN_Y 0x30000
+#define STORE_DEST_LAT_X1000 0x40000
+#define STORE_DEST_LONG_X1000 0x50000
 
 struct s_taskflag {
 	u8 Mag;
 	u8 CalMag;
+        u8 Bluetooth;
 };
 
 void    ft_putnbr_base(s32 nb, int base);

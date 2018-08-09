@@ -7,13 +7,12 @@
 
 #include "types.h"
 
-char buffBT[500];
 struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
 
 /* UART -> Bluetooth */
-void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
+void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
@@ -28,20 +27,11 @@ void __ISR(_UART1_VECTOR, IPL2SRS) UART1Handler(void) {
 }
 
 /* UART -> GPS/Debug */
-void __ISR(_UART2_VECTOR, IPL2SRS) UART2Handler(void) {
+void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
-	    // Store input in buffer
-		u32 dest_len = ft_strlen(buffBT);
-		buffBT[dest_len] = UART2_Get_Data_Byte();
-		UART1_Send_Data_Byte(buffBT[dest_len]);
-		buffBT[dest_len + 1] = '\0';
-		if (buffBT[dest_len] == NEWLINE) {
-			buffBT[dest_len] = '\0';
-			parser_gps_bluetooth(buffBT);
-			ft_bzero(buffBT, 500);
-		}
+                thisTaskFlag.Bluetooth = 1;
 	}
 	// Transmit
 	if (IFS1bits.U2TXIF)
@@ -237,14 +227,6 @@ void global_init()
     y_scale = 1.0/(float)(y_max - y_min);
     delayms(1000);
     ft_putendl("Start");
-    //ft_putnbr_base((s16)x_max, 10);
-    //ft_putstr(" ");
-    //ft_putnbr_base((s16)x_min, 10);
-    //ft_putstr(" ");
-    //ft_putnbr_base((s16)y_max, 10);
-    //ft_putstr(" ");
-    //ft_putnbr_base((s16)y_min, 10);
-    //ft_putstr(" ");
 }
 
 void global_off()
@@ -329,14 +311,29 @@ void Mag(s16 x, s16 y) {
 	if (devicePowered) {
 		LATFbits.LATF1 ^= 1;
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-//        ft_putnbr_base(degrees, 10);
-//        ft_putstr("\n\r");
+                ft_putnbr_base(degrees, 10);
+                ft_putstr("\n\r");
 		if (degrees < -90 || degrees > 90)
 			degrees = (degrees > 90) ? 0 : 180;
 		else
 			degrees = 90 - degrees;
 		thisTaskFlag.Mag = 0;
 	}
+}
+
+char buffBT[500];
+
+void BluetoothPos() {
+        // Store input in buffer
+        u32 dest_len = ft_strlen(buffBT);
+        buffBT[dest_len] = UART2_Get_Data_Byte();
+        UART1_Send_Data_Byte(buffBT[dest_len]);
+        buffBT[dest_len + 1] = '\0';
+        if (buffBT[dest_len] == NEWLINE) {
+                buffBT[dest_len] = '\0';
+                parser_gps_bluetooth(buffBT);
+                ft_bzero(buffBT, 500);
+        }
 }
 
 void main()
@@ -354,18 +351,23 @@ void main()
     ServoMotorSetAngle(180);
     INTCONbits.MVEC = 1; // Enable multi interrupts
     __builtin_enable_interrupts();
-	thisTaskFlag.Mag = 0;
-	thisTaskFlag.CalMag = 0;
-	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
+    thisTaskFlag.Mag = 0;
+    thisTaskFlag.CalMag = 0;
+    thisTaskFlag.Bluetooth = 0;
+    s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
     while (1) {
-		if (thisTaskFlag.Mag == 1) {
-			readMag(&mag_x, &mag_y, &mag_z);
-			Mag(mag_x, mag_y);
-			if (thisTaskFlag.CalMag == 1) {
-				calibrateMag(mag_x, mag_y);
-			}
-		}
-	}
+        if (thisTaskFlag.Mag == 1) {
+            readMag(&mag_x, &mag_y, &mag_z);
+            Mag(mag_x, mag_y);
+            if (thisTaskFlag.CalMag == 1) {
+                calibrateMag(mag_x, mag_y);
+            }
+        }
+        if (thisTaskFlag.Bluetooth == 1) {
+            BluetoothPos();
+            thisTaskFlag.Bluetooth = 0;
+        }
+    }
 }
 
 /*

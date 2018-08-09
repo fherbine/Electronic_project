@@ -54,7 +54,7 @@ int	ft_index(const char *s, int c)
 		return (ptr - s);
 }
 
-// lat xx.xxxxxx;long xxx.xxxxxx\n
+// lat xx.xxxxxx;long xxx.xxxxxx
 double parser_gps_bluetooth(char *data)
 {
 	double lat = 0.0;
@@ -65,28 +65,37 @@ double parser_gps_bluetooth(char *data)
 		{
 			data += 4;
 			lat = parse_float(data, separatorIndex - 4);
-			if (lat < -90 || lat > 90) {
+			if (lat < -90.0 || lat > 90.0) {
 				ft_putendl("Wrong latitude data");
+                                return (-1);
 			}
-			// Store data in flash memory
 			data += separatorIndex - 4 + 1; // - "lat " (4) + ";" (1)
 			if (!ft_strncmp(data, "long ", 5))
 			{
 				data += 5;
 				lon = parse_float(data, ft_strlen(data));
-				if (lon < -180 || lon > 180) {
+				if (lon < -180.0 || lon > 180.0) {
 					ft_putendl("Wrong longitude data");
+                                        return (-1);
 				}
-				// Store data in flash memory
-			}
+                        } else {
+                            return (-1);
+                        }
 		} else {
-
+                    return (-1);
 		}
 	} else {
+            ft_putendl("Invalid data");
             return (-1);
 	}
-        ft_putfloat(lat);
-        ft_putstr(" ");
-        ft_putfloat(lon);
+        // Store data in flash memory
+       	erase_sector(STORE_DEST_LAT_X1000);
+	delayms(85);
+	write_data(STORE_DEST_LAT_X1000, lat * 1000, 3);
+	delayms(85);
+	erase_sector(STORE_DEST_LONG_X1000);
+	delayms(85);
+	write_data(STORE_DEST_LONG_X1000, lon * 1000, 3);
+	delayms(85);
 	return (0.0);
 }
