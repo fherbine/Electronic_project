@@ -19,19 +19,6 @@ void ft_putstr(char *string)
    UART1_Send_String(string, ft_strlen(string));
 }
 
-void *ft_bzero(void *s, u32 size)
-{
-    char *str;
-
-    str = (char*)s;
-    while (size--)
-    {
-	*str = 0;
-	str++;
-    }
-    return (s);
-}
-
 static s32	ft_count(s32 nb, char base)
 {
 	int count;

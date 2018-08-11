@@ -62,7 +62,7 @@ typedef double s64;
 
 #define MAX_BUFFER_SIZE 256
 
-#define UART_BAUD_RATE ((PBCLK/9600/16)-1)
+#define UART_BAUD_RATE(X) ((PBCLK/X/16)-1)
 
 #define BITS(X) (1 << X)
 
@@ -110,7 +110,23 @@ typedef double s64;
 struct s_taskflag {
 	u8 Mag;
 	u8 CalMag;
-        u8 Bluetooth;
+	u8 Bluetooth;
+	u8 GPS;
+};
+
+typedef struct	s_coord
+{
+	u8 completed;
+	float lat;
+	float lon;
+}				t_coord;
+
+struct s_data {
+	u32 init_distance;
+	u32 current_distance;
+	t_coord dest_coord;
+	t_coord init_coord;
+	t_coord current_coord;
 };
 
 void    ft_putnbr_base(s32 nb, int base);

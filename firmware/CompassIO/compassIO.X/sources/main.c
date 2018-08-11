@@ -11,12 +11,12 @@ struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
 
-/* UART -> Bluetooth */
+/* UART -> GPS */
 void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
-		UART2_Send_Data_Byte(UART1_Get_Data_Byte());
+		thisTaskFlag.GPS = TRUE;
 	}
 	// Transmit
 	if (IFS0bits.U1TXIF)
@@ -26,12 +26,12 @@ void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 		IFS0CLR = U1E_IFS1;
 }
 
-/* UART -> GPS/Debug */
+/* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
-                thisTaskFlag.Bluetooth = 1;
+		thisTaskFlag.Bluetooth = TRUE;
 	}
 	// Transmit
 	if (IFS1bits.U2TXIF)
@@ -71,7 +71,7 @@ void	gps_power_on(void)
 	{
 		gpsTmp = 0;
 		gps = 1;
-                powerOnProcess = FALSE;
+		powerOnProcess = FALSE;
 	}
 }
 
@@ -80,10 +80,10 @@ void	gps_power_off(void)
 	if (gpsTmp == 0)
 		LATDbits.LATD5 = 1;
 	else if (gpsTmp == 200)
-        {
-           	LATDbits.LATD5 = 0;
-                powerOffProcess = FALSE;
-        }
+	{
+		LATDbits.LATD5 = 0;
+		powerOffProcess = FALSE;
+	}
 	gpsTmp++;
 }
 
@@ -159,7 +159,7 @@ void calibrateMag(s16 x, s16 y)
 		PR4 = PBCLK/256/2;
 		TMR4 = 0;
 		/* ======================= */
-                storeMagData(x_max, x_min, y_max, y_min);
+		storeMagData(x_max, x_min, y_max, y_min);
 	}
 }
 
@@ -221,11 +221,18 @@ void global_init()
     y_max = (s16)read_data(STORE_MAG_MAX_Y, 2);
     delayms(85);
     y_min = (s16)read_data(STORE_MAG_MIN_Y, 2);
+		delayms(85);
+		data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
+		delayms(85);
+		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
+		if (data->dest_coord.lat != 0.0 && data->dest_coord.lon != 0.0) {
+			data->dest_coord.completed = TRUE;
+		}
     offset_x = (x_min + x_max) / 2;
     offset_y = (y_min + y_max) / 2;
     x_scale = 1.0/(float)(x_max - x_min);
     y_scale = 1.0/(float)(y_max - y_min);
-    delayms(1000);
+    delayms(50);
     ft_putendl("Start");
 }
 
@@ -242,77 +249,77 @@ void global_off()
 #define FIVE_SEC 5000
 
 void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
-    if (INTCONbits.INT1EP == 1) { // Button Released
-	if (devicePowered && countTime > FIVE_SEC)
-        {
-            ft_putendl("Enter in calibration mode");
-            /* Set Timer4 on 100ms frequency */
-            PR4 = PBCLK/256/10;
-            TMR4 = 0;
-            /* ============================== */
-            // Clear offset
-            offset_x = 0;
-            offset_y = 0;
-            x_min = 0x7FFF;
-            x_max = 0x8000;
-            y_min = 0x7FFF;
-            y_max = 0x8000;
-            thisTaskFlag.CalMag = TRUE;
-            LATFbits.LATF1 = 1;
-            TimerCalMode = 0;
-        }
+	if (INTCONbits.INT1EP == 1) { // Button Released
+		if (devicePowered && countTime > FIVE_SEC)
+		{
+			ft_putendl("Enter in calibration mode");
+			/* Set Timer4 on 100ms frequency */
+			PR4 = PBCLK/256/10;
+			TMR4 = 0;
+			/* ============================== */
+			// Clear offset
+			offset_x = 0;
+			offset_y = 0;
+			x_min = 0x7FFF;
+			x_max = 0x8000;
+			y_min = 0x7FFF;
+			y_max = 0x8000;
+			thisTaskFlag.CalMag = TRUE;
+			LATFbits.LATF1 = 1;
+			TimerCalMode = 0;
+		}
 		else if (devicePowered && countTime > ONE_HALF_SEC)
-        {
-            powerOffProcess = TRUE;
-            gpsTmp = 0;
-            ft_putendl("GLOBAL POWER OFF");
-            global_off();
-            devicePowered = FALSE;
-        }
-        else
-        {
-            if (devicePowered)
-            {
-                ft_putendl("destination switch");
-								ft_putnbr_base(countTime, 10);
-            }
-            else
-            {
-                powerOnProcess = TRUE;
-                gpsTmp = 0;
-                global_init();
-                ft_putendl("first time = GLOBAL POWER ON");
-                devicePowered = TRUE;
-            }
-        }
-        countTime = 0;
-        countTimeEnable = FALSE;
-        INTCONbits.INT1EP = 0;
-        // Get button pushing instead of getting release
-    } else { // Button pressed
-        countTimeEnable = TRUE;
-        INTCONbits.INT1EP = 1; // Active button1 release mode
-    }
-    IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT1
+		{
+			powerOffProcess = TRUE;
+			gpsTmp = 0;
+			ft_putendl("GLOBAL POWER OFF");
+			global_off();
+			devicePowered = FALSE;
+		}
+		else
+		{
+			if (devicePowered)
+			{
+			    ft_putendl("destination switch");
+					ft_putnbr_base(countTime, 10);
+			}
+			else
+			{
+			    powerOnProcess = TRUE;
+			    gpsTmp = 0;
+			    global_init();
+			    ft_putendl("first time = GLOBAL POWER ON");
+			    devicePowered = TRUE;
+			}
+		}
+			countTime = 0;
+			countTimeEnable = FALSE;
+			INTCONbits.INT1EP = 0;
+			// Get button pushing instead of getting release
+		} else { // Button pressed
+			countTimeEnable = TRUE;
+			INTCONbits.INT1EP = 1; // Active button1 release mode
+		}
+		IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT1
 }
 
 void init_button()
 {
-    INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt se produit
+	INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt se produit
 
-    // INT1 - Button
-    IPC1bits.INT1IP = 1;
-    IPC1bits.INT1IS = 0;
-    IFS0bits.INT1IF = 0;
-    IEC0bits.INT1IE = 1;
+	// INT1 - Button
+	IPC1bits.INT1IP = 1;
+	IPC1bits.INT1IS = 0;
+	IFS0bits.INT1IF = 0;
+	IEC0bits.INT1IE = 1;
 }
 
 void Mag(s16 x, s16 y) {
 	if (devicePowered) {
 		LATFbits.LATF1 ^= 1;
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-                ft_putnbr_base(degrees, 10);
-                ft_putstr("\n\r");
+		// ft_putnbr_base(degrees, 10);
+		// ft_putstr("\n\r");
 		if (degrees < -90 || degrees > 90)
 			degrees = (degrees > 90) ? 0 : 180;
 		else
@@ -323,59 +330,93 @@ void Mag(s16 x, s16 y) {
 
 char buffBT[500];
 
-void BluetoothPos() {
-        // Store input in buffer
-        u32 dest_len = ft_strlen(buffBT);
-        buffBT[dest_len] = UART2_Get_Data_Byte();
-        UART1_Send_Data_Byte(buffBT[dest_len]);
-        buffBT[dest_len + 1] = '\0';
-        if (buffBT[dest_len] == NEWLINE) {
-                buffBT[dest_len] = '\0';
-                parser_gps_bluetooth(buffBT);
-                ft_bzero(buffBT, 500);
-        }
+void HandleBluetooth(s_data **data) {
+	// Store input in buffer
+	u32 dest_len = ft_strlen(buffBT);
+	buffBT[dest_len] = UART2_Get_Data_Byte();
+	UART1_Send_Data_Byte(buffBT[dest_len]);
+	buffBT[dest_len + 1] = '\0';
+	if (buffBT[dest_len] == NEWLINE) {
+		buffBT[dest_len] = '\0';
+		parser_gps_bluetooth(buffBT, &(*data));
+		ft_bzero(buffBT, 500);
+	}
+}
+
+int res = -1;
+char buffGPS[500];
+
+void HandleGPS(s_data *data) {
+	// Store input in buffer
+	u32 dest_len = ft_strlen(buffGPS);
+	buffGPS[dest_len] = UART1_Get_Data_Byte();
+//	ft_putnbr_base(UART1_Get_Data_Byte(), 10);
+//	UART2_Send_Data_Byte(UART1_Get_Data_Byte());
+//	UART2_Send_Data_Byte(buffGPS[dest_len]);
+	buffGPS[dest_len + 1] = '\0';
+//	ft_putstr("Here");
+	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
+	{
+		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
+			buffGPS[dest_len - 1] = '\0';
+			buffGPS[dest_len] = '\0';
+			res = parse_nmea_gps(buffGPS, &coord);
+			if (res == 1)
+			{
+				ft_putfloat(coord.lat);
+				UART2_Send_Data_Byte('-');
+				ft_putfloat(coord.lon);
+			}
+		}
+		dest_len = 0;
+		ft_bzero(buffGPS, 500);
+	}
+	LATFbits.LATF1 ^= 1;
 }
 
 void main()
 {
-    TRISFbits.TRISF1 = 0; // LED writable
-    LATFbits.LATF1 = 0;
-    TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
-    LATDbits.LATD6 = 1;
-    TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
+	struct s_data data;
+	TRISFbits.TRISF1 = 0; // LED writable
+	LATFbits.LATF1 = 0;
+	TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
+	LATDbits.LATD6 = 1;
+	TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
 
-    __builtin_disable_interrupts();
-    Init_Delay();
-    init_button();
-    init_servo();
-    ServoMotorSetAngle(180);
-    INTCONbits.MVEC = 1; // Enable multi interrupts
-    __builtin_enable_interrupts();
-    thisTaskFlag.Mag = 0;
-    thisTaskFlag.CalMag = 0;
-    thisTaskFlag.Bluetooth = 0;
-    s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
-    while (1) {
-        if (thisTaskFlag.Mag == 1) {
-            readMag(&mag_x, &mag_y, &mag_z);
-            Mag(mag_x, mag_y);
-            if (thisTaskFlag.CalMag == 1) {
-                calibrateMag(mag_x, mag_y);
-            }
-        }
-        if (thisTaskFlag.Bluetooth == 1) {
-            BluetoothPos();
-            thisTaskFlag.Bluetooth = 0;
-        }
-    }
+	__builtin_disable_interrupts();
+	Init_Delay();
+	init_button();
+	init_servo();
+	ServoMotorSetAngle(180);
+	INTCONbits.MVEC = 1; // Enable multi interrupts
+	__builtin_enable_interrupts();
+	// Set each element of the struc to NULL
+	ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag));
+	ft_memset(&data, 0, sizeof(data));
+	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
+	while (1) {
+		if (thisTaskFlag.Mag == 1) {
+			readMag(&mag_x, &mag_y, &mag_z);
+			Mag(mag_x, mag_y);
+			if (thisTaskFlag.CalMag == 1) {
+				calibrateMag(mag_x, mag_y);
+			}
+		}
+		if (thisTaskFlag.Bluetooth == 1) {
+			HandleBluetooth(&data);
+			thisTaskFlag.Bluetooth = 0;
+		}
+		if (thisTaskFlag.GPS = 1) {
+			HandleGPS();
+			thisTaskFlag.GPS = 0;
+		}
+	}
 }
 
 /*
- *
-     delayms(100);
-    store_double(0x030000, 999);
-    delayms(85);
-    read_data(0x030000, 8);
-    Read status register
-    //read_status_register();
- */
+	- Verifier à l'oscilloscope si les séquences d'inititialisation du GPS sont respectées Timer3
+	- Est-ce que l'on démarre l'UART1 (GPS) seulement quand l'on a récupéré les coordonnées de destination ?
+	- Store Bluetooth output
+
+
+*/
