@@ -25,6 +25,8 @@
       <itemPath>sources/utils.c</itemPath>
       <itemPath>sources/flashmemory.c</itemPath>
       <itemPath>sources/mag.c</itemPath>
+      <itemPath>sources/gps.c</itemPath>
+      <itemPath>sources/move.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

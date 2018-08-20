@@ -13,7 +13,7 @@
 // NMEA
 // Latitude -> DDmm.mmmm
 // Longitude -> DDDmm.mmmm
-int		parse_nmea_gps(char *data, s_data *data)
+int		parse_nmea_gps(char *data, struct s_data *data_s)
 {
 	int size = ft_strlen(data);
 	char separatorCount = 0;
@@ -70,16 +70,16 @@ int		parse_nmea_gps(char *data, s_data *data)
 				}
 				i++;
 			}
-      if (data.init_coord.completed == FALSE && data.dest_coord.completed ==  TRUE) {
-        data.init_coord.completed = TRUE;
-        data.init_coord.lat = lat;
-        data.init_coord.lon = lon;
-        data.init_distance = get_distance(data.init_coord.lat, data.init_coord.long, data.dest_coord.lat, data.dest_coord.lon);
+      if (data_s->init_coord.completed == FALSE && data_s->dest_coord.completed ==  TRUE) {
+        data_s->init_coord.completed = TRUE;
+        data_s->init_coord.lat = lat;
+        data_s->init_coord.lon = lon;
+        data_s->init_distance = get_distance(data_s->init_coord.lat, data_s->init_coord.lon, data_s->dest_coord.lat, data_s->dest_coord.lon);
       }
-      if (data.init_coord.completed == TRUE) {
-        data.current_coord.lat = lat;
-        data.current_coord.lon = lon;
-        data.current_distance = get_distance(data.current_coord.lat, data.current_coord.long, data.dest_coord.lat, data.dest_coord.lon);
+      if (data_s->init_coord.completed == TRUE) {
+        data_s->current_coord.lat = lat;
+        data_s->current_coord.lon = lon;
+        data_s->current_distance = get_distance(data_s->current_coord.lat, data_s->current_coord.lon, data_s->dest_coord.lat, data_s->dest_coord.lon);
       }
 			return (1);
 		}

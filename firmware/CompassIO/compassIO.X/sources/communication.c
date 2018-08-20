@@ -35,7 +35,7 @@ double parse_float(char *data, unsigned int size)
 }
 
 // lat xx.xxxxxx;long xxx.xxxxxx
-double parser_gps_bluetooth(char *data, s_data *data)
+double parser_gps_bluetooth(char *data, struct s_data *data_s)
 {
 	double lat = 0.0;
 	double lon = 0.0;
@@ -47,7 +47,7 @@ double parser_gps_bluetooth(char *data, s_data *data)
 			lat = parse_float(data, separatorIndex - 4);
 			if (lat < -90.0 || lat > 90.0) {
 				ft_putendl("Wrong latitude data");
-				data->dest_coord.completed = FALSE;
+				data_s->dest_coord.completed = FALSE;
 				return (-1);
 			}
 			data += separatorIndex - 4 + 1; // - "lat " (4) + ";" (1)
@@ -57,25 +57,25 @@ double parser_gps_bluetooth(char *data, s_data *data)
 				lon = parse_float(data, ft_strlen(data));
 				if (lon < -180.0 || lon > 180.0) {
 					ft_putendl("Wrong longitude data");
-					data->dest_coord.completed = FALSE;
+					data_s->dest_coord.completed = FALSE;
 					return (-1);
 				}
 			} else {
-				data->dest_coord.completed = FALSE;
+				data_s->dest_coord.completed = FALSE;
 				return (-1);
 			}
 		} else {
-			data->coord.completed = FALSE;
+			data_s->dest_coord.completed = FALSE;
 			return (-1);
 		}
 	} else {
 		ft_putendl("Invalid data");
-		data->dest_coord.completed = FALSE;
+		data_s->dest_coord.completed = FALSE;
 		return (-1);
 	}
-	data->dest_coord.completed = TRUE;
-	data->dest_coord.lat = lat;
-	data->dest_coord.lon = lon;
+	data_s->dest_coord.completed = TRUE;
+	data_s->dest_coord.lat = lat;
+	data_s->dest_coord.lon = lon;
 	// Store data in flash memory
 	erase_sector(STORE_DEST_LAT_X1000);
 	delayms(85);

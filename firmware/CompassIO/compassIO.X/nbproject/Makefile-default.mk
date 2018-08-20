@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=sources/communication.c sources/configBits.c sources/delay.c sources/i2c.c sources/lib.c sources/main.c sources/servomotor.c sources/spi.c sources/uart.c sources/utils.c sources/flashmemory.c sources/mag.c
+SOURCEFILES_QUOTED_IF_SPACED=sources/communication.c sources/configBits.c sources/delay.c sources/i2c.c sources/lib.c sources/main.c sources/servomotor.c sources/spi.c sources/uart.c sources/utils.c sources/flashmemory.c sources/mag.c sources/gps.c sources/move.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/sources/communication.o ${OBJECTDIR}/sources/configBits.o ${OBJECTDIR}/sources/delay.o ${OBJECTDIR}/sources/i2c.o ${OBJECTDIR}/sources/lib.o ${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/spi.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/utils.o ${OBJECTDIR}/sources/flashmemory.o ${OBJECTDIR}/sources/mag.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/sources/communication.o.d ${OBJECTDIR}/sources/configBits.o.d ${OBJECTDIR}/sources/delay.o.d ${OBJECTDIR}/sources/i2c.o.d ${OBJECTDIR}/sources/lib.o.d ${OBJECTDIR}/sources/main.o.d ${OBJECTDIR}/sources/servomotor.o.d ${OBJECTDIR}/sources/spi.o.d ${OBJECTDIR}/sources/uart.o.d ${OBJECTDIR}/sources/utils.o.d ${OBJECTDIR}/sources/flashmemory.o.d ${OBJECTDIR}/sources/mag.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/sources/communication.o ${OBJECTDIR}/sources/configBits.o ${OBJECTDIR}/sources/delay.o ${OBJECTDIR}/sources/i2c.o ${OBJECTDIR}/sources/lib.o ${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/spi.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/utils.o ${OBJECTDIR}/sources/flashmemory.o ${OBJECTDIR}/sources/mag.o ${OBJECTDIR}/sources/gps.o ${OBJECTDIR}/sources/move.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/sources/communication.o.d ${OBJECTDIR}/sources/configBits.o.d ${OBJECTDIR}/sources/delay.o.d ${OBJECTDIR}/sources/i2c.o.d ${OBJECTDIR}/sources/lib.o.d ${OBJECTDIR}/sources/main.o.d ${OBJECTDIR}/sources/servomotor.o.d ${OBJECTDIR}/sources/spi.o.d ${OBJECTDIR}/sources/uart.o.d ${OBJECTDIR}/sources/utils.o.d ${OBJECTDIR}/sources/flashmemory.o.d ${OBJECTDIR}/sources/mag.o.d ${OBJECTDIR}/sources/gps.o.d ${OBJECTDIR}/sources/move.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/sources/communication.o ${OBJECTDIR}/sources/configBits.o ${OBJECTDIR}/sources/delay.o ${OBJECTDIR}/sources/i2c.o ${OBJECTDIR}/sources/lib.o ${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/spi.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/utils.o ${OBJECTDIR}/sources/flashmemory.o ${OBJECTDIR}/sources/mag.o
+OBJECTFILES=${OBJECTDIR}/sources/communication.o ${OBJECTDIR}/sources/configBits.o ${OBJECTDIR}/sources/delay.o ${OBJECTDIR}/sources/i2c.o ${OBJECTDIR}/sources/lib.o ${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/spi.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/utils.o ${OBJECTDIR}/sources/flashmemory.o ${OBJECTDIR}/sources/mag.o ${OBJECTDIR}/sources/gps.o ${OBJECTDIR}/sources/move.o
 
 # Source Files
-SOURCEFILES=sources/communication.c sources/configBits.c sources/delay.c sources/i2c.c sources/lib.c sources/main.c sources/servomotor.c sources/spi.c sources/uart.c sources/utils.c sources/flashmemory.c sources/mag.c
+SOURCEFILES=sources/communication.c sources/configBits.c sources/delay.c sources/i2c.c sources/lib.c sources/main.c sources/servomotor.c sources/spi.c sources/uart.c sources/utils.c sources/flashmemory.c sources/mag.c sources/gps.c sources/move.c
 
 
 CFLAGS=
@@ -166,6 +166,18 @@ ${OBJECTDIR}/sources/mag.o: sources/mag.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/sources/mag.o 
 	@${FIXDEPS} "${OBJECTDIR}/sources/mag.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/mag.o.d" -o ${OBJECTDIR}/sources/mag.o sources/mag.c   
 	
+${OBJECTDIR}/sources/gps.o: sources/gps.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/gps.o.d 
+	@${RM} ${OBJECTDIR}/sources/gps.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/gps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/gps.o.d" -o ${OBJECTDIR}/sources/gps.o sources/gps.c   
+	
+${OBJECTDIR}/sources/move.o: sources/move.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/move.o.d 
+	@${RM} ${OBJECTDIR}/sources/move.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/move.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/move.o.d" -o ${OBJECTDIR}/sources/move.o sources/move.c   
+	
 else
 ${OBJECTDIR}/sources/communication.o: sources/communication.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/sources" 
@@ -238,6 +250,18 @@ ${OBJECTDIR}/sources/mag.o: sources/mag.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/sources/mag.o.d 
 	@${RM} ${OBJECTDIR}/sources/mag.o 
 	@${FIXDEPS} "${OBJECTDIR}/sources/mag.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/mag.o.d" -o ${OBJECTDIR}/sources/mag.o sources/mag.c   
+	
+${OBJECTDIR}/sources/gps.o: sources/gps.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/gps.o.d 
+	@${RM} ${OBJECTDIR}/sources/gps.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/gps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/gps.o.d" -o ${OBJECTDIR}/sources/gps.o sources/gps.c   
+	
+${OBJECTDIR}/sources/move.o: sources/move.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/move.o.d 
+	@${RM} ${OBJECTDIR}/sources/move.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/move.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/move.o.d" -o ${OBJECTDIR}/sources/move.o sources/move.c   
 	
 endif
 

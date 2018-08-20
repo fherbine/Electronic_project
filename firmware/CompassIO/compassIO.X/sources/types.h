@@ -124,9 +124,9 @@ typedef struct	s_coord
 struct s_data {
 	u32 init_distance;
 	u32 current_distance;
-	t_coord dest_coord;
-	t_coord init_coord;
-	t_coord current_coord;
+	t_coord dest_coord; // BT coord
+	t_coord init_coord; // GPS init coord
+	t_coord current_coord; // GPS coord
 };
 
 void    ft_putnbr_base(s32 nb, int base);

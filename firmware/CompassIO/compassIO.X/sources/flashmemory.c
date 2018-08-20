@@ -41,7 +41,7 @@ void erase_small_sector(u32 addr)
 void write_data(u32 addr, s32 data, u32 size)
 {
     u32 i = 0;
-    long long output;
+    u8 output;
 
     erase_sector(addr);
     delayms(200);
