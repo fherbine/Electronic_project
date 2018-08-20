@@ -13,7 +13,7 @@ struct s_data *data;
 #define NEWLINE '#'
 
 /* UART -> GPS */
-void __ISR(_UART1_VECTOR, IPL1AUTO) UART1Handler(void) {
+void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	// Reception
 	if (IFS0bits.U1RXIF) {
 		IFS0CLR = U1RX_IFS1;
@@ -28,7 +28,7 @@ void __ISR(_UART1_VECTOR, IPL1AUTO) UART1Handler(void) {
 }
 
 /* UART -> Bluetooth/Debug */
-void __ISR(_UART2_VECTOR, IPL1AUTO) UART2Handler(void) {
+void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
 		IFS1CLR = U2RX_IFS1;
@@ -104,7 +104,7 @@ float y_scale = 0;
 
 s32 TimerCalMode = 0;
 
-void __ISR(_TIMER_3_VECTOR, IPL1AUTO) Timer3Handler(void) {
+void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 	IFS0bits.T3IF = 0;
     /* Power Off 2 Sec */
     if (countTimeEnable && countTime < MAX_U16)
@@ -176,7 +176,7 @@ s16 readHeading(s16 x, s16 y)
 }
 
 
-void __ISR(_TIMER_4_VECTOR, IPL6AUTO) Timer4Handler(void) {
+void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
     IFS0bits.T4IF = 0;
 	thisTaskFlag.Mag = 1;
 }
@@ -223,12 +223,12 @@ void global_init()
     delayms(85);
     y_min = (s16)read_data(STORE_MAG_MIN_Y, 2);
 		delayms(85);
-		data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
+	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
 		if (data->dest_coord.lat != 0.0 && data->dest_coord.lon != 0.0) {
 			data->dest_coord.completed = TRUE;
-		}
+		}*/                                                                 // >>>>>>>> COMMENT
     offset_x = (x_min + x_max) / 2;
     offset_y = (y_min + y_max) / 2;
     x_scale = 1.0/(float)(x_max - x_min);
@@ -249,7 +249,7 @@ void global_off()
 #define ONE_HALF_SEC 1500
 #define FIVE_SEC 5000
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL1AUTO) MainButtonHandler(void) {
+void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 	if (INTCONbits.INT1EP == 1) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
 		{
@@ -383,6 +383,7 @@ void main()
 	TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
 	LATDbits.LATD6 = 1;
 	TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
+        LATDbits.LATD5 = 0;
 
 	__builtin_disable_interrupts();
 	Init_Delay();
@@ -391,12 +392,13 @@ void main()
 	ServoMotorSetAngle(180);
 	INTCONbits.MVEC = 1; // Enable multi interrupts
 	__builtin_enable_interrupts();
+        //ft_putendl("start");
 	// Set each element of the struc to NULL
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
 	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
 	while (1) {
-		if (thisTaskFlag.Mag == 1) {
+		/*if (thisTaskFlag.Mag == 1) {
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y);
 			if (thisTaskFlag.CalMag == 1) {
@@ -410,7 +412,7 @@ void main()
 		if (thisTaskFlag.GPS = 1) {
 			HandleGPS(data);
 			thisTaskFlag.GPS = 0;
-		}
+		}*/                                                 //  >>>>>> COMMENT
 	}
 }
 
