@@ -404,7 +404,7 @@ void main()
 			}
 		}
 		if (thisTaskFlag.Bluetooth == 1) {
-			HandleBluetooth(&data);
+			HandleBluetooth(data);
 			thisTaskFlag.Bluetooth = 0;
 		}
 		if (thisTaskFlag.GPS = 1) {
