@@ -55,17 +55,17 @@ void	gps_power_on(void)
 {
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
 	{
-		LATDbits.LATD6 = 1;
+		LATDbits.LATD5 = 1;
 		rst = 1;
 	}
 	else if (gpsTmp == 110 && !on_off)
 	{
-		LATDbits.LATD5 = 1;
+		LATDbits.LATD6 = 1;
 		on_off = 1;
 	}
 	else if (gpsTmp == 310 && on_off)
 	{
-		LATDbits.LATD5 = 0;
+		LATDbits.LATD6 = 0;
 		on_off = 0;
 	}
 	else if (gpsTmp > 310)
@@ -79,10 +79,10 @@ void	gps_power_on(void)
 void	gps_power_off(void)
 {
 	if (gpsTmp == 0)
-		LATDbits.LATD5 = 1;
+		LATDbits.LATD6 = 1;
 	else if (gpsTmp == 200)
 	{
-		LATDbits.LATD5 = 0;
+		LATDbits.LATD6 = 0;
 		powerOffProcess = FALSE;
 	}
 	gpsTmp++;
@@ -249,8 +249,8 @@ void global_off()
 #define ONE_HALF_SEC 1500
 #define FIVE_SEC 5000
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
-	if (INTCONbits.INT1EP == 1) { // Button Released
+void __ISR(_EXTERNAL_2_VECTOR, IPL1) MainButtonHandler(void) {
+	if (INTCONbits.INT2EP == 0) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
 		{
 			ft_putendl("Enter in calibration mode");
@@ -271,10 +271,11 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 		}
 		else if (devicePowered && countTime > ONE_HALF_SEC)
 		{
+			powerOnProcess = FALSE;
 			powerOffProcess = TRUE;
 			gpsTmp = 0;
 			ft_putendl("GLOBAL POWER OFF");
-			global_off();
+			//global_off();										>>>>>>>>>>>>>>> CRASH !!!
 			devicePowered = FALSE;
 		}
 		else if(countTime > 10)
@@ -287,6 +288,7 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 			else
 			{
 			    powerOnProcess = TRUE;
+				powerOffProcess = FALSE;
 			    gpsTmp = 0;
 			    global_init();
 			    ft_putendl("first time = GLOBAL POWER ON");
@@ -295,24 +297,24 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 		}
 			countTime = 0;
 			countTimeEnable = FALSE;
-			INTCONbits.INT1EP = 0;
+			INTCONbits.INT2EP = 1;
 			// Get button pushing instead of getting release
 		} else { // Button pressed
 			countTimeEnable = TRUE;
-			INTCONbits.INT1EP = 1; // Active button1 release mode
+			INTCONbits.INT2EP = 0; // Active button1 release mode
 		}
-		IFS0bits.INT1IF = 0; // Reset to 0 Interrupt INT1
+		IFS0bits.INT2IF = 0; // Reset to 0 Interrupt INT1
 }
 
 void init_button()
 {
-	INTCONbits.INT1EP = 0; //0->lorsqu'on entre, 1 lorsqu'on sort l'interrupt se produit
+	INTCONbits.INT2EP = 1; //1->lorsqu'on entre, 0 lorsqu'on sort l'interrupt se produit*/
 
 	// INT1 - Button
-	IPC1bits.INT1IP = 1;
-	IPC1bits.INT1IS = 0;
-	IFS0bits.INT1IF = 0;
-	IEC0bits.INT1IE = 1;
+	IPC2bits.INT2IP = 1;
+	IPC2bits.INT2IS = 0;
+	IFS0bits.INT2IF = 0;
+	IEC0bits.INT2IE = 1;
 }
 
 void Mag(s16 x, s16 y) {
@@ -380,10 +382,10 @@ void main()
 	//struct s_data *data;
 	TRISFbits.TRISF1 = 0; // LED writable
 	LATFbits.LATF1 = 0;
-	TRISDbits.TRISD6 = 0; // RD6 is an output -> nRST GPS
-	LATDbits.LATD6 = 1;
-	TRISDbits.TRISD5 = 0; // RD5 is an output -> ON_OFF GPS
-        LATDbits.LATD5 = 0;
+	TRISDbits.TRISD6 = 0; // RD6 is an output -> ON_OFF GPS
+	LATDbits.LATD6 = 0;
+	TRISDbits.TRISD5 = 0; // RD5 is an output -> nRST GPS
+    LATDbits.LATD5 = 1;
 
 	__builtin_disable_interrupts();
 	Init_Delay();
