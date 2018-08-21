@@ -180,6 +180,7 @@ void init_struct_datas(struct s_data *data)
 	}
 	else
 		data->dest_coord.completed = FALSE;
+	data->init_coord.completed = FALSE;
 	data->current_coord.lat = 0.0;
 	data->current_coord.lon = 0.0;
 	data->init_coord.lat = 0.0;
