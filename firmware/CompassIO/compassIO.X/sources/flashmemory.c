@@ -74,7 +74,7 @@ u8	store_several_datas(u32 addr, s32 *datas, u32 each_size, u8 n_data)
 		buffer |= (datas[i] << (each_size * 8 * i));
 		i++;
 		/*	in case of overflow */
-		if ((buffer << 32 & (0x1 << 32)) && !(i < n_data))
+		if ((buffer & (0x1 << 31)) && !(i < n_data))
 			return (FALSE);
 	}
 	write_data(addr, buffer, each_size * n_data);
