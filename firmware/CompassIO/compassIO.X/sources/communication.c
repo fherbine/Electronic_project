@@ -79,11 +79,11 @@ double parser_gps_bluetooth(char *data, struct s_data *data_s)
 	// Store data in flash memory
 	erase_sector(STORE_DEST_LAT_X1000);
 	delayms(85);
-	write_data(STORE_DEST_LAT_X1000, lat * 1000, 4);
+	write_data(STORE_DEST_LAT_X1000, ((int)(lat * 1000)), 4);
 	delayms(85);
 	erase_sector(STORE_DEST_LONG_X1000);
 	delayms(85);
-	write_data(STORE_DEST_LONG_X1000, lon * 1000, 4);
+	write_data(STORE_DEST_LONG_X1000, ((int)lon * 1000), 4);
 	delayms(85);
 	return (0.0);
 }

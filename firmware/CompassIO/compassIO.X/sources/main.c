@@ -168,6 +168,19 @@ s16 readHeading(s16 x, s16 y)
 	return (atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
 }
 
+void Mag(s16 x, s16 y) {
+	if (devicePowered) {
+		//LATFbits.LATF1 = 0;													// USELESS ----
+		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
+		if (degrees < -90 || degrees > 90)
+			degrees = (degrees > 90) ? 0 : 180;
+		else
+			degrees = 90 - degrees;
+		ServoMotorSetAngle(degrees);
+		thisTaskFlag.Mag = 0;
+	}
+}
+
 
 void __ISR(_TIMER_4_VECTOR, IPL6) Timer4Handler(void) {
     IFS0bits.T4IF = 0;
@@ -227,7 +240,6 @@ void global_init()
     x_scale = 1.0/(float)(x_max - x_min);
     y_scale = 1.0/(float)(y_max - y_min);
     delayms(50);
-    ft_putendl("Start");
 }
 
 void global_off()
@@ -254,10 +266,10 @@ void __ISR(_EXTERNAL_2_VECTOR, IPL1) MainButtonHandler(void) {
 			// Clear offset
 			offset_x = 0;
 			offset_y = 0;
-			x_min = 0x7FFF;
-			x_max = 0x8000;
-			y_min = 0x7FFF;
-			y_max = 0x8000;
+			x_min = 0x7FFF;														//// ?
+			x_max = 0x8000;														//// ?
+			y_min = 0x7FFF;														//// ?
+			y_max = 0x8000;														//// ?
 			thisTaskFlag.CalMag = TRUE;
 			LATFbits.LATF1 = 1;
 			TimerCalMode = 0;
@@ -310,20 +322,6 @@ void init_button()
 	IEC0bits.INT2IE = 1;
 }
 
-void Mag(s16 x, s16 y) {
-	if (devicePowered) {
-		LATFbits.LATF1 ^= 1;
-		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-		// ft_putnbr_base(degrees, 10);
-		// ft_putstr("\n\r");
-		if (degrees < -90 || degrees > 90)
-			degrees = (degrees > 90) ? 0 : 180;
-		else
-			degrees = 90 - degrees;
-		thisTaskFlag.Mag = 0;
-	}
-}
-
 char buffBT[500];
 
 void HandleBluetooth(struct s_data *data) {
@@ -343,14 +341,11 @@ int res = -1;
 char buffGPS[500];
 
 void HandleGPS(struct s_data *data) {
-	// Store input in buffer
 	u32 dest_len = ft_strlen(buffGPS);
+
 	buffGPS[dest_len] = UART1_Get_Data_Byte();
-//	ft_putnbr_base(UART1_Get_Data_Byte(), 10);
-//	UART2_Send_Data_Byte(UART1_Get_Data_Byte());
-//	UART2_Send_Data_Byte(buffGPS[dest_len]);
 	buffGPS[dest_len + 1] = '\0';
-//	ft_putstr("Here");
+
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
 	{
 		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
@@ -368,6 +363,14 @@ void HandleGPS(struct s_data *data) {
 		ft_bzero(buffGPS, 500);
 	}
 	LATFbits.LATF1 ^= 1;
+}
+
+void init_task_flags(void)
+{
+	thisTaskFlag.Bluetooth = FALSE;
+	thisTaskFlag.CalMag = FALSE;
+	thisTaskFlag.GPS = FALSE;
+	thisTaskFlag.Mag = FALSE;
 }
 
 void main()
@@ -391,23 +394,26 @@ void main()
 	// Set each element of the struc to NULL
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
+	struct s_data data;
+	init_struct_datas(&data);
+	init_task_flags();
 	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
 	while (1) {
-		/*if (thisTaskFlag.Mag == 1) {
+		if (thisTaskFlag.Mag == 1) {
 			readMag(&mag_x, &mag_y, &mag_z);
-			Mag(mag_x, mag_y);
+			Mag(mag_x, mag_y);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
 				calibrateMag(mag_x, mag_y);
 			}
 		}
 		if (thisTaskFlag.Bluetooth == 1) {
-			HandleBluetooth(data);
+			HandleBluetooth(&data);
 			thisTaskFlag.Bluetooth = 0;
 		}
 		if (thisTaskFlag.GPS = 1) {
-			HandleGPS(data);
+			HandleGPS(&data);
 			thisTaskFlag.GPS = 0;
-		}*/                                                 //  >>>>>> COMMENT
+		}                                                 //  >>>>>> COMMENT
 	}
 }
 

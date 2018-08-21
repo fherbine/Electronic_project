@@ -168,3 +168,22 @@ void store_int(u32 addr, u32 data)
     write_data(addr, data, 4);
     delayms(85);
 }
+
+void init_struct_datas(struct s_data *data)
+{
+	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
+	delayms(85);
+	data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
+	delayms(85);
+	if (data->dest_coord.lat != 0.0 && data->dest_coord.lon != 0.0) {
+		data->dest_coord.completed = TRUE;
+	}
+	else
+		data->dest_coord.completed = FALSE;
+	data->current_coord.lat = 0.0;
+	data->current_coord.lon = 0.0;
+	data->init_coord.lat = 0.0;
+	data->init_coord.lon = 0.0;
+	data->init_distance = 0xFFFFFFFF;
+	data->current_distance = 0xFFFFFFFF;
+}
