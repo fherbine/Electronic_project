@@ -100,10 +100,12 @@ typedef double s64;
 #define FM_ERASE_SECTOR 0xD8
 
 /* Flash Memory Space Sharing */
-#define STORE_MAG_MAX_X 0x0
-#define STORE_MAG_MIN_X 0x10000
-#define STORE_MAG_MAX_Y 0x20000
-#define STORE_MAG_MIN_Y 0x30000
+//#define STORE_MAG_MAX_X 0x0
+#define STORE_MAG_X 0x0
+#define STORE_MAG_Y 0x10000
+//#define STORE_MAG_MIN_X 0x10000
+//#define STORE_MAG_MAX_Y 0x20000
+//#define STORE_MAG_MIN_Y 0x30000
 #define STORE_DEST_LAT_X1000 0x40000
 #define STORE_DEST_LONG_X1000 0x50000
 
@@ -123,10 +125,10 @@ typedef struct	s_coord
 
 struct s_data {
 	u32 init_distance;
-	u32 current_distance;
+	u32 current_distance; // --> no flash
 	t_coord dest_coord; // BT coord
 	t_coord init_coord; // GPS init coord
-	t_coord current_coord; // GPS coord
+	t_coord current_coord; // GPS coord --> no flsh
 };
 
 void    ft_putnbr_base(s32 nb, int base);

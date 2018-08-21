@@ -8,7 +8,6 @@
 #include "types.h"
 
 struct s_taskflag thisTaskFlag;
-struct s_data *data;
 
 #define NEWLINE '#'
 
@@ -120,21 +119,15 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 }
 
 void storeMagData(s16 x_max, s16 x_min, s16 y_max, s16 y_min) {
-	erase_sector(STORE_MAG_MAX_X);
+	s16 x_tab[2] = {x_max, x_min};
+	s16 y_tab[2] = {y_max, y_min};
+	erase_sector(STORE_MAG_X);
 	delayms(85);
-	write_data(STORE_MAG_MAX_X, x_max, 2);
+	store_several_datas(STORE_MAG_X, x_tab, 2, 2);
 	delayms(85);
-	erase_sector(STORE_MAG_MIN_X);
+	erase_sector(STORE_MAG_Y);
 	delayms(85);
-	write_data(STORE_MAG_MIN_X, x_min, 2);
-	delayms(85);
-	erase_sector(STORE_MAG_MAX_Y);
-	delayms(85);
-	write_data(STORE_MAG_MAX_Y, y_max, 2);
-	delayms(85);
-	erase_sector(STORE_MAG_MIN_Y);
-	delayms(85);
-	write_data(STORE_MAG_MIN_Y, y_min, 2);
+	store_several_datas(STORE_MAG_Y, y_tab, 2, 2);
 	delayms(85);
 }
 
@@ -215,14 +208,14 @@ void global_init()
     on_off = 0;
     gps = 0;
     /* MAG - OFFSET */
-    x_max = (s16)read_data(STORE_MAG_MAX_X, 2);
+	x_max = (s16)read_index_data(STORE_MAG_X, 2, 0);
     delayms(85);
-    x_min = (s16)read_data(STORE_MAG_MIN_X, 2);
+	x_min = (s16)read_index_data(STORE_MAG_X, 2, 1);
     delayms(85);
-    y_max = (s16)read_data(STORE_MAG_MAX_Y, 2);
+	y_max = (s16)read_index_data(STORE_MAG_Y, 2, 0);
     delayms(85);
-    y_min = (s16)read_data(STORE_MAG_MIN_Y, 2);
-		delayms(85);
+	y_min = (s16)read_index_data(STORE_MAG_Y, 2, 1);
+	delayms(85);
 	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);

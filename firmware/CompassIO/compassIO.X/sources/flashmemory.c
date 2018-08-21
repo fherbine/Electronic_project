@@ -62,6 +62,40 @@ void write_data(u32 addr, s32 data, u32 size)
     _CS1_OFF();
 }
 
+u8	store_several_datas(u32 addr, s32 *datas, u32 each_size, u8 n_data)
+{
+	u8 i = 0;
+	s32 buffer = 0;
+
+
+
+	while (i < n_data)
+	{
+		buffer |= (datas[i] << (each_size * 8 * i));
+		i++;
+		/*	in case of overflow */
+		if ((buffer << 32 & (0x1 << 32)) && !(i < n_data))
+			return (FALSE);
+	}
+	write_data(addr, buffer, each_size * n_data);
+	return (TRUE);
+}
+
+s32		read_index_data(u32 addr, u32 size, u8 index)
+{
+	s32 mask = 0x0;
+
+	if (size == 1)
+		mask = 0xff;
+	else if (size == 2)
+		mask = 0xffff;
+	else if (size == 3)
+		mask = 0xffffff;
+	else if (size == 4)
+		mask = 0xffffffff;
+	return ((read_data(addr, size) << index * size * 8) & mask); // get data at index
+}
+
 s32		read_data(u32 addr, u32 size)
 {
     u32 i = 0;
