@@ -81,6 +81,7 @@ int		parse_nmea_gps(char *data, struct s_data *data_s)
         data_s->current_coord.lon = lon;
         data_s->current_distance = get_distance(data_s->current_coord.lat, data_s->current_coord.lon, data_s->dest_coord.lat, data_s->dest_coord.lon);
       }
+			data_s->current_coord.completed = TRUE;
 			return (1);
 		}
 	}

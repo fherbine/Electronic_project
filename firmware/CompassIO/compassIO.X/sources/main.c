@@ -52,6 +52,8 @@ u8 powerOffProcess = FALSE;
 
 void	gps_power_on(void)
 {
+	if (gpsTmp % 100 == 0)
+		LATBbits.LATB1 ^= 1;													//// POWER ON LED
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
 	{
 		LATDbits.LATD5 = 1;
@@ -144,7 +146,7 @@ void calibrateMag(s16 x, s16 y)
 	if(TimerCalMode > 5000) // Exit calibration
 	{
 		thisTaskFlag.CalMag = FALSE;
-		LATFbits.LATF1 = 0;
+		LATBbits.LATB1 = 0;
 		offset_x = (x_min + x_max) / 2;
 		offset_y = (y_min + y_max) / 2;
 		x_scale = 1.0/(float)(x_max - x_min);
@@ -168,15 +170,19 @@ s16 readHeading(s16 x, s16 y)
 	return (atan2(-yf*y_scale, xf*x_scale) * DEG_PER_RAD);
 }
 
-void Mag(s16 x, s16 y) {
+void Mag(s16 x, s16 y, struct s_data *datas) {
 	if (devicePowered) {
 		//LATFbits.LATF1 = 0;													// USELESS ----
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
-		if (degrees < -90 || degrees > 90)
-			degrees = (degrees > 90) ? 0 : 180;
-		else
-			degrees = 90 - degrees;
-		ServoMotorSetAngle(degrees);
+		if (datas->dest_coord.completed == TRUE && datas->current_coord.completed == TRUE)
+		{
+			degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
+			if (degrees < -90 || degrees > 90)
+				degrees = (degrees > 90) ? 0 : 180;
+			else
+				degrees = 90 - degrees;
+			ServoMotorSetAngle(degrees);											///	North
+		}
 		thisTaskFlag.Mag = 0;
 	}
 }
@@ -271,7 +277,7 @@ void __ISR(_EXTERNAL_2_VECTOR, IPL1) MainButtonHandler(void) {
 			y_min = 0x7FFF;														//// ?
 			y_max = 0x8000;														//// ?
 			thisTaskFlag.CalMag = TRUE;
-			LATFbits.LATF1 = 1;
+			LATBbits.LATB1 = 1;
 			TimerCalMode = 0;
 		}
 		else if (devicePowered && countTime > ONE_HALF_SEC)
@@ -362,7 +368,7 @@ void HandleGPS(struct s_data *data) {
 		dest_len = 0;
 		ft_bzero(buffGPS, 500);
 	}
-	LATFbits.LATF1 ^= 1;
+	LATBbits.LATB1 ^= 1;
 }
 
 void init_task_flags(void)
@@ -376,8 +382,8 @@ void init_task_flags(void)
 void main()
 {
 	//struct s_data *data;
-	TRISFbits.TRISF1 = 0; // LED writable
-	LATFbits.LATF1 = 0;
+	TRISBbits.TRISB1 = 0; // LED writable
+	LATBbits.LATB1 = 0;
 	TRISDbits.TRISD6 = 0; // RD6 is an output -> ON_OFF GPS
 	LATDbits.LATD6 = 0;
 	TRISDbits.TRISD5 = 0; // RD5 is an output -> nRST GPS
@@ -401,7 +407,7 @@ void main()
 	while (1) {
 		if (thisTaskFlag.Mag == 1) {
 			readMag(&mag_x, &mag_y, &mag_z);
-			Mag(mag_x, mag_y);													/// ?
+			Mag(mag_x, mag_y, &data);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
 				calibrateMag(mag_x, mag_y);
 			}
