@@ -52,8 +52,8 @@ u8 powerOffProcess = FALSE;
 
 void	gps_power_on(void)
 {
-	if (gpsTmp % 100 == 0)
-		LATBbits.LATB1 ^= 1;													//// POWER ON LED
+	//if (gpsTmp % 100 == 0)
+	//	LATBbits.LATB1 ^= 1;													//// POWER ON LED ===== comment == test
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
 	{
 		LATDbits.LATD5 = 1;
@@ -79,6 +79,7 @@ void	gps_power_on(void)
 
 void	gps_power_off(void)
 {
+	gps = 0;
 	if (gpsTmp == 0)
 		LATDbits.LATD6 = 1;
 	else if (gpsTmp == 200)
@@ -86,7 +87,7 @@ void	gps_power_off(void)
 		LATDbits.LATD6 = 0;
 		powerOffProcess = FALSE;
 	}
-	gpsTmp++;
+	gpsTmp++;																	/// WARNING
 }
 
 #define MAX_U16 0xFFFF
@@ -105,6 +106,8 @@ float y_scale = 0;
 
 s32 TimerCalMode = 0;
 
+u16 counter = 0;
+
 void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 	IFS0bits.T3IF = 0;
     /* Power Off 2 Sec */
@@ -117,7 +120,14 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
         gps_power_off();
 	if (thisTaskFlag.CalMag)
 		TimerCalMode++;
-    gpsTmp++;
+	counter = (counter < 0xFFFF) ? counter + 1 : 0;
+    gpsTmp = (gpsTmp <= 500) ? gpsTmp + 1 : 500 ;										//overflow
+}
+
+void blink_distance(struct s_data *datas)
+{
+	if (counter % ((6 * datas->current_distance * 100) / datas->init_distance + 100))
+		LATBbits.LATB1 ^= 1;
 }
 
 void storeMagData(s16 x_max, s16 x_min, s16 y_max, s16 y_min) {
@@ -378,6 +388,7 @@ void init_task_flags(void)
 	thisTaskFlag.GPS = FALSE;
 	thisTaskFlag.Mag = FALSE;
 	thisTaskFlag.switchPos = FALSE;
+	thisTaskFlag.displayDist = FALSE;
 }
 
 void main()
@@ -406,6 +417,8 @@ void main()
 	init_task_flags();
 	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
 	while (1) {
+		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
+			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y, &data);													/// ?
@@ -426,6 +439,8 @@ void main()
 			switch_position(&data);
 			thisTaskFlag.switchPos = FALSE;
 		}
+		if (thisTaskFlag.displayDist == TRUE)
+			blink_distance(&data);
 	}
 }
 

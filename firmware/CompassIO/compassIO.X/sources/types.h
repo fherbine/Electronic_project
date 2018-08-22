@@ -115,6 +115,7 @@ struct s_taskflag {
 	u8 Bluetooth;
 	u8 GPS;
 	u8 switchPos;
+	u8 displayDist;
 };
 
 typedef struct	s_coord
