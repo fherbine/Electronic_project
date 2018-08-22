@@ -35,7 +35,7 @@ double parse_float(char *data, unsigned int size)
 }
 
 // lat xx.xxxxxx;long xxx.xxxxxx
-double parser_gps_bluetooth(char *data, struct s_data *data_s)
+u8 parser_gps_bluetooth(char *data, struct s_data *data_s)
 {
 	double lat = 0.0;
 	double lon = 0.0;
@@ -85,5 +85,5 @@ double parser_gps_bluetooth(char *data, struct s_data *data_s)
 	delayms(85);
 	write_data(STORE_DEST_LONG_X1000, ((int)lon * 1000), 4);
 	delayms(85);
-	return (0.0);
+	return (0);
 }

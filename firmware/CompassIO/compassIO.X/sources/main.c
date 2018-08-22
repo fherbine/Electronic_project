@@ -52,8 +52,8 @@ u8 powerOffProcess = FALSE;
 
 void	gps_power_on(void)
 {
-	//if (gpsTmp % 100 == 0)
-	//	LATBbits.LATB1 ^= 1;													//// POWER ON LED ===== comment == test
+	if (gpsTmp % 100 == 0)
+		LATBbits.LATB1 ^= 1;													//// POWER ON LED 
 	if (gpsTmp == 100 && !rst) // 100ms after PIC power on
 	{
 		LATDbits.LATD5 = 1;
@@ -74,6 +74,7 @@ void	gps_power_on(void)
 		gpsTmp = 0;
 		gps = 1;
 		powerOnProcess = FALSE;
+		///////////////////////////////////////////////////////////////////////////////////// SHOULD ENABLE BT HERE
 	}
 }
 
@@ -121,7 +122,7 @@ void __ISR(_TIMER_3_VECTOR, IPL1) Timer3Handler(void) {
 	if (thisTaskFlag.CalMag)
 		TimerCalMode++;
 	counter = (counter < 0xFFFF) ? counter + 1 : 0;
-    gpsTmp = (gpsTmp <= 500) ? gpsTmp + 1 : 500 ;										//overflow
+    gpsTmp = (gpsTmp <= 500) ? gpsTmp + 1 : 500 ;			//overflow
 }
 
 void blink_distance(struct s_data *datas)
@@ -182,7 +183,6 @@ s16 readHeading(s16 x, s16 y)
 
 void Mag(s16 x, s16 y, struct s_data *datas) {
 	if (devicePowered) {
-		//LATFbits.LATF1 = 0;													// USELESS ----
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
 		if (datas->dest_coord.completed == TRUE && datas->current_coord.completed == TRUE)
 		{
@@ -191,7 +191,8 @@ void Mag(s16 x, s16 y, struct s_data *datas) {
 				degrees = (degrees > 90) ? 0 : 180;
 			else
 				degrees = 90 - degrees;
-			ServoMotorSetAngle(degrees);											///	North
+			if (thisTaskFlag.displayDist == TRUE)
+				ServoMotorSetAngle(degrees);
 		}
 		thisTaskFlag.Mag = 0;
 	}
@@ -343,12 +344,14 @@ char buffBT[500];
 void HandleBluetooth(struct s_data *data) {
 	// Store input in buffer
 	u32 dest_len = ft_strlen(buffBT);
+	u8 res = 0;
 	buffBT[dest_len] = UART2_Get_Data_Byte();
 	UART1_Send_Data_Byte(buffBT[dest_len]);
 	buffBT[dest_len + 1] = '\0';
 	if (buffBT[dest_len] == NEWLINE) {
 		buffBT[dest_len] = '\0';
-		parser_gps_bluetooth(buffBT, data);
+		res = parser_gps_bluetooth(buffBT, data);
+		LATDbits.LATD1 = (!res) ? 1 : 0;
 		ft_bzero(buffBT, 500);
 	}
 }
@@ -441,6 +444,11 @@ void main()
 		}
 		if (thisTaskFlag.displayDist == TRUE)
 			blink_distance(&data);
+
+		if (thisTaskFlag.displayDist == TRUE && data.current_distance <= 10){		// the walk is over 10m near from the final destination
+			thisTaskFlag.displayDist = FALSE;
+			LATDbits.LATD1 = 1;
+		}
 	}
 }
 
