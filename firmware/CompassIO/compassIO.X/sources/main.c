@@ -294,7 +294,7 @@ void __ISR(_EXTERNAL_2_VECTOR, IPL1) MainButtonHandler(void) {
 			if (devicePowered)
 			{
 			    ft_putendl("destination switch");
-					ft_putnbr_base(countTime, 10);
+				thisTaskFlag.switchPos = TRUE;
 			}
 			else
 			{
@@ -368,7 +368,7 @@ void HandleGPS(struct s_data *data) {
 		dest_len = 0;
 		ft_bzero(buffGPS, 500);
 	}
-	LATBbits.LATB1 ^= 1;
+	//LATBbits.LATB1 ^= 1;
 }
 
 void init_task_flags(void)
@@ -377,6 +377,7 @@ void init_task_flags(void)
 	thisTaskFlag.CalMag = FALSE;
 	thisTaskFlag.GPS = FALSE;
 	thisTaskFlag.Mag = FALSE;
+	thisTaskFlag.switchPos = FALSE;
 }
 
 void main()
@@ -419,7 +420,12 @@ void main()
 		if (thisTaskFlag.GPS = 1) {
 			HandleGPS(&data);
 			thisTaskFlag.GPS = 0;
-		}                                                 //  >>>>>> COMMENT
+		}
+		if (thisTaskFlag.switchPos == TRUE)
+		{
+			switch_position(&data);
+			thisTaskFlag.switchPos = FALSE;
+		}
 	}
 }
 

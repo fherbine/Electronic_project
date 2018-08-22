@@ -172,6 +172,8 @@ void store_int(u32 addr, u32 data)
 void init_struct_datas(struct s_data *data)
 {
 	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
+	//data->dest_coord.lat = 1.1;													///               TEST STUFF
+	//data->dest_coord.lon = 1.1;													///				TEST STUFF
 	delayms(85);
 	data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
 	delayms(85);

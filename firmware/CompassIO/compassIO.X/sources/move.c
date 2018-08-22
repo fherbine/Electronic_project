@@ -45,3 +45,14 @@ s16 get_direction(float lat1, float long1, float lat2, float long2)
   }
   return brng;
 }
+
+void switch_position(struct s_data *datas)
+{
+	float tmp0 = 0.0, tmp1 = 0.0;
+	tmp0 = datas->dest_coord.lat;
+	tmp1 = datas->dest_coord.lon;
+	datas->dest_coord.lat = datas->init_coord.lat;
+	datas->dest_coord.lon = datas->init_coord.lon;
+	datas->init_coord.lat = tmp0;
+	datas->init_coord.lon = tmp1;
+}
