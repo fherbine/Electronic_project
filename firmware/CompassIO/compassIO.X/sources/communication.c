@@ -76,14 +76,17 @@ u8 parser_gps_bluetooth(char *data, struct s_data *data_s)
 	data_s->dest_coord.completed = TRUE;
 	data_s->dest_coord.lat = lat;
 	data_s->dest_coord.lon = lon;
-	// Store data in flash memory
-	erase_sector(STORE_DEST_LAT_X1000);
-	delayms(85);
-	write_data(STORE_DEST_LAT_X1000, ((int)(lat * 1000)), 4);
-	delayms(85);
-	erase_sector(STORE_DEST_LONG_X1000);
-	delayms(85);
-	write_data(STORE_DEST_LONG_X1000, ((int)lon * 1000), 4);
-	delayms(85);
+	ft_putfloat(lat);
+	ft_putfloat(lon);
+	data_s->store_data = TRUE;
+	// Store data in flash memory												// FATAL CRASH
+//	erase_sector(STORE_DEST_LAT_X1000);
+//	delayms(85);
+//	write_data(STORE_DEST_LAT_X1000, ((int)(lat * 1000)), 4);
+//	delayms(85);
+//	erase_sector(STORE_DEST_LONG_X1000);
+//	delayms(85);
+//	write_data(STORE_DEST_LONG_X1000, ((int)lon * 1000), 4);
+//	delayms(85);
 	return (0);
 }

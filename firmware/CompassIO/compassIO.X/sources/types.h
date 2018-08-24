@@ -102,12 +102,10 @@ typedef double s64;
 /* Flash Memory Space Sharing */
 //#define STORE_MAG_MAX_X 0x0
 #define STORE_MAG_X 0x0
-#define STORE_MAG_Y 0x10000
-#define STORE_DEST_LAT_X1000 0x20000
-#define STORE_DEST_LONG_X1000 0x30000
-#define STORE_INIT_LAT_X1000 0x40000 // USELESS
-#define STORE_INIT_LONG_X1000 0x50000 // USELESS
-#define STORE_INIT_DIST 0x60000 // USELESS
+#define STORE_MAG_Y 0x010000
+#define STORE_DEST_LAT_X1000 0x020000
+#define STORE_DEST_LONG_X1000 0x030000
+#define STORE_DEBUG 0x50000
 
 struct s_taskflag {
 	u8 Mag;
@@ -131,6 +129,7 @@ struct s_data {
 	t_coord dest_coord; // BT coord
 	t_coord init_coord; // GPS init coord
 	t_coord current_coord; // GPS coord --> no flsh
+	u8 store_data;
 };
 
 void    ft_putnbr_base(s32 nb, int base);

@@ -14,6 +14,19 @@ void delayms(u32 ms) {
 	    ms--;
 	}
 }
+//
+//void delayms_prior(u32 ms) {
+//	IPC3bits.T3IP = 1; // Set priority
+//  IPC3bits.T3IS = 0; // Set subpriority
+//    while (ms)
+//	if (IFS0bits.T2IF == 1) {
+//	    IFS0bits.T2IF = 0;
+//	    ms--;
+//		ft_putnbr_base(ms, 10);
+//	}
+//  IPC3bits.T3IP = 1; // Set priority
+//  IPC3bits.T3IS = 2; // Set subpriority
+//}
 
 void Init_Delay()
 {

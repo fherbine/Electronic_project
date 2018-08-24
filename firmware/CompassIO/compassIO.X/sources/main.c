@@ -6,7 +6,7 @@
  */
 
 #include "types.h"
-
+struct s_data data;
 struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
@@ -219,6 +219,30 @@ void Init_Timer4()
   T4CONbits.ON = 1;
 }
 
+void mag_offset_init(void)
+{
+	read_id();
+	/* MAG - OFFSET */
+	x_max = (s16)read_index_data(STORE_MAG_X, 2, 0);
+    delayms(85);
+	x_min = (s16)read_index_data(STORE_MAG_X, 2, 1);
+    delayms(85);
+	y_max = (s16)read_index_data(STORE_MAG_Y, 2, 0);
+    delayms(85);
+	y_min = (s16)read_index_data(STORE_MAG_Y, 2, 1);
+	delayms(85);
+	/* ft_putstr("mag x ");
+	ft_putbinary(x_max);
+	ft_putstr(" - ");
+	ft_putbinary(x_min);
+	ft_putendl("");
+	ft_putstr("mag y ");
+	ft_putbinary(y_max);
+	ft_putstr(" - ");
+	ft_putbinary(y_min);
+	ft_putendl("");*/
+}
+
 void global_init()
 {
     __builtin_disable_interrupts();
@@ -237,15 +261,8 @@ void global_init()
     rst = 0;
     on_off = 0;
     gps = 0;
-    /* MAG - OFFSET */
-	x_max = (s16)read_index_data(STORE_MAG_X, 2, 0);
-    delayms(85);
-	x_min = (s16)read_index_data(STORE_MAG_X, 2, 1);
-    delayms(85);
-	y_max = (s16)read_index_data(STORE_MAG_Y, 2, 0);
-    delayms(85);
-	y_min = (s16)read_index_data(STORE_MAG_Y, 2, 1);
-	delayms(85);
+    mag_offset_init();
+	init_struct_datas(&data);
 	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
@@ -266,6 +283,18 @@ void global_off()
     I2C1CONbits.ON = 0; // Disable I2C1
     SPI2CONbits.ON = 0; // Disable SPI2 Flash Memory
     T2CONbits.ON = 0;  // Disable Timer2 Servomotor
+}
+
+void store_datas(void)
+{
+	erase_sector(STORE_DEST_LAT_X1000);
+	delayms(200);
+	write_data(STORE_DEST_LAT_X1000, ((int)(data.dest_coord.lat * 1000)), 4);
+	delayms(85);
+	erase_sector(STORE_DEST_LONG_X1000);
+	delayms(200);
+	write_data(STORE_DEST_LONG_X1000, ((int)(data.dest_coord.lon * 1000)), 4);
+	delayms(85);
 }
 
 #define ONE_HALF_SEC 1500
@@ -302,7 +331,14 @@ void __ISR(_EXTERNAL_2_VECTOR, IPL1) MainButtonHandler(void) {
 		}
 		else if(countTime > 10)
 		{
-			if (devicePowered)
+			if (data.store_data)
+			{
+				ft_putendl("start");
+				store_datas();
+				ft_putendl("okok");
+				data.store_data = FALSE;
+			}
+			else if (devicePowered)
 			{
 			    ft_putendl("destination switch");
 				thisTaskFlag.switchPos = TRUE;
@@ -341,17 +377,19 @@ void init_button()
 
 char buffBT[500];
 
-void HandleBluetooth(struct s_data *data) {
+void HandleBluetooth(struct s_data *data_s) {
 	// Store input in buffer
 	u32 dest_len = ft_strlen(buffBT);
 	u8 res = 0;
 	buffBT[dest_len] = UART2_Get_Data_Byte();
-	UART1_Send_Data_Byte(buffBT[dest_len]);
+	//UART1_Send_Data_Byte(buffBT[dest_len]);
 	buffBT[dest_len + 1] = '\0';
 	if (buffBT[dest_len] == NEWLINE) {
 		buffBT[dest_len] = '\0';
-		res = parser_gps_bluetooth(buffBT, data);
-		LATDbits.LATD1 = (!res) ? 1 : 0;
+		//ft_putendl(buffBT);
+		//ft_putnbr_base(IFS1bits.U2RXIF, 10);
+		res = parser_gps_bluetooth(buffBT, data_s);
+		LATBbits.LATB1 = (!res) ? 1 : 0;
 		ft_bzero(buffBT, 500);
 	}
 }
@@ -359,7 +397,7 @@ void HandleBluetooth(struct s_data *data) {
 int res = -1;
 char buffGPS[500];
 
-void HandleGPS(struct s_data *data) {
+void HandleGPS(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffGPS);
 
 	buffGPS[dest_len] = UART1_Get_Data_Byte();
@@ -370,12 +408,12 @@ void HandleGPS(struct s_data *data) {
 		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
 			buffGPS[dest_len - 1] = '\0';
 			buffGPS[dest_len] = '\0';
-			res = parse_nmea_gps(buffGPS, data);
+			res = parse_nmea_gps(buffGPS, data_s);
 			if (res == 1)
 			{
-				ft_putfloat(data->current_coord.lat);
+				ft_putfloat(data_s->current_coord.lat);
 				UART2_Send_Data_Byte('-');
-				ft_putfloat(data->current_coord.lon);
+				ft_putfloat(data_s->current_coord.lon);
 			}
 		}
 		dest_len = 0;
@@ -394,6 +432,36 @@ void init_task_flags(void)
 	thisTaskFlag.displayDist = FALSE;
 }
 
+int main_old()
+{
+	__builtin_disable_interrupts();
+    UART1_Init(_8N, 0, UART_RX_TX_ON);
+    Init_SPI2();
+    Init_Delay();
+	INTCONbits.MVEC = 1; // Enable multi interrupts
+	__builtin_enable_interrupts();
+	ft_putendl("toto");
+    delayms(500);
+    ft_putstr("Yes!\n\r");
+    _CS1_OFF();
+    //read_id();
+    ft_putbinary(read_data(0x030000, 10));
+    delayms(85);
+    ft_putstr("-------------------\n\r");
+    erase_sector(0x030000);
+    delayms(200);
+    read_data(0x030000, 10);
+    delayms(85);
+    ft_putstr("-------------------\n\r");
+    write_data(0x030000, "Hello\0", 6);
+    delayms(85);
+    ft_putbinary(read_data(0x030000, 10));
+    ft_putstr("-------------------\n\r");
+    /* Read status register */
+    read_status_register();
+    return (0);
+}
+
 void main()
 {
 	//struct s_data *data;
@@ -403,6 +471,10 @@ void main()
 	LATDbits.LATD6 = 0;
 	TRISDbits.TRISD5 = 0; // RD5 is an output -> nRST GPS
     LATDbits.LATD5 = 1;
+
+	TRISGbits.TRISG9 = 1; // Chip selector
+	init_task_flags();
+	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
 
 	__builtin_disable_interrupts();
 	Init_Delay();
@@ -415,10 +487,6 @@ void main()
 	// Set each element of the struc to NULL
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
-	struct s_data data;
-	init_struct_datas(&data);
-	init_task_flags();
-	s16 mag_x = 0.0, mag_y = 0.0, mag_z = 0.0;
 	while (1) {
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
