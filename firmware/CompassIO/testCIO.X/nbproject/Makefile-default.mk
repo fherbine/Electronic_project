@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c
+SOURCEFILES_QUOTED_IF_SPACED=sources/main.c sources/config_bits.c sources/pps.c sources/servomotor.c sources/uart.c sources/lib.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/config_bits.o ${OBJECTDIR}/sources/pps.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/lib.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/sources/main.o.d ${OBJECTDIR}/sources/config_bits.o.d ${OBJECTDIR}/sources/pps.o.d ${OBJECTDIR}/sources/servomotor.o.d ${OBJECTDIR}/sources/uart.o.d ${OBJECTDIR}/sources/lib.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o
+OBJECTFILES=${OBJECTDIR}/sources/main.o ${OBJECTDIR}/sources/config_bits.o ${OBJECTDIR}/sources/pps.o ${OBJECTDIR}/sources/servomotor.o ${OBJECTDIR}/sources/uart.o ${OBJECTDIR}/sources/lib.o
 
 # Source Files
-SOURCEFILES=main.c
+SOURCEFILES=sources/main.c sources/config_bits.c sources/pps.c sources/servomotor.c sources/uart.c sources/lib.c
 
 
 CFLAGS=
@@ -94,18 +94,78 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	@${RM} ${OBJECTDIR}/main.o 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
+${OBJECTDIR}/sources/main.o: sources/main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/main.o.d 
+	@${RM} ${OBJECTDIR}/sources/main.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/main.o.d" -o ${OBJECTDIR}/sources/main.o sources/main.c   
+	
+${OBJECTDIR}/sources/config_bits.o: sources/config_bits.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/config_bits.o.d 
+	@${RM} ${OBJECTDIR}/sources/config_bits.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/config_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/config_bits.o.d" -o ${OBJECTDIR}/sources/config_bits.o sources/config_bits.c   
+	
+${OBJECTDIR}/sources/pps.o: sources/pps.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/pps.o.d 
+	@${RM} ${OBJECTDIR}/sources/pps.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/pps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/pps.o.d" -o ${OBJECTDIR}/sources/pps.o sources/pps.c   
+	
+${OBJECTDIR}/sources/servomotor.o: sources/servomotor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/servomotor.o.d 
+	@${RM} ${OBJECTDIR}/sources/servomotor.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/servomotor.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/servomotor.o.d" -o ${OBJECTDIR}/sources/servomotor.o sources/servomotor.c   
+	
+${OBJECTDIR}/sources/uart.o: sources/uart.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/uart.o.d 
+	@${RM} ${OBJECTDIR}/sources/uart.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/uart.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/uart.o.d" -o ${OBJECTDIR}/sources/uart.o sources/uart.c   
+	
+${OBJECTDIR}/sources/lib.o: sources/lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/lib.o.d 
+	@${RM} ${OBJECTDIR}/sources/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/lib.o.d" -o ${OBJECTDIR}/sources/lib.o sources/lib.c   
 	
 else
-${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/main.o.d 
-	@${RM} ${OBJECTDIR}/main.o 
-	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c   
+${OBJECTDIR}/sources/main.o: sources/main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/main.o.d 
+	@${RM} ${OBJECTDIR}/sources/main.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/main.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/main.o.d" -o ${OBJECTDIR}/sources/main.o sources/main.c   
+	
+${OBJECTDIR}/sources/config_bits.o: sources/config_bits.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/config_bits.o.d 
+	@${RM} ${OBJECTDIR}/sources/config_bits.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/config_bits.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/config_bits.o.d" -o ${OBJECTDIR}/sources/config_bits.o sources/config_bits.c   
+	
+${OBJECTDIR}/sources/pps.o: sources/pps.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/pps.o.d 
+	@${RM} ${OBJECTDIR}/sources/pps.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/pps.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/pps.o.d" -o ${OBJECTDIR}/sources/pps.o sources/pps.c   
+	
+${OBJECTDIR}/sources/servomotor.o: sources/servomotor.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/servomotor.o.d 
+	@${RM} ${OBJECTDIR}/sources/servomotor.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/servomotor.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/servomotor.o.d" -o ${OBJECTDIR}/sources/servomotor.o sources/servomotor.c   
+	
+${OBJECTDIR}/sources/uart.o: sources/uart.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/uart.o.d 
+	@${RM} ${OBJECTDIR}/sources/uart.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/uart.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/uart.o.d" -o ${OBJECTDIR}/sources/uart.o sources/uart.c   
+	
+${OBJECTDIR}/sources/lib.o: sources/lib.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/sources" 
+	@${RM} ${OBJECTDIR}/sources/lib.o.d 
+	@${RM} ${OBJECTDIR}/sources/lib.o 
+	@${FIXDEPS} "${OBJECTDIR}/sources/lib.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sources/lib.o.d" -o ${OBJECTDIR}/sources/lib.o sources/lib.c   
 	
 endif
 
