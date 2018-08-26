@@ -81,7 +81,10 @@ void	*ft_memset(void *s, int c, size_t n)
 
 void ft_putstr(char *string)
 {
-   UART1_Send_String(string, ft_strlen(string));
+	if (MAIN_DEBUG == UART_1)
+		UART1_Send_String(string, ft_strlen(string));
+	else
+		UART2_Send_String(string, ft_strlen(string));
 }
 
 static s32	ft_count(s32 nb, char base)
@@ -143,8 +146,31 @@ void ft_putbinary(u32 nb)
 
 void ft_putendl(char *string)
 {
-   UART1_Send_String(string, ft_strlen(string));
-   UART1_Send_String("\n\r", 2);
+	if (MAIN_DEBUG == UART_1)
+	{
+		UART1_Send_String(string, ft_strlen(string));
+		UART1_Send_String("\n\r", 2);
+	}
+	else
+	{
+		UART2_Send_String(string, ft_strlen(string));
+		UART2_Send_String("\n\r", 2);
+	}
 }
 
-void ft_putfloat(double nb) { int tmp; if (nb < 0) { UART1_Send_Data_Byte('-'); nb = -nb; } tmp = nb; ft_putnbr_base(tmp, 10); nb = (nb - tmp) * 1000000 + 0.5; UART1_Send_Data_Byte('.'); tmp = nb; ft_putnbr_base(tmp, 10); }
+void ft_putfloat(double nb) {
+	int tmp;
+	if (nb < 0)
+	{
+		UART1_Send_Data_Byte('-');
+		nb = -nb;
+	}
+	tmp = nb;
+	ft_putnbr_base(tmp, 10);
+	nb = (nb - tmp) * 1000000 + 0.5;
+	if (MAIN_DEBUG == UART_1)
+		UART1_Send_Data_Byte('.');
+	else
+		UART2_Send_Data_Byte('.');
+	tmp = nb; ft_putnbr_base(tmp, 10);
+}

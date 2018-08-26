@@ -32,10 +32,10 @@ void UART1_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     if (!TRX_Mode) {
 	return;
     }
-    U1BRG = UART_BAUD_RATE(4800); // 4800 is the GPS baud rate
+    U1BRG = UART_BAUD_RATE(UART1_BR); // 4800 is the GPS baud rate
     U1MODEbits.PDSEL = parityDataBits;
     U1MODEbits.STSEL = stopBits;
-    UART1_Int();
+   // UART1_Int();
     U1STAbits.URXEN = TRX_Mode != 1; // Enable reception
     U1MODEbits.ON = 1; // Enable UART1 Module
     U1STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
@@ -95,7 +95,7 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
 	return;
     }
 	//U2MODEbits.BRGH = 1; // Activate for 38400 BR
-    U2BRG = UART_BAUD_RATE(9600); // 9600 is the Bluetooth baud rate
+    U2BRG = UART_BAUD_RATE(UART2_BR); // 9600 is the Bluetooth baud rate
     U2MODEbits.PDSEL = parityDataBits;
     U2MODEbits.STSEL = stopBits;
 	//UART2_Int();

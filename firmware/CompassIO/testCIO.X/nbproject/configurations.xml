@@ -19,6 +19,11 @@
       <itemPath>sources/servomotor.c</itemPath>
       <itemPath>sources/uart.c</itemPath>
       <itemPath>sources/lib.c</itemPath>
+      <itemPath>sources/i2c.c</itemPath>
+      <itemPath>sources/mag.c</itemPath>
+      <itemPath>sources/delay.c</itemPath>
+      <itemPath>sources/spi.c</itemPath>
+      <itemPath>sources/flashmemory.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
