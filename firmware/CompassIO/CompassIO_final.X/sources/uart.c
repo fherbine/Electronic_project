@@ -1,4 +1,17 @@
 #include "types.h"
+void Disable_UART1_Int(void)
+{
+	IEC1bits.U1EIE = 0;
+	IEC1bits.U1RXIE = 0;
+	IEC1bits.U1TXIE = 0;
+}
+
+void Enable_UART1_Int(void)
+{
+	IEC1bits.U1EIE = 0;
+	IEC1bits.U1RXIE = 1;
+	IEC1bits.U1TXIE = 0;
+}
 
 /* UART1 */
 void UART1_Int()
@@ -11,13 +24,11 @@ void UART1_Int()
 	IFS1bits.U1RXIF = 0;
 	IFS1bits.U1TXIF = 0;
 	/* Enable interrupts */
-	IEC1bits.U1EIE = 1;
-	IEC1bits.U1RXIE = 1;
-	IEC1bits.U1TXIE = 1;
+	Enable_UART1_Int();
 
 	/* Enable transmit/reception interrupt */
-	U1STAbits.UTXISEL = 1;
-	U1STAbits.URXISEL = 1;
+	U1STAbits.UTXISEL = 0;
+	U1STAbits.URXISEL = 0;
 }
 
 void UART1_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
@@ -28,7 +39,7 @@ void UART1_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     U1BRG = UART_BAUD_RATE(UART1_BR); // 4800 is the GPS baud rate
     U1MODEbits.PDSEL = parityDataBits;
     U1MODEbits.STSEL = stopBits;
-    UART1_Int();
+	UART1_Int();
     U1STAbits.URXEN = TRX_Mode != 1; // Enable reception
     U1MODEbits.ON = 1; // Enable UART1 Module
     U1STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
@@ -62,6 +73,19 @@ void UART1_Read_String(char *string, u32 size)
 	string[i] = UART1_Get_Data_Byte();
 }
 
+void Disable_UART2_Int(void)
+{
+	IEC1bits.U2EIE = 0;
+	IEC1bits.U2RXIE = 0;
+	IEC1bits.U2TXIE = 0;
+}
+
+void Enable_UART2_Int(void)
+{
+	IEC1bits.U2EIE = 0;
+	IEC1bits.U2RXIE = 1;
+	IEC1bits.U2TXIE = 0;
+}
 /* UART2 */
 void UART2_Int()
 {
@@ -73,13 +97,11 @@ void UART2_Int()
 	IFS1bits.U2RXIF = 0;
 	IFS1bits.U2TXIF = 0;
 	/* Enable interrupts */
-	IEC1bits.U2EIE = 1;
-	IEC1bits.U2RXIE = 1;
-	IEC1bits.U2TXIE = 1;
+	Disable_UART2_Int();
 
 	/* Enable transmit/reception interrupt */
-	U2STAbits.UTXISEL = 1;
-	U2STAbits.URXISEL = 1;
+	U2STAbits.UTXISEL = 0;
+	U2STAbits.URXISEL = 0;
 }
 
 void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)

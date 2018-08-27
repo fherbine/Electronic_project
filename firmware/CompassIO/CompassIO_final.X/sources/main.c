@@ -5,16 +5,27 @@ struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
 
+char buffBT[500];
+void HandleBluetooth(struct s_data *data);
+void HandleGPS(struct s_data *data_s);
+
 /* UART -> GPS */
 void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	// Reception
+	//ft_putendl("int");
 	if (IFS1bits.U1RXIF) {
-		IFS1CLR = U1RX_IFS1;
-		thisTaskFlag.GPS = TRUE;
+		IFS1bits.U1RXIF = 0;
+		//IFS1CLR = U1RX_IFS1;
+		HandleBluetooth(&data);
+		//ft_putendl("int");
+		thisTaskFlag.Bluetooth = TRUE;
 	}
 	// Transmit
 	if (IFS1bits.U1TXIF)
+	{
 		IFS1CLR = U1TX_IFS1;
+		//ft_putendl("int");
+	}
 	// Error
 	if (IFS1bits.U1EIF)
 		IFS1CLR = U1E_IFS1;
@@ -23,9 +34,11 @@ void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 /* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
+	ft_putendl("int");
 	if (IFS1bits.U2RXIF) {
-		IFS1CLR = U2RX_IFS1;
-		thisTaskFlag.Bluetooth = TRUE;
+		IFS1bits.U2RXIF = 0;
+		HandleGPS(&data);
+		thisTaskFlag.GPS = TRUE;
 	}
 	// Transmit
 	if (IFS1bits.U2TXIF)
@@ -257,6 +270,7 @@ void global_init()
     gps = 0;
     mag_offset_init();
 	init_struct_datas(&data);
+	ft_bzero(buffBT, 500);
 	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
@@ -268,6 +282,7 @@ void global_init()
     x_scale = 1.0/(float)(x_max - x_min);
     y_scale = 1.0/(float)(y_max - y_min);
     delayms(50);
+	ft_putendl("End_of_init");
 }
 
 void global_off()
@@ -293,7 +308,7 @@ void store_datas(void)
 
 #define ONE_HALF_SEC 1500
 #define FIVE_SEC 5000
-
+u8 dest_selected = 0;
 void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 	if (INTCONbits.INT1EP == 0) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
@@ -325,16 +340,27 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 		}
 		else if(countTime > 10)
 		{
-			if (data.store_data)
+			if (devicePowered && data.store_data == FALSE && data.dest_coord.completed && !dest_selected)
+			{
+				ft_putendl("start");
+				dest_selected = TRUE;
+				Disable_UART1_Int();
+				Enable_UART2_Int();
+				LATBbits.LATB2 = 1;
+			}
+			else if (devicePowered && data.store_data && !dest_selected)
 			{
 				ft_putendl("start");
 				store_datas();
 				ft_putendl("okok");
 				data.store_data = FALSE;
+				dest_selected = TRUE;
+				Disable_UART1_Int();
+				Enable_UART2_Int();
+				LATBbits.LATB2 = 1;
 			}
 			else if (devicePowered)
 			{
-			    ft_putendl("destination switch");
 				thisTaskFlag.switchPos = TRUE;
 			}
 			else
@@ -369,21 +395,24 @@ void init_button()
 	IEC0bits.INT1IE = 1;
 }
 
-char buffBT[500];
+
 
 void HandleBluetooth(struct s_data *data_s) {
 	// Store input in buffer
 	u32 dest_len = ft_strlen(buffBT);
 	u8 res = 0;
-	buffBT[dest_len] = UART2_Get_Data_Byte();
-	//UART1_Send_Data_Byte(buffBT[dest_len]);
+	buffBT[dest_len] = UART1_Get_Data_Byte();
+	//UART2_Send_Data_Byte(buffBT[dest_len]);
 	buffBT[dest_len + 1] = '\0';
+//	if (!ft_strncmp("CONNECT,E4A7C532A306,03", buffBT, dest_len + 1)) // issue >> connection
+//	{
+//		ft_bzero(buffBT, 500);
+//	}
 	if (buffBT[dest_len] == NEWLINE) {
 		buffBT[dest_len] = '\0';
 		//ft_putendl(buffBT);
 		//ft_putnbr_base(IFS1bits.U2RXIF, 10);
 		res = parser_gps_bluetooth(buffBT, data_s);
-		LATBbits.LATB2 = (!res) ? 1 : 0;
 		ft_bzero(buffBT, 500);
 	}
 }
@@ -394,7 +423,8 @@ char buffGPS[500];
 void HandleGPS(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffGPS);
 
-	buffGPS[dest_len] = UART1_Get_Data_Byte();
+	buffGPS[dest_len] = UART2_Get_Data_Byte();
+	UART2_Send_Data_Byte(buffGPS[dest_len]);
 	buffGPS[dest_len + 1] = '\0';
 
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
@@ -452,9 +482,11 @@ void main()
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
 	while (1) {
+		//ft_putendl("loop");
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
+			ft_putendl("mag");
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y, &data);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
@@ -462,24 +494,24 @@ void main()
 			}
 		}
 		if (thisTaskFlag.Bluetooth == 1) {
-			HandleBluetooth(&data);
 			thisTaskFlag.Bluetooth = 0;
 		}
-		if (thisTaskFlag.GPS = 1) {
-			HandleGPS(&data);
+		if (thisTaskFlag.GPS == 1) {
+			ft_putendl("GPS");
 			thisTaskFlag.GPS = 0;
 		}
 		if (thisTaskFlag.switchPos == TRUE)
 		{
+			ft_putendl("destination switch");
 			switch_position(&data);
 			thisTaskFlag.switchPos = FALSE;
 		}
 		if (thisTaskFlag.displayDist == TRUE)
 			blink_distance(&data);
-
 		if (thisTaskFlag.displayDist == TRUE && data.current_distance <= 10){		// the walk is over 10m near from the final destination
 			thisTaskFlag.displayDist = FALSE;
 			LATBbits.LATB2 = 1;
 		}
+		//ft_putendl("end_loop");
 	}
 }

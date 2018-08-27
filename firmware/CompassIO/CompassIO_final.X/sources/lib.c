@@ -162,7 +162,10 @@ void ft_putfloat(double nb) {
 	int tmp;
 	if (nb < 0)
 	{
-		UART1_Send_Data_Byte('-');
+		if (MAIN_DEBUG == UART_1)
+			UART1_Send_Data_Byte('-');
+		else
+			UART2_Send_Data_Byte('-');
 		nb = -nb;
 	}
 	tmp = nb;
