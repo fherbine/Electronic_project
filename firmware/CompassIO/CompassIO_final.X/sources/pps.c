@@ -2,12 +2,14 @@
 
 void set_pps(void)
 {
+	ANSELA = 0;
+	ANSELB = 0;
 	TRISBbits.TRISB10 = 1;
 	INT1Rbits.INT1R = 0b0011; // INT1 >> main button
 	TRISAbits.TRISA4 = 1;
 	U1RXRbits.U1RXR = 0b0010; // RX1 >> BT
 	TRISBbits.TRISB1 = 1;
-	U2RXRbits.U2RXR = 0b0010; // RX2 >> GPS
+	U2RXRbits.U2RXR = 0b0010; // RX2 >> GPS 10
 	TRISBbits.TRISB11 = 1;
 	SDI1Rbits.SDI1R = 0b0011; // MISO1 >> FLASH
 

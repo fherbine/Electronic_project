@@ -6,6 +6,7 @@ struct s_taskflag thisTaskFlag;
 #define NEWLINE '#'
 
 char buffBT[500];
+char buffGPS[500];
 void HandleBluetooth(struct s_data *data);
 void HandleGPS(struct s_data *data_s);
 
@@ -34,7 +35,7 @@ void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 /* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
-	ft_putendl("int");
+	//ft_putendl("int");
 	if (IFS1bits.U2RXIF) {
 		IFS1bits.U2RXIF = 0;
 		HandleGPS(&data);
@@ -271,6 +272,7 @@ void global_init()
     mag_offset_init();
 	init_struct_datas(&data);
 	ft_bzero(buffBT, 500);
+	ft_bzero(buffGPS, 500);
 	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
@@ -334,6 +336,7 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 			powerOnProcess = FALSE;
 			powerOffProcess = TRUE;
 			gpsTmp = 0;
+			dest_selected = 0;
 			ft_putendl("GLOBAL POWER OFF");
 			//global_off();										>>>>>>>>>>>>>>> CRASH !!!
 			devicePowered = FALSE;
@@ -418,13 +421,12 @@ void HandleBluetooth(struct s_data *data_s) {
 }
 
 int res = -1;
-char buffGPS[500];
 
 void HandleGPS(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffGPS);
 
 	buffGPS[dest_len] = UART2_Get_Data_Byte();
-	UART2_Send_Data_Byte(buffGPS[dest_len]);
+	UART1_Send_Data_Byte(buffGPS[dest_len]);
 	buffGPS[dest_len + 1] = '\0';
 
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
@@ -436,7 +438,7 @@ void HandleGPS(struct s_data *data_s) {
 			if (res == 1)
 			{
 				ft_putfloat(data_s->current_coord.lat);
-				UART2_Send_Data_Byte('-');
+				//UART2_Send_Data_Byte('-');
 				ft_putfloat(data_s->current_coord.lon);
 			}
 		}
@@ -455,6 +457,8 @@ void init_task_flags(void)
 	thisTaskFlag.switchPos = FALSE;
 	thisTaskFlag.displayDist = FALSE;
 }
+
+u8 tchr = '0';
 
 void main()
 {
@@ -483,6 +487,9 @@ void main()
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
 	while (1) {
 		//ft_putendl("loop");
+		//tchr = UART2_Get_Data_Byte();
+		//ft_putendl("");
+		//ft_putbinary(tchr);
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
