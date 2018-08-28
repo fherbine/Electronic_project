@@ -56,12 +56,13 @@ int	ft_index(const char *s, int c)
 void *ft_bzero(void *s, u32 size)
 {
     char *str;
+	u32 i = 0;
 
     str = (char*)s;
-    while (size--)
+    while (i < (size - 1))
     {
-	*str = 0;
-	str++;
+		str[i] = 0;
+		i++;
     }
     return (s);
 }

@@ -5,8 +5,13 @@ struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
 
+void HandleBluetooth(struct s_data *data_s);
 void HandleGPS(struct s_data *data_s);
 char buffBT[500];
+char buffGPS[500];
+char mb[500];
+u16 mbi = -1;
+u8 dest_selected = 0;
 
 
 /* UART -> GPS */
@@ -19,12 +24,29 @@ void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	}
 }
 
+u8 tch = '0';
 /* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
 	if (IFS1bits.U2RXIF) {
+		//while(U2STAbits.URXISEL)
 		IFS1bits.U2RXIF = 0;
-		thisTaskFlag.GPS = TRUE;
+		mbi++;
+		mb[mbi] = UART2_Get_Data_Byte();
+		UART2_Send_Data_Byte(mb[mbi]);
+		if (mb[mbi] == 10)
+			UART2_Send_Data_Byte('\n');
+		//HandleGPS(&data);
+		if (mbi > 0 && mb[mbi - 1] == 13 && mb[mbi] == 10)
+		{
+			ft_putendl("tutu");
+			thisTaskFlag.GPS = TRUE;
+			__builtin_disable_interrupts();
+			ft_putendl("toto");
+			U2MODEbits.ON = 0;
+			ft_putendl("tata");
+			__builtin_enable_interrupts();
+		}
 	}
 }
 
@@ -229,7 +251,7 @@ void mag_offset_init(void)
 	ft_putbinary(y_min);
 	ft_putendl("");*/
 }
-u8 dest_selected = 0;
+
 void global_init()
 {
     __builtin_disable_interrupts();
@@ -319,6 +341,7 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 			//global_off();										>>>>>>>>>>>>>>> CRASH !!!
 			devicePowered = FALSE;
 			dest_selected = 0;
+			LATBbits.LATB2 = 0;
 		}
 		else if(countTime > 10)
 		{
@@ -329,11 +352,27 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 				ft_putendl("okok");
 				data.store_data = FALSE;
 				dest_selected = 1;
+				//U1MODEbits.ON = 0;											// AFTER
+				//U2MODEbits.ON = 1;
+				ft_bzero(mb, 500);
+				__builtin_disable_interrupts();
+				IEC1bits.U2RXIE = 1;
+				U2MODEbits.ON = 1;
+				__builtin_enable_interrupts();
+				LATBbits.LATB2 = 1;
 			}
 			else if (devicePowered && !dest_selected)
 			{
 				ft_putendl("start");
 				dest_selected = 1;
+				//U1MODEbits.ON = 0;
+				//U2MODEbits.ON = 1;
+				ft_bzero(mb, 500);
+				__builtin_disable_interrupts();
+				IEC1bits.U2RXIE = 1;
+				U2MODEbits.ON = 1;
+				__builtin_enable_interrupts();
+				LATBbits.LATB2 = 1;
 			}
 			else if (devicePowered && dest_selected)
 			{
@@ -377,32 +416,41 @@ void HandleBluetooth(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffBT);
 	u8 res = 0;
 	buffBT[dest_len] = UART1_Get_Data_Byte();
-	UART2_Send_Data_Byte(buffBT[dest_len]);
+	UART1_Send_Data_Byte(buffBT[dest_len]);
 	buffBT[dest_len + 1] = '\0';
 	if (buffBT[dest_len] == NEWLINE) {
 		buffBT[dest_len] = '\0';
 		//ft_putendl(buffBT);
 		//ft_putnbr_base(IFS1bits.U2RXIF, 10);
 		res = parser_gps_bluetooth(buffBT, data_s);
-		ft_putnbr_base(data_s->store_data, 10);
-		ft_putendl("<< toto");
-		ft_putnbr_base(dest_selected, 10);
-		ft_putendl("<< toto");
+		//ft_putnbr_base(data_s->store_data, 10);
+		//ft_putendl("<< toto");
+		//ft_putnbr_base(dest_selected, 10);
+		//ft_putendl("<< toto");
 		ft_bzero(buffBT, 500);
 	}
 }
 
-int res = -1;
-char buffGPS[500];
 
 void HandleGPS(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffGPS);
+	u8 res = -1;
 
-	buffGPS[dest_len] = UART2_Get_Data_Byte();
+	//buffGPS[dest_len] = UART2_Get_Data_Byte();
+	__builtin_disable_interrupts();
+	U2MODEbits.ON = 0;
+	__builtin_enable_interrupts();
+
+//	if (dest_len == 0)
+//		UART2_Send_Data_Byte('|');
+//	else if (buffGPS[dest_len] == 10)
+//		UART2_Send_Data_Byte('|');
+	//UART2_Send_String(buffGPS, ft_strlen(buffGPS));
 	buffGPS[dest_len + 1] = '\0';
 
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
 	{
+		//UART2_Send_String("toto\n", ft_strlen("toto\n"));
 		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
 			buffGPS[dest_len - 1] = '\0';
 			buffGPS[dest_len] = '\0';
@@ -410,14 +458,20 @@ void HandleGPS(struct s_data *data_s) {
 			if (res == 1)
 			{
 				ft_putfloat(data_s->current_coord.lat);
-				UART2_Send_Data_Byte('-');
+				//UART2_Send_Data_Byte('-');
 				ft_putfloat(data_s->current_coord.lon);
 			}
 		}
-		dest_len = 0;
+		//dest_len = 0;
+		//UART2_Send_Data_Byte('|');
+		//UART2_Send_String(buffGPS, dest_len);
+		//UART2_Send_Data_Byte('|');
 		ft_bzero(buffGPS, 500);
 	}
 	//LATBbits.LATB1 ^= 1;
+	__builtin_disable_interrupts();
+	U2MODEbits.ON = 1;
+	__builtin_enable_interrupts();
 }
 
 void init_task_flags(void)
@@ -428,6 +482,27 @@ void init_task_flags(void)
 	thisTaskFlag.Mag = FALSE;
 	thisTaskFlag.switchPos = FALSE;
 	thisTaskFlag.displayDist = FALSE;
+}
+
+void flags_status(void)
+{
+	ft_putstr("thisTaskFlag.Bluetooth : ");
+	ft_putendl(thisTaskFlag.Bluetooth ? "TRUE" : "FLASE");
+
+	ft_putstr("thisTaskFlag.Mag : ");
+	ft_putendl(thisTaskFlag.Mag ? "TRUE" : "FLASE");
+
+	ft_putstr("thisTaskFlag.GPS : ");
+	ft_putendl(thisTaskFlag.GPS ? "TRUE" : "FLASE");
+	ft_putendl("");
+}
+
+void reg_stat(void)
+{
+	ft_putstr("IFS1bits.U2RXIF : ");
+	ft_putendl(IFS1bits.U2RXIF ? "1" : "0");
+	ft_putstr("IEC1bits.U2RXIE : ");
+	ft_putendl(IEC1bits.U2RXIE ? "1" : "0");
 }
 
 void main()
@@ -456,6 +531,8 @@ void main()
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
 	while (1) {
+		//ft_putendl("loop");
+		//reg_stat();
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
@@ -468,8 +545,17 @@ void main()
 		if (thisTaskFlag.Bluetooth == 1) {
 			thisTaskFlag.Bluetooth = 0;
 		}
-		if (thisTaskFlag.GPS = 1) {
-			HandleGPS(&data);
+		if (thisTaskFlag.GPS == 1) {
+			u8 i = 0;
+			ft_putnbr_base(mbi, 10);
+			while(i < mbi){UART1_Send_Data_Byte(mb[mbi]);i++;}
+			i = 0;
+			while(i < mbi){ft_putbinary(mb[i]);i++;}
+			ft_putbinary(mb[10]);
+			mb[mbi] = '\0';
+			UART1_Send_String(mb, mbi);											// Un poil resolu
+			//delayms(40);
+			//ft_bzero(mb, 500);
 			thisTaskFlag.GPS = 0;
 		}
 		if (thisTaskFlag.switchPos == TRUE)

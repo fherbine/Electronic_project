@@ -64,10 +64,10 @@ struct s_data {
 
 /* UART defines */
 #define UART1_BR 9600	//Regular 4800
-#define UART2_BR 9600	//Regular 9600bonjour bonjour je suis un canard
+#define UART2_BR 4800	//Regular 9600bonjour bonjour je suis un canard
 #define UART_1 1
 #define UART_2 0
-#define MAIN_DEBUG UART_2
+#define MAIN_DEBUG UART_1
 
 #define UART_BAUD_RATE(X) ((PBCLK/X/16)-1)
 #define MAX_BUFFER_SIZE 256

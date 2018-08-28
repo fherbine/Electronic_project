@@ -39,7 +39,7 @@ u8 parser_gps_bluetooth(char *data, struct s_data *data_s)
 			data += 4;
 			lat = parse_float(data, separatorIndex - 4);
 			if (lat < -90.0 || lat > 90.0) {
-				ft_putendl("Wrong latitude data");
+				//ft_putendl("Wrong latitude data");
 				data_s->dest_coord.completed = FALSE;
 				return (-1);
 			}
@@ -49,7 +49,7 @@ u8 parser_gps_bluetooth(char *data, struct s_data *data_s)
 				data += 5;
 				lon = parse_float(data, ft_strlen(data));
 				if (lon < -180.0 || lon > 180.0) {
-					ft_putendl("Wrong longitude data");
+					//ft_putendl("Wrong longitude data");
 					data_s->dest_coord.completed = FALSE;
 					return (-1);
 				}
@@ -62,15 +62,15 @@ u8 parser_gps_bluetooth(char *data, struct s_data *data_s)
 			return (-1);
 		}
 	} else {
-		ft_putendl("Invalid data");
+		//ft_putendl("Invalid data");
 		data_s->dest_coord.completed = FALSE;
 		return (-1);
 	}
 	data_s->dest_coord.completed = TRUE;
 	data_s->dest_coord.lat = lat;
 	data_s->dest_coord.lon = lon;
-	ft_putfloat(lat);
-	ft_putfloat(lon);
+	//ft_putfloat(lat);
+	//ft_putfloat(lon);
 	data_s->store_data = TRUE;
 	// Store data in flash memory												// FATAL CRASH
 //	erase_sector(STORE_DEST_LAT_X1000);

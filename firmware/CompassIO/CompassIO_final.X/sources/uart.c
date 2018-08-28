@@ -74,7 +74,7 @@ void UART2_Int()
 	IFS1bits.U2TXIF = 0;
 	/* Enable interrupts */
 	IEC1bits.U2EIE = 0;
-	IEC1bits.U2RXIE = 1;
+	IEC1bits.U2RXIE = 0;
 	IEC1bits.U2TXIE = 0;
 
 	/* Enable transmit/reception interrupt */
@@ -93,7 +93,7 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     U2MODEbits.STSEL = stopBits;
 	UART2_Int();
     U2STAbits.URXEN = TRX_Mode != 1; // Enable reception
-    U2MODEbits.ON = 1; // Enable UART2 Module
+    U2MODEbits.ON = 0; // Enable UART2 Module
     U2STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
 }
 
