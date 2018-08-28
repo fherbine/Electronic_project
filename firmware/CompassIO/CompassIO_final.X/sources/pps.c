@@ -9,7 +9,7 @@ void set_pps(void)
 	TRISAbits.TRISA4 = 1;
 	U1RXRbits.U1RXR = 0b0010; // RX1 >> BT
 	TRISBbits.TRISB1 = 1;
-	U2RXRbits.U2RXR = 0b0010; // RX2 >> GPS 10
+	U2RXRbits.U2RXR = 0b0010; // RX2 >> GPS
 	TRISBbits.TRISB11 = 1;
 	SDI1Rbits.SDI1R = 0b0011; // MISO1 >> FLASH
 

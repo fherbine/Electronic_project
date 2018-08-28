@@ -5,48 +5,27 @@ struct s_taskflag thisTaskFlag;
 
 #define NEWLINE '#'
 
-char buffBT[500];
-char buffGPS[500];
-void HandleBluetooth(struct s_data *data);
 void HandleGPS(struct s_data *data_s);
+char buffBT[500];
+
 
 /* UART -> GPS */
 void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
 	// Reception
-	//ft_putendl("int");
 	if (IFS1bits.U1RXIF) {
 		IFS1bits.U1RXIF = 0;
-		//IFS1CLR = U1RX_IFS1;
 		HandleBluetooth(&data);
-		//ft_putendl("int");
 		thisTaskFlag.Bluetooth = TRUE;
 	}
-	// Transmit
-	if (IFS1bits.U1TXIF)
-	{
-		IFS1CLR = U1TX_IFS1;
-		//ft_putendl("int");
-	}
-	// Error
-	if (IFS1bits.U1EIF)
-		IFS1CLR = U1E_IFS1;
 }
 
 /* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
-	//ft_putendl("int");
 	if (IFS1bits.U2RXIF) {
 		IFS1bits.U2RXIF = 0;
-		HandleGPS(&data);
 		thisTaskFlag.GPS = TRUE;
 	}
-	// Transmit
-	if (IFS1bits.U2TXIF)
-		IFS1CLR = U2TX_IFS1;
-	// Error
-	if (IFS1bits.U2EIF)
-		IFS1CLR = U2E_IFS1;
 }
 
 u16 countTime = 0;
@@ -250,7 +229,7 @@ void mag_offset_init(void)
 	ft_putbinary(y_min);
 	ft_putendl("");*/
 }
-
+u8 dest_selected = 0;
 void global_init()
 {
     __builtin_disable_interrupts();
@@ -269,10 +248,10 @@ void global_init()
     rst = 0;
     on_off = 0;
     gps = 0;
+	ft_bzero(buffBT, 500);
     mag_offset_init();
 	init_struct_datas(&data);
-	ft_bzero(buffBT, 500);
-	ft_bzero(buffGPS, 500);
+	dest_selected = 0;
 	/*	data->dest_coord.lat = (float)(((u32)read_data(STORE_DEST_LAT_X1000, 4)) / 1000);
 		delayms(85);
 		data->dest_coord.lon = (float)(((u32)read_data(STORE_DEST_LONG_X1000, 4)) / 1000);
@@ -284,7 +263,6 @@ void global_init()
     x_scale = 1.0/(float)(x_max - x_min);
     y_scale = 1.0/(float)(y_max - y_min);
     delayms(50);
-	ft_putendl("End_of_init");
 }
 
 void global_off()
@@ -310,7 +288,8 @@ void store_datas(void)
 
 #define ONE_HALF_SEC 1500
 #define FIVE_SEC 5000
-u8 dest_selected = 0;
+
+
 void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 	if (INTCONbits.INT1EP == 0) { // Button Released
 		if (devicePowered && countTime > FIVE_SEC)
@@ -336,34 +315,29 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 			powerOnProcess = FALSE;
 			powerOffProcess = TRUE;
 			gpsTmp = 0;
-			dest_selected = 0;
 			ft_putendl("GLOBAL POWER OFF");
 			//global_off();										>>>>>>>>>>>>>>> CRASH !!!
 			devicePowered = FALSE;
+			dest_selected = 0;
 		}
 		else if(countTime > 10)
 		{
-			if (devicePowered && data.store_data == FALSE && data.dest_coord.completed && !dest_selected)
-			{
-				ft_putendl("start");
-				dest_selected = TRUE;
-				Disable_UART1_Int();
-				Enable_UART2_Int();
-				LATBbits.LATB2 = 1;
-			}
-			else if (devicePowered && data.store_data && !dest_selected)
+			if (devicePowered  && data.store_data && !dest_selected)
 			{
 				ft_putendl("start");
 				store_datas();
 				ft_putendl("okok");
 				data.store_data = FALSE;
-				dest_selected = TRUE;
-				Disable_UART1_Int();
-				Enable_UART2_Int();
-				LATBbits.LATB2 = 1;
+				dest_selected = 1;
 			}
-			else if (devicePowered)
+			else if (devicePowered && !dest_selected)
 			{
+				ft_putendl("start");
+				dest_selected = 1;
+			}
+			else if (devicePowered && dest_selected)
+			{
+			    ft_putendl("destination switch");
 				thisTaskFlag.switchPos = TRUE;
 			}
 			else
@@ -398,35 +372,33 @@ void init_button()
 	IEC0bits.INT1IE = 1;
 }
 
-
-
 void HandleBluetooth(struct s_data *data_s) {
 	// Store input in buffer
 	u32 dest_len = ft_strlen(buffBT);
 	u8 res = 0;
 	buffBT[dest_len] = UART1_Get_Data_Byte();
-	//UART2_Send_Data_Byte(buffBT[dest_len]);
+	UART2_Send_Data_Byte(buffBT[dest_len]);
 	buffBT[dest_len + 1] = '\0';
-//	if (!ft_strncmp("CONNECT,E4A7C532A306,03", buffBT, dest_len + 1)) // issue >> connection
-//	{
-//		ft_bzero(buffBT, 500);
-//	}
 	if (buffBT[dest_len] == NEWLINE) {
 		buffBT[dest_len] = '\0';
 		//ft_putendl(buffBT);
 		//ft_putnbr_base(IFS1bits.U2RXIF, 10);
 		res = parser_gps_bluetooth(buffBT, data_s);
+		ft_putnbr_base(data_s->store_data, 10);
+		ft_putendl("<< toto");
+		ft_putnbr_base(dest_selected, 10);
+		ft_putendl("<< toto");
 		ft_bzero(buffBT, 500);
 	}
 }
 
 int res = -1;
+char buffGPS[500];
 
 void HandleGPS(struct s_data *data_s) {
 	u32 dest_len = ft_strlen(buffGPS);
 
 	buffGPS[dest_len] = UART2_Get_Data_Byte();
-	UART1_Send_Data_Byte(buffGPS[dest_len]);
 	buffGPS[dest_len + 1] = '\0';
 
 	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
@@ -438,7 +410,7 @@ void HandleGPS(struct s_data *data_s) {
 			if (res == 1)
 			{
 				ft_putfloat(data_s->current_coord.lat);
-				//UART2_Send_Data_Byte('-');
+				UART2_Send_Data_Byte('-');
 				ft_putfloat(data_s->current_coord.lon);
 			}
 		}
@@ -457,8 +429,6 @@ void init_task_flags(void)
 	thisTaskFlag.switchPos = FALSE;
 	thisTaskFlag.displayDist = FALSE;
 }
-
-u8 tchr = '0';
 
 void main()
 {
@@ -486,14 +456,9 @@ void main()
 	//ft_memset(&thisTaskFlag, 0, sizeof(thisTaskFlag)); // USELESS ?
 	//ft_memset(&data, 0, sizeof(data));                 // USELESS ?
 	while (1) {
-		//ft_putendl("loop");
-		//tchr = UART2_Get_Data_Byte();
-		//ft_putendl("");
-		//ft_putbinary(tchr);
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
-			ft_putendl("mag");
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y, &data);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
@@ -503,22 +468,21 @@ void main()
 		if (thisTaskFlag.Bluetooth == 1) {
 			thisTaskFlag.Bluetooth = 0;
 		}
-		if (thisTaskFlag.GPS == 1) {
-			ft_putendl("GPS");
+		if (thisTaskFlag.GPS = 1) {
+			HandleGPS(&data);
 			thisTaskFlag.GPS = 0;
 		}
 		if (thisTaskFlag.switchPos == TRUE)
 		{
-			ft_putendl("destination switch");
 			switch_position(&data);
 			thisTaskFlag.switchPos = FALSE;
 		}
 		if (thisTaskFlag.displayDist == TRUE)
 			blink_distance(&data);
+
 		if (thisTaskFlag.displayDist == TRUE && data.current_distance <= 10){		// the walk is over 10m near from the final destination
 			thisTaskFlag.displayDist = FALSE;
 			LATBbits.LATB2 = 1;
 		}
-		//ft_putendl("end_loop");
 	}
 }
