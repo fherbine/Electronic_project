@@ -6,13 +6,13 @@
 int		parse_nmea_gps(char *data, struct s_data *data_s)
 {
 	int size = ft_strlen(data);
+	ft_putstr("to parse: ");
+	ft_putendl(data);
 	char separatorCount = 0;
 	double lat = 0.0;
 	double lon = 0.0;
 	if (size > 6)
 	{
-		if (!ft_strncmp(data, "$GPRMC,", 7))
-		{
 			int i = 0;
 			int degrees = 0;
 			int min = 0;
@@ -73,7 +73,6 @@ int		parse_nmea_gps(char *data, struct s_data *data_s)
       }
 			data_s->current_coord.completed = TRUE;
 			return (1);
-		}
 	}
 	return(0);
 }

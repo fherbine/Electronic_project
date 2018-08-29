@@ -639,7 +639,16 @@ void main()
 					line[i] = 0;
 					if (!ft_strncmp(line, "$GPRMC,", 7))
 					{
+						u8 res = 0;
 						ft_putendl("parse");
+						res = parse_nmea_gps(line, &data);
+						if (res == 1)
+						{
+							ft_putendl(">>>>>>>>>>>>>>>>>>>> parsed");
+							ft_putfloat(data.current_coord.lat);
+							UART1_Send_Data_Byte('-');
+							ft_putfloat(data.current_coord.lon);
+						}
 					}
 					else
 					{
