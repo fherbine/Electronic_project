@@ -52,6 +52,7 @@ u8 UART1_Send_String(const char *string, u32 size)
 
 u8 UART1_Get_Data_Byte()
 {
+	//while (!U1STAbits.URXDA);
     return (U1RXREG); // Return the FIFO data
 }
 
@@ -74,7 +75,7 @@ void UART2_Int()
 	IFS1bits.U2TXIF = 0;
 	/* Enable interrupts */
 	IEC1bits.U2EIE = 0;
-	IEC1bits.U2RXIE = 0;
+	IEC1bits.U2RXIE = 1;
 	IEC1bits.U2TXIE = 0;
 
 	/* Enable transmit/reception interrupt */
@@ -87,11 +88,12 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     if (!TRX_Mode) {
 	return;
     }
-	//U2MODEbits.BRGH = 1; // Activate for 38400 BR
-    U2BRG = UART_BAUD_RATE(UART2_BR); // 9600 is the Bluetooth baud rate
+	U2MODEbits.BRGH = 1; // Activate for 38400 BR
+   // U2BRG = UART_BAUD_RATE(UART2_BR); // 9600 is the Bluetooth baud rate
+	U2BRG = 520;
     U2MODEbits.PDSEL = parityDataBits;
     U2MODEbits.STSEL = stopBits;
-	UART2_Int();
+	//UART2_Int();
     U2STAbits.URXEN = TRX_Mode != 1; // Enable reception
     U2MODEbits.ON = 0; // Enable UART2 Module
     U2STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
@@ -115,6 +117,7 @@ u8 UART2_Send_String(const char *string, u32 size)
 
 u8 UART2_Get_Data_Byte()
 {
+	while (!U2STAbits.URXDA);
     return (U2RXREG); // Return the FIFO data
 }
 

@@ -6,7 +6,6 @@ struct s_taskflag thisTaskFlag;
 #define NEWLINE '#'
 
 void HandleBluetooth(struct s_data *data_s);
-void HandleGPS(struct s_data *data_s);
 char buffBT[500];
 char buffGPS[500];
 char mb[500];
@@ -354,9 +353,9 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 				dest_selected = 1;
 				//U1MODEbits.ON = 0;											// AFTER
 				//U2MODEbits.ON = 1;
-				ft_bzero(mb, 500);
+				ft_bzero(buffGPS, 500);
 				__builtin_disable_interrupts();
-				IEC1bits.U2RXIE = 1;
+				//IEC1bits.U2RXIE = 1;
 				U2MODEbits.ON = 1;
 				__builtin_enable_interrupts();
 				LATBbits.LATB2 = 1;
@@ -367,9 +366,9 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 				dest_selected = 1;
 				//U1MODEbits.ON = 0;
 				//U2MODEbits.ON = 1;
-				ft_bzero(mb, 500);
+				ft_bzero(buffGPS, 500);
 				__builtin_disable_interrupts();
-				IEC1bits.U2RXIE = 1;
+				//IEC1bits.U2RXIE = 1;
 				U2MODEbits.ON = 1;
 				__builtin_enable_interrupts();
 				LATBbits.LATB2 = 1;
@@ -431,8 +430,42 @@ void HandleBluetooth(struct s_data *data_s) {
 	}
 }
 
+void parse_GPS(struct s_data *data_s)
+{
+	u32 dest_len = 0;
+	u8 res = -1;
+	buffGPS[0] = '$';
+	buffGPS[1] = '\0';
+	while(UART2_Get_Data_Byte() != '$');
+	while (res != 1)
+	{
+	while(buffGPS[dest_len] != 10)
+	{
+		dest_len = ft_strlen(buffGPS);
+		buffGPS[dest_len] = UART2_Get_Data_Byte();
 
-void HandleGPS(struct s_data *data_s) {
+		if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
+		{
+			if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
+				buffGPS[dest_len - 1] = '\0';
+				buffGPS[dest_len] = '\0';
+				ft_putendl(buffGPS);
+				res = parse_nmea_gps(buffGPS, data_s);
+				if (res == 1)
+				{
+					ft_putfloat(data_s->current_coord.lat);
+					UART1_Send_Data_Byte('-');
+					ft_putfloat(data_s->current_coord.lon);
+				}
+			}
+			ft_bzero(buffGPS, 500);
+		}
+	}
+	}
+}
+
+
+void HandleGPS(struct s_data *data_s, char *buff) {
 	u32 dest_len = ft_strlen(buffGPS);
 	u8 res = -1;
 
@@ -545,17 +578,8 @@ void main()
 		if (thisTaskFlag.Bluetooth == 1) {
 			thisTaskFlag.Bluetooth = 0;
 		}
-		if (thisTaskFlag.GPS == 1) {
-			u8 i = 0;
-			ft_putnbr_base(mbi, 10);
-			while(i < mbi){UART1_Send_Data_Byte(mb[mbi]);i++;}
-			i = 0;
-			while(i < mbi){ft_putbinary(mb[i]);i++;}
-			ft_putbinary(mb[10]);
-			mb[mbi] = '\0';
-			UART1_Send_String(mb, mbi);											// Un poil resolu
-			//delayms(40);
-			//ft_bzero(mb, 500);
+		if (thisTaskFlag.GPS == 1 || dest_selected) {
+			parse_GPS(&data);
 			thisTaskFlag.GPS = 0;
 		}
 		if (thisTaskFlag.switchPos == TRUE)
