@@ -434,18 +434,23 @@ void parse_GPS(struct s_data *data_s)
 {
 	u32 dest_len = 0;
 	u8 res = -1;
+    u8 out = 0;
 	buffGPS[0] = '$';
 	buffGPS[1] = '\0';
 	while(UART2_Get_Data_Byte() != '$');
 	while (res != 1)
 	{
-	while(buffGPS[dest_len] != 10)
+        out = 0;
+	while(!out)
 	{
 		dest_len = ft_strlen(buffGPS);
 		buffGPS[dest_len] = UART2_Get_Data_Byte();
 
 		if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
 		{
+            out = 1;
+            //buffGPS[dest_len] = '\0';
+			//	ft_putendl(buffGPS);
 			if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
 				buffGPS[dest_len - 1] = '\0';
 				buffGPS[dest_len] = '\0';
@@ -459,9 +464,16 @@ void parse_GPS(struct s_data *data_s)
 				}
 			}
 			ft_bzero(buffGPS, 500);
+            dest_len = 1;
+            buffGPS[0] = '$';
+            buffGPS[1] = '\0';
+            ft_putendl("tutu");
+            while(UART2_Get_Data_Byte() != '$');
 		}
 	}
+        ft_putendl("EOW");
 	}
+    ft_putendl("EOF");
 }
 
 
