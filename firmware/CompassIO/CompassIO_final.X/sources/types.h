@@ -13,6 +13,7 @@
 # include <sys/attribs.h>
 # include <xc.h>
 # include <math.h>
+//# include <string.h>
 
 typedef unsigned char u8;
 typedef unsigned short u16;

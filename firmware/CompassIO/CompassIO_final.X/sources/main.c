@@ -7,11 +7,39 @@ struct s_taskflag thisTaskFlag;
 
 void HandleBluetooth(struct s_data *data_s);
 char buffBT[500];
-char buffGPS[500];
-char mb[500];
-u16 mbi = -1;
 u8 dest_selected = 0;
+#define FIFO_SIZE 256
 
+char pbBuffer[FIFO_SIZE];
+char *pbPut;
+char *pbGet;
+
+void FIFOInit(void)
+{
+    pbPut = pbBuffer;
+    pbGet = pbBuffer;
+}
+
+void FIFOPut(char bInput)
+{
+    *pbPut = bInput;
+    pbPut++;
+
+    if (pbPut >= (pbBuffer + FIFO_SIZE))
+        pbPut = pbBuffer;
+}
+
+char FIFOGet(void)
+{
+    char bReturn;
+
+    bReturn = *pbGet;
+    pbGet++;
+
+    if (pbGet>= (pbBuffer + FIFO_SIZE))
+        pbGet= pbBuffer;
+	return(bReturn);
+}
 
 /* UART -> GPS */
 void __ISR(_UART1_VECTOR, IPL1) UART1Handler(void) {
@@ -27,26 +55,31 @@ u8 tch = '0';
 /* UART -> Bluetooth/Debug */
 void __ISR(_UART2_VECTOR, IPL1) UART2Handler(void) {
 	// Reception
-	if (IFS1bits.U2RXIF) {
-		//while(U2STAbits.URXISEL)
-		IFS1bits.U2RXIF = 0;
-		mbi++;
-		mb[mbi] = UART2_Get_Data_Byte();
-		UART2_Send_Data_Byte(mb[mbi]);
-		if (mb[mbi] == 10)
-			UART2_Send_Data_Byte('\n');
-		//HandleGPS(&data);
-		if (mbi > 0 && mb[mbi - 1] == 13 && mb[mbi] == 10)
-		{
-			ft_putendl("tutu");
-			thisTaskFlag.GPS = TRUE;
-			__builtin_disable_interrupts();
-			ft_putendl("toto");
-			U2MODEbits.ON = 0;
-			ft_putendl("tata");
-			__builtin_enable_interrupts();
-		}
-	}
+	IFS1bits.U2RXIF = 0;
+	char bReceived;
+
+    // Receive Data Ready
+    // there is a 4 byte hardware Rx fifo, so we must be sure to get all read bytes
+   // while(U2STAbits.URXDA)
+   // {
+        bReceived = U2RXREG;
+
+        // only usethe data if there was no error
+        if ((U2STAbits.PERR == 0) && (U2STAbits.FERR == 0))
+        {
+
+             // Put your data into a queue
+             FIFOPut(bReceived);
+			 if (bReceived == 10)
+			 {
+				 __builtin_disable_interrupts();
+				U2MODEbits.ON = 0;
+				__builtin_enable_interrupts();
+			 }
+
+        }
+
+  //  }      // clear rx interrupt flag
 }
 
 u16 countTime = 0;
@@ -266,6 +299,7 @@ void global_init()
     /* GPS */
     LATBbits.LATB5 = 0;
     LATBbits.LATB3 = 0;
+	FIFOInit();
     rst = 0;
     on_off = 0;
     gps = 0;
@@ -353,11 +387,10 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 				dest_selected = 1;
 				//U1MODEbits.ON = 0;											// AFTER
 				//U2MODEbits.ON = 1;
-				ft_bzero(buffGPS, 500);
-				__builtin_disable_interrupts();
-				//IEC1bits.U2RXIE = 1;
-				U2MODEbits.ON = 1;
-				__builtin_enable_interrupts();
+//				__builtin_disable_interrupts();
+//				U2MODEbits.ON = 1;
+//				__builtin_enable_interrupts();
+//				ft_bzero(buffGPS, 500);
 				LATBbits.LATB2 = 1;
 			}
 			else if (devicePowered && !dest_selected)
@@ -365,12 +398,10 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL1) MainButtonHandler(void) {
 				ft_putendl("start");
 				dest_selected = 1;
 				//U1MODEbits.ON = 0;
-				//U2MODEbits.ON = 1;
-				ft_bzero(buffGPS, 500);
-				__builtin_disable_interrupts();
-				//IEC1bits.U2RXIE = 1;
-				U2MODEbits.ON = 1;
-				__builtin_enable_interrupts();
+//				__builtin_disable_interrupts();
+//				U2MODEbits.ON = 1;
+//				__builtin_enable_interrupts();
+//				ft_bzero(buffGPS, 500);
 				LATBbits.LATB2 = 1;
 			}
 			else if (devicePowered && dest_selected)
@@ -430,94 +461,82 @@ void HandleBluetooth(struct s_data *data_s) {
 	}
 }
 
-void parse_GPS(struct s_data *data_s)
-{
-	u32 dest_len = 0;
-	u8 res = -1;
-    u8 out = 0;
-	buffGPS[0] = '$';
-	buffGPS[1] = '\0';
-	while(UART2_Get_Data_Byte() != '$');
-	while (res != 1)
-	{
-        out = 0;
-	while(!out)
-	{
-		dest_len = ft_strlen(buffGPS);
-		buffGPS[dest_len] = UART2_Get_Data_Byte();
+//void parse_GPS(struct s_data *data_s)
+//{
+//	u32 dest_len = 0;
+//	u8 res = -1;
+//	buffGPS[0] = '$';
+//	buffGPS[1] = '\0';
+//	while(UART2_Get_Data_Byte() != '$');
+//	while (res != 1)
+//	{
+//	while(buffGPS[dest_len] != 10)
+//	{
+//		dest_len = ft_strlen(buffGPS);
+//		buffGPS[dest_len] = UART2_Get_Data_Byte();
+//
+//		if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
+//		{
+//			if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
+//				buffGPS[dest_len - 1] = '\0';
+//				buffGPS[dest_len] = '\0';
+//				ft_putendl(buffGPS);
+//				res = parse_nmea_gps(buffGPS, data_s);
+//				if (res == 1)
+//				{
+//					ft_putfloat(data_s->current_coord.lat);
+//					UART1_Send_Data_Byte('-');
+//					ft_putfloat(data_s->current_coord.lon);
+//				}
+//			}
+//			ft_bzero(buffGPS, 500);
+//		}
+//	}
+//	}
+//}
 
-		if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
-		{
-            out = 1;
-            //buffGPS[dest_len] = '\0';
-			//	ft_putendl(buffGPS);
-			if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
-				buffGPS[dest_len - 1] = '\0';
-				buffGPS[dest_len] = '\0';
-				ft_putendl(buffGPS);
-				res = parse_nmea_gps(buffGPS, data_s);
-				if (res == 1)
-				{
-					ft_putfloat(data_s->current_coord.lat);
-					UART1_Send_Data_Byte('-');
-					ft_putfloat(data_s->current_coord.lon);
-				}
-			}
-			ft_bzero(buffGPS, 500);
-            dest_len = 1;
-            buffGPS[0] = '$';
-            buffGPS[1] = '\0';
-            ft_putendl("tutu");
-            while(UART2_Get_Data_Byte() != '$');
-		}
-	}
-        ft_putendl("EOW");
-	}
-    ft_putendl("EOF");
-}
-
-
-void HandleGPS(struct s_data *data_s, char *buff) {
-	u32 dest_len = ft_strlen(buffGPS);
-	u8 res = -1;
-
-	//buffGPS[dest_len] = UART2_Get_Data_Byte();
-	__builtin_disable_interrupts();
-	U2MODEbits.ON = 0;
-	__builtin_enable_interrupts();
-
-//	if (dest_len == 0)
-//		UART2_Send_Data_Byte('|');
-//	else if (buffGPS[dest_len] == 10)
-//		UART2_Send_Data_Byte('|');
-	//UART2_Send_String(buffGPS, ft_strlen(buffGPS));
-	buffGPS[dest_len + 1] = '\0';
-
-	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
-	{
-		//UART2_Send_String("toto\n", ft_strlen("toto\n"));
-		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
-			buffGPS[dest_len - 1] = '\0';
-			buffGPS[dest_len] = '\0';
-			res = parse_nmea_gps(buffGPS, data_s);
-			if (res == 1)
-			{
-				ft_putfloat(data_s->current_coord.lat);
-				//UART2_Send_Data_Byte('-');
-				ft_putfloat(data_s->current_coord.lon);
-			}
-		}
-		//dest_len = 0;
-		//UART2_Send_Data_Byte('|');
-		//UART2_Send_String(buffGPS, dest_len);
-		//UART2_Send_Data_Byte('|');
-		ft_bzero(buffGPS, 500);
-	}
-	//LATBbits.LATB1 ^= 1;
-	__builtin_disable_interrupts();
-	U2MODEbits.ON = 1;
-	__builtin_enable_interrupts();
-}
+//
+//void HandleGPS(struct s_data *data_s, char *buff) {
+//	u32 dest_len = ft_strlen(buffGPS);
+//	u8 res = -1;
+//
+//	//buffGPS[dest_len] = UART2_Get_Data_Byte();
+//	__builtin_disable_interrupts();
+//	U2MODEbits.ON = 0;
+//	__builtin_enable_interrupts();
+//
+////	if (dest_len == 0)
+////		UART2_Send_Data_Byte('|');
+////	else if (buffGPS[dest_len] == 10)
+////		UART2_Send_Data_Byte('|');
+//	//UART2_Send_String(buffGPS, ft_strlen(buffGPS));
+//	buffGPS[dest_len + 1] = '\0';
+//
+//	if (dest_len > 0 && buffGPS[dest_len - 1] == 13 && buffGPS[dest_len] == 10)
+//	{
+//		//UART2_Send_String("toto\n", ft_strlen("toto\n"));
+//		if (!ft_strncmp(buffGPS, "$GPRMC,", 7)) {
+//			buffGPS[dest_len - 1] = '\0';
+//			buffGPS[dest_len] = '\0';
+//			res = parse_nmea_gps(buffGPS, data_s);
+//			if (res == 1)
+//			{
+//				ft_putfloat(data_s->current_coord.lat);
+//				//UART2_Send_Data_Byte('-');
+//				ft_putfloat(data_s->current_coord.lon);
+//			}
+//		}
+//		//dest_len = 0;
+//		//UART2_Send_Data_Byte('|');
+//		//UART2_Send_String(buffGPS, dest_len);
+//		//UART2_Send_Data_Byte('|');
+//		ft_bzero(buffGPS, 500);
+//	}
+//	//LATBbits.LATB1 ^= 1;
+//	__builtin_disable_interrupts();
+//	U2MODEbits.ON = 1;
+//	__builtin_enable_interrupts();
+//}
 
 void init_task_flags(void)
 {
@@ -550,6 +569,11 @@ void reg_stat(void)
 	ft_putendl(IEC1bits.U2RXIE ? "1" : "0");
 }
 
+u16 i = 0;
+char line[FIFO_SIZE];
+u8 tstchr;
+int x = 0;
+
 void main()
 {
 	//struct s_data *data;
@@ -581,6 +605,8 @@ void main()
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
+			ft_putendl("");
+			ft_putendl("===>> mag <<===");
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y, &data);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
@@ -591,8 +617,53 @@ void main()
 			thisTaskFlag.Bluetooth = 0;
 		}
 		if (thisTaskFlag.GPS == 1 || dest_selected) {
-			parse_GPS(&data);
-			thisTaskFlag.GPS = 0;
+			while(i < 128)
+			{
+				FIFOPut(UART2_Get_Data_Byte());
+				//}
+				//UART1_Send_Data_Byte(line[i]);
+				//if (line[i] == 10)
+				//	break ;
+				i++;
+				
+			}
+			i = 0;
+			while(i < 128 && FIFOGet() != '$');
+			while(i < 128)
+			{
+				line[x] = FIFOGet();
+				UART1_Send_Data_Byte(line[x]);
+				if (x > 0 && line[x] == 10 && line[x - 1] == 13)
+				{
+					line[i - 1] = 0;
+					line[i] = 0;
+					if (!ft_strncmp(line, "$GPRMC,", 7))
+					{
+						ft_putendl("parse");
+					}
+					else
+					{
+						ft_putendl("no parsing");
+					}
+					x = 256;													//////
+				}
+				i++;
+				x = (x == 256) ? 0 : x + 1;
+			}
+
+			i = 0;
+			FIFOInit();
+//			line[i] = 0;
+//			line[i - 1] = 0;
+//			//delayms(10);
+//			for (x = 0; x < 64; x++)
+//				UART1_Send_Data_Byte(line[x]);
+//			ft_putendl("titi");
+//			for (x = 0; x < 199; x++)
+//				line[i] = 0;
+//			i = 0;
+//			ft_putendl("toto");
+//			thisTaskFlag.GPS = 0;
 		}
 		if (thisTaskFlag.switchPos == TRUE)
 		{

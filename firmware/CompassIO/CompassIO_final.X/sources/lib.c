@@ -53,32 +53,38 @@ int	ft_index(const char *s, int c)
 		return (ptr - s);
 }
 
-void *ft_bzero(void *s, u32 size)
+void	*ft_memset(void *b, int c, size_t len)
 {
-    char *str;
-	u32 i = 0;
+	size_t i;
 
-    str = (char*)s;
-    while (i < (size - 1))
-    {
-		str[i] = 0;
-		i++;
-    }
-    return (s);
-}
-
-void	*ft_memset(void *s, int c, size_t n)
-{
-	unsigned char *str;
-
-	str = (unsigned char*)s;
-	while (n--)
+	i = 0;
+	c = (unsigned char)c;
+	while (i < len)
 	{
-		*str = (unsigned char)c;
-		str++;
+		((unsigned char *)b)[i] = c;
+		i++;
 	}
-	return (s);
+	return ((void *)b);
 }
+
+void	ft_bzero(void *s, size_t n)
+{
+	if (n > 0)
+		s = ft_memset(s, 0, n);
+}
+
+//void	*ft_memset(void *s, int c, size_t n)
+//{
+//	unsigned char *str;
+//
+//	str = (unsigned char*)s;
+//	while (n--)
+//	{
+//		*str = (unsigned char)c;
+//		str++;
+//	}
+//	return (s);
+//}
 
 void ft_putstr(char *string)
 {

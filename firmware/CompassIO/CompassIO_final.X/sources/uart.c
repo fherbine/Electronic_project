@@ -66,17 +66,11 @@ void UART1_Read_String(char *string, u32 size)
 /* UART2 */
 void UART2_Int()
 {
-	/* Set priorities */
+	IFS1bits.U2RXIF = 0;        // clear rx interrupt flag
+	IFS1bits.U2TXIF = 0;        // clear tx interrupt flag
+
+	IEC1bits.U2RXIE = 1;        // enable Rx interrupts
 	IPC9bits.U2IP = 1;
-	IPC9bits.U2IS = 0;
-	/* Clear Interrupt flags */
-	IFS1bits.U2EIF = 0;
-	IFS1bits.U2RXIF = 0;
-	IFS1bits.U2TXIF = 0;
-	/* Enable interrupts */
-	IEC1bits.U2EIE = 0;
-	IEC1bits.U2RXIE = 1;
-	IEC1bits.U2TXIE = 0;
 
 	/* Enable transmit/reception interrupt */
 	U2STAbits.UTXISEL = 0;
@@ -95,7 +89,7 @@ void UART2_Init(u8 parityDataBits, u8 stopBits, u8 TRX_Mode)
     U2MODEbits.STSEL = stopBits;
 	//UART2_Int();
     U2STAbits.URXEN = TRX_Mode != 1; // Enable reception
-    U2MODEbits.ON = 0; // Enable UART2 Module
+    U2MODEbits.ON = 1; // Enable UART2 Module
     U2STAbits.UTXEN = TRX_Mode & 1; // Enable transmission
 }
 
@@ -117,8 +111,11 @@ u8 UART2_Send_String(const char *string, u32 size)
 
 u8 UART2_Get_Data_Byte()
 {
+	u8 receive;
 	while (!U2STAbits.URXDA);
-    return (U2RXREG); // Return the FIFO data
+	receive = U2RXREG;
+	U2STAbits.OERR = 0; // Clear the overflow bit
+    return (receive); // Return the FIFO data
 }
 
 void UART2_Read_String(char *string, u32 size)
