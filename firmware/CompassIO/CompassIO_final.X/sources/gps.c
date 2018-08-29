@@ -6,8 +6,8 @@
 int		parse_nmea_gps(char *data, struct s_data *data_s)
 {
 	int size = ft_strlen(data);
-	ft_putstr("to parse: ");
-	ft_putendl(data);
+	//ft_putstr("to parse: ");
+	//ft_putendl(data);
 	char separatorCount = 0;
 	double lat = 0.0;
 	double lon = 0.0;
@@ -60,6 +60,10 @@ int		parse_nmea_gps(char *data, struct s_data *data_s)
 				}
 				i++;
 			}
+            ft_putfloat(lat);
+            ft_putstr(" - ");
+            ft_putfloat(lon);
+            ft_putendl("");
       if (data_s->init_coord.completed == FALSE && data_s->dest_coord.completed ==  TRUE) {
         data_s->init_coord.completed = TRUE;
         data_s->init_coord.lat = lat;

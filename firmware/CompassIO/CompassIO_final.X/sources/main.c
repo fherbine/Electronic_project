@@ -227,7 +227,8 @@ void Mag(s16 x, s16 y, struct s_data *datas) {
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
 		if (datas->dest_coord.completed == TRUE && datas->current_coord.completed == TRUE)
 		{
-			degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
+            ft_putendl("here");
+			//degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
 			if (degrees < -90 || degrees > 90)
 				degrees = (degrees > 90) ? 0 : 180;
 			else
@@ -605,8 +606,8 @@ void main()
 		if (thisTaskFlag.displayDist == FALSE && data.current_coord.completed == TRUE)
 			thisTaskFlag.displayDist = TRUE;
 		if (thisTaskFlag.Mag == 1) {
-			ft_putendl("");
-			ft_putendl("===>> mag <<===");
+			//ft_putendl("");
+			//ft_putendl("===>> mag <<===");
 			readMag(&mag_x, &mag_y, &mag_z);
 			Mag(mag_x, mag_y, &data);													/// ?
 			if (thisTaskFlag.CalMag == 1) {
@@ -632,7 +633,7 @@ void main()
 			while(i < 128)
 			{
 				line[x] = FIFOGet();
-				UART1_Send_Data_Byte(line[x]);
+				//UART1_Send_Data_Byte(line[x]);
 				if (x > 0 && line[x] == 10 && line[x - 1] == 13)
 				{
 					line[i - 1] = 0;
@@ -652,7 +653,7 @@ void main()
 					}
 					else
 					{
-						ft_putendl("no parsing");
+						//ft_putendl("no parsing");
 					}
 					x = 256;													//////
 				}
