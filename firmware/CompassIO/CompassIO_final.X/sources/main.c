@@ -228,7 +228,7 @@ void Mag(s16 x, s16 y, struct s_data *datas) {
 		if (datas->dest_coord.completed == TRUE && datas->current_coord.completed == TRUE)
 		{
             ft_putendl("here");
-			//degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
+			degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
 			if (degrees < -90 || degrees > 90)
 				degrees = (degrees > 90) ? 0 : 180;
 			else

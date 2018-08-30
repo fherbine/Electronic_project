@@ -64,6 +64,8 @@ int		parse_nmea_gps(char *data, struct s_data *data_s)
             ft_putstr(" - ");
             ft_putfloat(lon);
             ft_putendl("");
+			if (lat == 0.0 && lon == 0.0)
+				return (999);
       if (data_s->init_coord.completed == FALSE && data_s->dest_coord.completed ==  TRUE) {
         data_s->init_coord.completed = TRUE;
         data_s->init_coord.lat = lat;
