@@ -52,8 +52,11 @@ u8 UART1_Send_String(const char *string, u32 size)
 
 u8 UART1_Get_Data_Byte()
 {
+	u8 receive = 0;
 	//while (!U1STAbits.URXDA);
-    return (U1RXREG); // Return the FIFO data
+	receive = U1RXREG;
+	U1STAbits.OERR = 0; // Clear the overflow bit
+    return (receive); // Return the FIFO data
 }
 
 void UART1_Read_String(char *string, u32 size)

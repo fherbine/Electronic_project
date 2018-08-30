@@ -137,6 +137,10 @@ struct s_data {
 #define NMEA_GPRMC_LATITUDE 2
 #define NMEA_GPRMC_LONGITUDE 4
 
+/* UTILS */
+#define toRad(angle) ((angle) * M_PI / 180)
+#define toDeg(angle) ((angle) / M_PI * 180)
+
 #ifdef	__cplusplus
 extern "C" {
 #endif

@@ -225,10 +225,18 @@ s16 readHeading(s16 x, s16 y)
 void Mag(s16 x, s16 y, struct s_data *datas) {
 	if (devicePowered) {
 		s16 degrees = (int)readHeading(x - offset_x, y - offset_y);
+		s16 azimut = 0;
 		if (datas->dest_coord.completed == TRUE && datas->current_coord.completed == TRUE)
 		{
             ft_putendl("here");
-			degrees += get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
+			azimut = get_direction(datas->current_coord.lat, datas->current_coord.lon, datas->dest_coord.lat, datas->dest_coord.lon);
+			azimut = (azimut > 180) ? -1 * (360 - azimut) : azimut;
+			if (degrees + azimut >= -180 && degrees + azimut <= 180)
+				degrees = (degrees + azimut) / 2;
+			else if (degrees + azimut < -180)
+				degrees = (360 + (degrees + azimut))/2;
+			else if (degrees + azimut > -180)
+				degrees = (360 - (degrees + azimut))/2;
 			if (degrees < -90 || degrees > 90)
 				degrees = (degrees > 90) ? 0 : 180;
 			else
