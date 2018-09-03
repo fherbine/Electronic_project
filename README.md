@@ -12,4 +12,4 @@ Then we had to make a proof of concept, this step has shown our capability to bu
 ![POC](https://user-images.githubusercontent.com/32856358/44981069-d4bb2580-af71-11e8-81a6-7152cec3901d.jpg)
 
 Finally we built our prototype !
-
+![Proto](https://user-images.githubusercontent.com/32856358/44981175-1ea40b80-af72-11e8-97de-1d102f1cb9f7.jpg)
