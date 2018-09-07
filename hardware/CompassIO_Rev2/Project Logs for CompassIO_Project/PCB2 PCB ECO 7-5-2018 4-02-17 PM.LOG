@@ -1,0 +1,15 @@
+Change Component Comment : Designator=R10 Old Comment=Res1 New Comment=1K
+Change Component Comment : Designator=R11 Old Comment=Res1 New Comment=1K
+Change Component Comment : Designator=R12 Old Comment=Res1 New Comment=1K
+Added Component: Designator=C16(SMT-HA-V-D)
+Added Component: Designator=D2(SMB-403A-03-J)
+Added Component: Designator=D3(SMA-B2XX/A)
+Added Pin To Net: NetName=V5 Pin=C16-1
+Added Pin To Net: NetName=GND Pin=C16-2
+Added Pin To Net: NetName=V5 Pin=D2-1
+Added Pin To Net: NetName=NetC15_1 Pin=D2-2
+Added Pin To Net: NetName=NetC17_1 Pin=D3-1
+Added Pin To Net: NetName=GND Pin=D3-2
+Added Member To Class: ClassName=POWER Member=Component C16 Cout
+Added Member To Class: ClassName=POWER Member=Component D2 MBRS130LT3
+Added Member To Class: ClassName=POWER Member=Component D3 B240A

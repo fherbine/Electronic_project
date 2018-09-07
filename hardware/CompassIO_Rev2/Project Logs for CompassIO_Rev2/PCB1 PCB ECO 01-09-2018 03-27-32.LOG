@@ -1,0 +1,107 @@
+Added Component: Designator=BT1(BAT-2)
+Added Component: Designator=C1(own_0603)
+Added Component: Designator=C2(own_0603)
+Added Component: Designator=C3(own_0603)
+Added Component: Designator=C4(own_0603)
+Added Component: Designator=C5(own_0603)
+Added Component: Designator=C6(own_0603)
+Added Component: Designator=C7(own_0603)
+Added Component: Designator=C8(own_0603)
+Added Component: Designator=C9(own_0603)
+Added Component: Designator=C10(own_0603)
+Added Component: Designator=C11(own_0603)
+Added Component: Designator=C12(own_0603)
+Added Component: Designator=C13(Own_0805)
+Added Component: Designator=C14(Own_0805)
+Added Component: Designator=D1(1608 led)
+Added Component: Designator=D2(1608 led)
+Added Component: Designator=D3(1608 led)
+Added Component: Designator=D4(1608 led)
+Added Component: Designator=D5(20125 led)
+Added Component: Designator=D6(1608 led)
+Added Component: Designator=D7(ShotkyCMS)
+Added Component: Designator=J0(C-Grid III X6)
+Added Component: Designator=J1(jumper)
+Added Component: Designator=J2(RN42)
+Added Component: Designator=J3(DEBUG3)
+Added Component: Designator=J4(UEXT_MALE x10)
+Added Component: Designator=J5(A2035-H)
+Added Component: Designator=J6(DEBUG3)
+Added Component: Designator=J7(jumper)
+Added Component: Designator=L1(Inductor CMS)
+Added Component: Designator=M1(C-Grid III x3)
+Added Component: Designator=R1(own_0603)
+Added Component: Designator=R2(own_0603)
+Added Component: Designator=R3(own_0603)
+Added Component: Designator=R4(own_0603)
+Added Component: Designator=R5(own_0603)
+Added Component: Designator=R6(own_0603)
+Added Component: Designator=R7(own_0603)
+Added Component: Designator=R8(own_0603)
+Added Component: Designator=R9(own_0603)
+Added Component: Designator=R10(own_0603)
+Added Component: Designator=R11(own_0603)
+Added Component: Designator=R12(own_0603)
+Added Component: Designator=R13(own_0603)
+Added Component: Designator=R14(own_0603)
+Added Component: Designator=R15(own_0603)
+Added Component: Designator=R16(own_0603)
+Added Component: Designator=R17(own_0603)
+Added Component: Designator=R18(own_0603)
+Added Component: Designator=R19(own_0603)
+Added Component: Designator=S1(SWTCH 1)
+Added Component: Designator=S2(SWTCH 1)
+Added Component: Designator=S3(SPST-2)
+Added Component: Designator=S4(SPST-2)
+Added Component: Designator=U1(PIC32MX250F128/SO)
+Added Component: Designator=U2(LE25U40CMDTWG)
+Added Component: Designator=U3(R-PDSO-G8)
+Added Pin To Net: NetName=NetBT1_1 Pin=BT1-1
+Added Pin To Net: NetName=GND Pin=BT1-2
+Added Pin To Net: NetName=GND Pin=C1-1
+Added Pin To Net: NetName=SECONDARY BUT Pin=C1-2
+Added Pin To Net: NetName=GND Pin=C2-1
+Added Pin To Net: NetName=V3P3 Pin=C2-2
+Added Pin To Net: NetName=GND Pin=C3-1
+Added Pin To Net: NetName=V3P3 Pin=C3-2
+Added Pin To Net: NetName=GND Pin=C4-1
+Added Pin To Net: NetName=NetC4_2 Pin=C4-2
+Added Pin To Net: NetName=GND Pin=C5-1
+Added Pin To Net: NetName=NetC5_2 Pin=C5-2
+Added Pin To Net: NetName=GND Pin=C6-1
+Added Pin To Net: NetName=MAIN BUTTON Pin=C6-2
+Added Pin To Net: NetName=GND Pin=C7-1
+Added Pin To Net: NetName=V3P3 Pin=C7-2
+Added Pin To Net: NetName=NetC8_1 Pin=C8-1
+Added Pin To Net: NetName=GND Pin=C8-2
+Added Pin To Net: NetName=GND Pin=C9-1
+Added Pin To Net: NetName=NetC9_2 Pin=C9-2
+Added Pin To Net: NetName=GND Pin=C10-1
+Added Pin To Net: NetName=NetC10_2 Pin=C10-2
+Added Pin To Net: NetName=GND Pin=C11-1
+Added Pin To Net: NetName=NetC11_2 Pin=C11-2
+Added Pin To Net: NetName=NetC12_1 Pin=C12-1
+Added Pin To Net: NetName=NetC12_2 Pin=C12-2
+Added Pin To Net: NetName=GND Pin=C13-1
+Added Pin To Net: NetName=V3P3 Pin=C13-2
+Added Pin To Net: NetName=GND Pin=C14-1
+Added Pin To Net: NetName=V3P3 Pin=C14-2
+Added Pin To Net: NetName=V3P3 Pin=D1-1
+Added Pin To Net: NetName=NetD1_2 Pin=D1-2
+Added Pin To Net: NetName=V3P3 Pin=D2-1
+Added Pin To Net: NetName=NetD2_2 Pin=D2-2
+Added Pin To Net: NetName=V3P3 Pin=D3-1
+Added Pin To Net: NetName=NetD3_2 Pin=D3-2
+Added Pin To Net: NetName=NetD4_1 Pin=D4-1
+Added Pin To Net: NetName=GND Pin=D4-2
+Added Pin To Net: NetName=NetD5_1 Pin=D5-1
+Added Pin To Net: NetName=GND Pin=D5-2
+Added Pin To Net: NetName=NetD6_1 Pin=D6-1
+Added Pin To Net: NetName=NetD6_2 Pin=D6-2
+Added Pin To Net: NetName=NetC12_1 Pin=D7-1
+Added Pin To Net: NetName=GND Pin=D7-2
+Added Pin To Net: NetName=MCLR Pin=J0-1
+Added Pin To Net: NetName=V3P3 Pin=J0-2
+Added Pin To Net: NetName=GND Pin=J0-3
+Added Pin To Net: NetName=PGED Pin=J0-4
+Added Pin To Net: NetName=PGEC Pin=J0-5

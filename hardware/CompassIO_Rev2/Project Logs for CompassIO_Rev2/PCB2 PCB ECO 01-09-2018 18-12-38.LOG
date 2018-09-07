@@ -1,0 +1,4 @@
+Added Component: Designator=J1(jumper 254)
+Added Component: Designator=J7(jumper 254)
+Added Pin To Net: NetName=GND Pin=J1-1
+Added Pin To Net: NetName=GND Pin=J1-1

@@ -1,0 +1,12 @@
+Added Component: Designator=J4(A2035-H)
+Added Pin To Net: NetName=NetJ4_1 Pin=J4-1
+Added Pin To Net: NetName=V3P3 Pin=J4-3
+Added Pin To Net: NetName=NetJ4_5 Pin=J4-5
+Added Pin To Net: NetName=GND Pin=J4-6
+Added Pin To Net: NetName=NetJ4_7 Pin=J4-7
+Added Pin To Net: NetName=GND Pin=J4-9
+Added Pin To Net: NetName=NetJ4_18 Pin=J4-18
+Added Pin To Net: NetName=GND Pin=J4-19
+Added Pin To Net: NetName=NetJ4_20 Pin=J4-20
+Added Pin To Net: NetName=NetJ4_21 Pin=J4-21
+Added Member To Class: ClassName=GPS Member=Component J4 A2035-H
