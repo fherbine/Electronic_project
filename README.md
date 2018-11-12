@@ -20,6 +20,6 @@ During 7 months we had to make a connected compass from scrath.
 
 ![Proto](https://user-images.githubusercontent.com/32856358/44981175-1ea40b80-af72-11e8-97de-1d102f1cb9f7.jpg)
 
-<img alt="PCB" src="./screenshots/pcb.jpg" width="75%" title="pcb">
+<img alt="PCB" src="./pictures/pcb.jpg" width="75%" title="pcb">
 
-<img alt="Global" src="./screenshots/global.jpg" width="75%" title="global">
+<img alt="Global" src="./pictures/global.jpg" width="75%" title="global">
